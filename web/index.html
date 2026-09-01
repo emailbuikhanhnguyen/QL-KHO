@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập — Kho NPL</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-box">
+      <h1>Hệ thống Quản lý Kho NPL</h1>
+      <p class="subtitle">Đăng nhập để tiếp tục</p>
+
+      <div class="error-box" id="loginError"></div>
+
+      <form id="loginForm">
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" id="email" required autocomplete="username" />
+        </div>
+        <div class="form-row">
+          <label>Mật khẩu</label>
+          <input type="password" id="password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">Đăng nhập</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    // Neu da dang nhap roi, vao thang dashboard
+    if (getToken()) window.location.href = "/dashboard.html";
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError("loginError");
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.textContent = "Đang đăng nhập...";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const res = await apiFetch("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Đăng nhập";
+
+      if (!res.ok) {
+        showError("loginError", extractErrorMessage(res.data) || "Email hoặc mật khẩu không đúng");
+        return;
+      }
+
+      saveSession(res.data.accessToken, res.data.user);
+      window.location.href = "/dashboard.html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xuất kho — Kho NPL</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1>Xuất kho</h1>
+    <p class="subtitle">Yêu cầu xuất → Trưởng bộ phận duyệt → BOD duyệt → Thủ kho thực xuất (tự động FEFO)</p>
+
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;">Danh sách phiếu xuất</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()">+ Tạo yêu cầu xuất</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;">Đang tải...</div>
+    </div>
+
+    <div class="card" id="createCard" style="display:none;">
+      <h2>Tạo yêu cầu xuất kho</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label>Xuất từ kho *</label>
+        <select id="f_warehouseId"></select>
+      </div>
+      <div class="form-row">
+        <label>Lý do xuất</label>
+        <textarea id="f_reason" placeholder="VD: Xuất vải cho chuyền may áo sơ mi tháng 9"></textarea>
+      </div>
+
+      <h3>Danh sách vật tư cần xuất</h3>
+      <div id="linesContainer"></div>
+      <button class="btn btn-outline btn-sm" onclick="addLine()">+ Thêm dòng</button>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn">Tạo yêu cầu (DRAFT)</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()">Hủy</button>
+      </div>
+    </div>
+
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;">Chi tiết phiếu <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/issue-requests.js"></script>
+</body>
+</html>

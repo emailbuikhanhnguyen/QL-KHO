@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo cáo — Kho NPL</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1>Báo cáo tồn kho</h1>
+    <p class="subtitle">Xem tồn kho hiện tại và lịch sử biến động, xuất được ra Excel</p>
+
+    <div class="tabs">
+      <button class="active" id="tabBalance" onclick="switchTab('balance')">Tồn kho hiện tại</button>
+      <button id="tabHistory" onclick="switchTab('history')">Lịch sử biến động</button>
+    </div>
+
+    <!-- ============ TON KHO HIEN TAI ============ -->
+    <div class="card" id="balanceCard">
+      <div class="form-grid cols-3">
+        <div class="form-row">
+          <label>Vật tư</label>
+          <select id="balance_itemId"><option value="">— Tất cả —</option></select>
+        </div>
+        <div class="form-row">
+          <label>Kho</label>
+          <select id="balance_warehouseId"><option value="">— Tất cả —</option></select>
+        </div>
+        <div class="form-row">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" style="width:100%;" onclick="loadBalance()">Xem</button>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-success btn-sm" onclick="exportBalance()">📥 Xuất Excel</button>
+      </div>
+      <div id="balanceContainer" style="margin-top: 16px;">Đang tải...</div>
+    </div>
+
+    <!-- ============ LICH SU BIEN DONG ============ -->
+    <div class="card" id="historyCard" style="display:none;">
+      <div class="form-grid cols-3">
+        <div class="form-row">
+          <label>Vật tư</label>
+          <select id="history_itemId"><option value="">— Tất cả —</option></select>
+        </div>
+        <div class="form-row">
+          <label>Kho</label>
+          <select id="history_warehouseId"><option value="">— Tất cả —</option></select>
+        </div>
+        <div class="form-row">
+          <label>Loại giao dịch</label>
+          <select id="history_movementType">
+            <option value="">— Tất cả —</option>
+            <option value="RECEIPT">Nhập kho</option>
+            <option value="ISSUE">Xuất kho</option>
+            <option value="TRANSFER_IN">Chuyển đến</option>
+            <option value="TRANSFER_OUT">Chuyển đi</option>
+            <option value="ADJUSTMENT">Điều chỉnh</option>
+            <option value="RETURN">Trả hàng</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="loadHistory()">Xem</button>
+        <button class="btn btn-success btn-sm" onclick="exportHistory()">📥 Xuất Excel</button>
+      </div>
+      <div id="historyContainer" style="margin-top: 16px;">Đang tải...</div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/reports.js"></script>
+</body>
+</html>

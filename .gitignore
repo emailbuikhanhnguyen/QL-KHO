@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+*.log
+
+# File anh upload tu Module 3 (QC) — khong commit vao git, can backup rieng
+uploads/

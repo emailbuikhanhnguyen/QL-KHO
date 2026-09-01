@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Quét QR Kiểm kê — Kho NPL</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* Giao dien rieng, toi uu cho man hinh dien thoai luc cam di quet */
+    body { background: #0f1220; }
+    .scan-page { max-width: 480px; margin: 0 auto; padding: 16px; min-height: 100vh; box-sizing: border-box; }
+    .scan-header { text-align: center; color: #fff; padding: 12px 0 20px; }
+    .scan-header h1 { font-size: 18px; margin: 0 0 4px; }
+    .scan-header p { font-size: 13px; color: #9aa3c7; margin: 0; }
+    #qr-reader { border-radius: 14px; overflow: hidden; border: 3px solid #2e75b6; }
+    .result-card {
+      background: #fff; border-radius: 14px; padding: 20px; margin-top: 16px; display: none;
+    }
+    .result-card.show { display: block; }
+    .result-card .item-name { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .result-card .lot-code { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .result-card .system-qty {
+      background: #f7f8fc; border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 16px;
+    }
+    .result-card .system-qty .label { font-size: 12px; color: var(--muted); }
+    .result-card .system-qty .value { font-size: 26px; font-weight: 700; color: var(--navy); }
+    .count-input {
+      width: 100%; padding: 16px; font-size: 24px; text-align: center; border: 2px solid var(--border);
+      border-radius: 10px; font-weight: 700; margin-bottom: 14px;
+    }
+    .count-input:focus { border-color: var(--navy-light); outline: none; }
+    .big-btn { width: 100%; padding: 16px; font-size: 16px; border-radius: 10px; }
+    .scan-again-hint { text-align: center; color: #9aa3c7; font-size: 12px; margin-top: 14px; }
+    .status-msg { text-align: center; color: #fff; padding: 10px; font-size: 13px; min-height: 20px; }
+    .status-msg.error { color: #ff8a8a; }
+    .status-msg.success { color: #7be08a; }
+    .manual-toggle {
+      text-align: center; margin-top: 16px;
+    }
+    .manual-toggle button {
+      background: none; border: none; color: #9aa3c7; text-decoration: underline; font-size: 13px; cursor: pointer;
+    }
+    .manual-form { display: none; margin-top: 14px; }
+    .manual-form.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="scan-page">
+    <div class="scan-header">
+      <h1>📷 Quét QR Kiểm kê</h1>
+      <p id="warehouseHint">Đưa camera vào tem QR dán trên lô hàng</p>
+    </div>
+
+    <div id="qr-reader"></div>
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="manual-toggle">
+      <button onclick="toggleManualEntry()">Không quét được? Nhập mã lô thủ công</button>
+    </div>
+    <div class="manual-form" id="manualForm">
+      <input type="number" id="manualLotId" placeholder="Nhập ID lô hàng (số)" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:10px;" />
+      <button class="btn btn-primary big-btn" onclick="lookupManual()">Tìm lô hàng</button>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="item-name" id="resultItemName"></div>
+      <div class="lot-code" id="resultLotCode"></div>
+      <div class="system-qty">
+        <div class="label">Hệ thống ghi nhận</div>
+        <div class="value" id="resultSystemQty"></div>
+      </div>
+      <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Số đếm thực tế</label>
+      <input type="number" id="countedQtyInput" class="count-input" inputmode="decimal" placeholder="0" />
+      <button class="btn btn-success big-btn" id="confirmBtn" onclick="confirmCount()">✔ Xác nhận & Quét tiếp</button>
+    </div>
+
+    <p class="scan-again-hint">Sau khi xác nhận, camera tự bật lại để quét lô tiếp theo.</p>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="/js/stocktake-scan.js"></script>
+</body>
+</html>

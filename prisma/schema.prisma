@@ -1,0 +1,830 @@
+// He thong Quan ly Kho NPL (nguyen phu lieu nganh may)
+// Module 1 (Danh muc & Master Data) + Auth/RBAC
+// Cap nhat 29/08/2026: them zoneType (khu cach ly), PO/PackingList/Invoice
+// reference cho Lot, va cac model Auth (Department, User, Role).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enum dung chung voi module QC
+// ---------------------------------------------------------------------------
+enum QcStatus {
+  PENDING
+  IN_PROGRESS
+  PASSED
+  FAILED
+  PARTIALLY_PASSED
+  PENDING_DISPOSITION
+
+  @@map("qc_status")
+}
+
+// ---------------------------------------------------------------------------
+// Loai khu vuc trong kho — them de danh dau khu cach ly hang loi (cau 20)
+// ---------------------------------------------------------------------------
+enum ZoneType {
+  NORMAL
+  QUARANTINE
+
+  @@map("zone_type")
+}
+
+// ---------------------------------------------------------------------------
+// Role — quyen han cua user trong he thong
+// ---------------------------------------------------------------------------
+enum Role {
+  ADMIN            // Quan tri he thong
+  WAREHOUSE_STAFF  // Nhan vien thao tac du lieu kho, gan voi 1 Department cu the
+  DEPT_HEAD        // Truong bo phan, duyet cap 1 cho phieu xuat kho
+  BOD              // Duyet cap cuoi
+  QC_MANAGER       // Duyet ket qua QC
+  REQUESTER        // Nhan vien phong ban khac, chi tao phieu yeu cau xuat kho
+
+  @@map("role")
+}
+
+// ---------------------------------------------------------------------------
+// Department — phong ban / bo phan (bang rieng, khong hardcode enum,
+// de sau nay them phong ban moi khong can sua code)
+// ---------------------------------------------------------------------------
+model Department {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique @map("code") // VD: RM_WAREHOUSE, COLOR_KITCHEN, FG_WAREHOUSE, PMC, CS, FD, QA, BOD
+  name      String    @map("name")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  users     User[]
+  warehouses Warehouse[]
+  issueRequests IssueRequest[]
+
+  @@index([deletedAt])
+  @@map("departments")
+}
+
+// ---------------------------------------------------------------------------
+// User — tai khoan dang nhap he thong
+// ---------------------------------------------------------------------------
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique @map("email")
+  passwordHash String    @map("password_hash")
+  fullName     String    @map("full_name")
+  role         Role      @map("role")
+
+  departmentId Int       @map("department_id")
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  isActive     Boolean   @default(true) @map("is_active")
+
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  approvedGoodsReceipts GoodsReceipt[] @relation("GoodsReceiptApprover")
+  approvedQcInspections QcInspection[] @relation("QcInspectionApprover")
+  requestedIssueRequests    IssueRequest[] @relation("IssueRequestRequester")
+  headApprovedIssueRequests IssueRequest[] @relation("IssueRequestHeadApprover")
+  bodApprovedIssueRequests  IssueRequest[] @relation("IssueRequestBodApprover")
+  issuedIssueRequests       IssueRequest[] @relation("IssueRequestIssuer")
+  createdTransfers  WarehouseTransfer[] @relation("TransferCreator")
+  shippedTransfers  WarehouseTransfer[] @relation("TransferShipper")
+  receivedTransfers WarehouseTransfer[] @relation("TransferReceiver")
+
+  @@index([departmentId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// ItemGroup (nhom vat tu)
+// ---------------------------------------------------------------------------
+model ItemGroup {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @map("code")
+  name        String    @map("name")
+  description String?   @map("description")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   Int?      @map("created_by")
+  updatedBy   Int?      @map("updated_by")
+  deletedAt   DateTime? @map("deleted_at")
+
+  items       Item[]
+
+  @@index([deletedAt])
+  @@map("item_groups")
+}
+
+// ---------------------------------------------------------------------------
+// Item (vat tu / nguyen phu lieu)
+// ---------------------------------------------------------------------------
+model Item {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @map("code")
+  name        String    @map("name")
+  spec        String?   @map("spec")
+  unit        String    @map("unit")
+
+  itemGroupId Int       @map("item_group_id")
+  itemGroup   ItemGroup @relation(fields: [itemGroupId], references: [id])
+
+  minStock    Decimal   @map("min_stock") @db.Decimal(18, 3)
+  maxStock    Decimal   @map("max_stock") @db.Decimal(18, 3)
+
+  isActive    Boolean   @default(true) @map("is_active")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   Int?      @map("created_by")
+  updatedBy   Int?      @map("updated_by")
+  deletedAt   DateTime? @map("deleted_at")
+
+  lots        Lot[]
+  goodsReceiptLines GoodsReceiptLine[]
+  stockLedgerEntries StockLedgerEntry[]
+  issueRequestLines IssueRequestLine[]
+
+  @@index([itemGroupId])
+  @@index([deletedAt])
+  @@map("items")
+}
+
+// ---------------------------------------------------------------------------
+// Supplier (nha cung cap)
+// ---------------------------------------------------------------------------
+model Supplier {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique @map("code")
+  name          String    @map("name")
+  taxCode       String?   @map("tax_code")
+  address       String?   @map("address")
+  contactPerson String?   @map("contact_person")
+  phone         String?   @map("phone")
+  email         String?   @map("email")
+  isActive      Boolean   @default(true) @map("is_active")
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdBy     Int?      @map("created_by")
+  updatedBy     Int?      @map("updated_by")
+  deletedAt     DateTime? @map("deleted_at")
+
+  lots          Lot[]
+  goodsReceipts GoodsReceipt[]
+
+  @@index([deletedAt])
+  @@map("suppliers")
+}
+
+// ---------------------------------------------------------------------------
+// Warehouse (kho) — 4 kho vat ly: RM/ Vat tu/ Color Kitchen/ Thanh pham
+// Them departmentId de biet phong ban nao quan ly kho nao (dung de kiem tra
+// quyen duyet phieu nhap/xuat sau nay — vd: Truong bo phan Color Kitchen
+// khong duoc duyet phieu nhap cua kho RM).
+// ---------------------------------------------------------------------------
+model Warehouse {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique @map("code")
+  name      String    @map("name")
+  address   String?   @map("address")
+
+  departmentId Int?       @map("department_id")
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  // Dung sai cho phep khi kiem ke, tinh theo %. Mac dinh 0 (khong cho phep
+  // chenh lech) — ap dung cho tat ca kho. Rieng Color Kitchen se duoc chinh
+  // sau khi co con so cu the tu Sep (hien dang cho tra loi), chi can sua
+  // gia tri nay qua API, khong can sua code.
+  stocktakeTolerancePercent Decimal @default(0) @map("stocktake_tolerance_percent") @db.Decimal(5, 2)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy Int?      @map("created_by")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+
+  zones     Zone[]
+  goodsReceipts GoodsReceipt[]
+  stockLedgerEntries StockLedgerEntry[]
+  issueRequests IssueRequest[]
+  transfersAsSource WarehouseTransfer[] @relation("TransferSourceWarehouse")
+  transfersAsDest   WarehouseTransfer[] @relation("TransferDestWarehouse")
+  stocktakes        Stocktake[]
+  stocktakeLocks    StocktakeLock[]
+
+  @@index([deletedAt])
+  @@index([departmentId])
+  @@map("warehouses")
+}
+
+// ---------------------------------------------------------------------------
+// Zone (khu vuc trong kho)
+// Them zoneType de danh dau khu cach ly hang loi (cau hoi 20 cua Sep)
+// ---------------------------------------------------------------------------
+model Zone {
+  id          Int       @id @default(autoincrement())
+  warehouseId Int       @map("warehouse_id")
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+  code        String    @map("code")
+  name        String    @map("name")
+  zoneType    ZoneType  @default(NORMAL) @map("zone_type")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   Int?      @map("created_by")
+  updatedBy   Int?      @map("updated_by")
+  deletedAt   DateTime? @map("deleted_at")
+
+  racks       Rack[]
+
+  @@unique([warehouseId, code])
+  @@index([warehouseId])
+  @@index([zoneType])
+  @@index([deletedAt])
+  @@map("zones")
+}
+
+// ---------------------------------------------------------------------------
+// Rack (ke)
+// ---------------------------------------------------------------------------
+model Rack {
+  id        Int       @id @default(autoincrement())
+  zoneId    Int       @map("zone_id")
+  zone      Zone      @relation(fields: [zoneId], references: [id])
+  code      String    @map("code")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdBy Int?      @map("created_by")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+
+  storageLocations StorageLocation[]
+
+  @@unique([zoneId, code])
+  @@index([zoneId])
+  @@index([deletedAt])
+  @@map("racks")
+}
+
+// ---------------------------------------------------------------------------
+// StorageLocation (vi tri luu tru cu the)
+// ---------------------------------------------------------------------------
+model StorageLocation {
+  id          Int       @id @default(autoincrement())
+  rackId      Int       @map("rack_id")
+  rack        Rack      @relation(fields: [rackId], references: [id])
+  code        String    @map("code")
+  maxCapacity Decimal?  @map("max_capacity") @db.Decimal(18, 3)
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  createdBy   Int?      @map("created_by")
+  updatedBy   Int?      @map("updated_by")
+  deletedAt   DateTime? @map("deleted_at")
+
+  goodsReceiptLines GoodsReceiptLine[]
+  stockLedgerEntries StockLedgerEntry[]
+
+  @@unique([rackId, code])
+  @@index([rackId])
+  @@index([deletedAt])
+  @@map("storage_locations")
+}
+
+// ---------------------------------------------------------------------------
+// Lot (ma lo/batch)
+// Them poNumber/packingListNumber/invoiceNumber de theo doi tung lo hang
+// theo PO/Packing List/Invoice (cau hoi 8 cua Sep)
+// ---------------------------------------------------------------------------
+model Lot {
+  id                Int       @id @default(autoincrement())
+  itemId            Int       @map("item_id")
+  item              Item      @relation(fields: [itemId], references: [id])
+  lotCode           String    @map("lot_code")
+  color             String?   @map("color")
+  size              String?   @map("size")
+  manufactureDate   DateTime? @map("manufacture_date") @db.Date
+  expiryDate        DateTime? @map("expiry_date") @db.Date
+
+  supplierId        Int       @map("supplier_id")
+  supplier          Supplier  @relation(fields: [supplierId], references: [id])
+
+  poNumber          String?   @map("po_number")
+  packingListNumber String?   @map("packing_list_number")
+  invoiceNumber     String?   @map("invoice_number")
+
+  qcStatus          QcStatus  @default(PENDING) @map("qc_status")
+
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         Int?      @map("created_by")
+  updatedBy         Int?      @map("updated_by")
+  deletedAt         DateTime? @map("deleted_at")
+
+  goodsReceiptLines GoodsReceiptLine[]
+  stockLedgerEntries StockLedgerEntry[]
+  qcInspections     QcInspection[]
+  transferLines     WarehouseTransferLine[]
+  stocktakeLines    StocktakeLine[]
+
+  @@unique([itemId, lotCode])
+  @@index([itemId])
+  @@index([supplierId])
+  @@index([qcStatus])
+  @@index([poNumber])
+  @@index([deletedAt])
+  @@map("lots")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE 2: Nhap kho RM
+// Luong trang thai: DRAFT -> PENDING_APPROVAL -> CONFIRMED
+//                                             \-> REJECTED -> (reopen) -> DRAFT
+// Khi CONFIRMED: tu dong tao/cap nhat Lot + ghi StockLedgerEntry (cong ton).
+// ---------------------------------------------------------------------------
+enum GoodsReceiptStatus {
+  DRAFT
+  PENDING_APPROVAL
+  CONFIRMED
+  REJECTED
+
+  @@map("goods_receipt_status")
+}
+
+model GoodsReceipt {
+  id                Int       @id @default(autoincrement())
+  code              String    @unique @map("code") // Tu sinh: GRN-{year}-{id}, dung de in phieu
+
+  warehouseId       Int       @map("warehouse_id")
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id])
+
+  supplierId        Int       @map("supplier_id")
+  supplier          Supplier  @relation(fields: [supplierId], references: [id])
+
+  poNumber          String?   @map("po_number")
+  packingListNumber String?   @map("packing_list_number")
+  invoiceNumber     String?   @map("invoice_number")
+
+  status            GoodsReceiptStatus @default(DRAFT) @map("status")
+  note              String?   @map("note")
+
+  submittedAt       DateTime? @map("submitted_at")
+  approvedAt        DateTime? @map("approved_at")
+  approvedBy        Int?      @map("approved_by")
+  approver          User?     @relation("GoodsReceiptApprover", fields: [approvedBy], references: [id])
+  rejectedReason    String?   @map("rejected_reason")
+
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         Int?      @map("created_by")
+  updatedBy         Int?      @map("updated_by")
+  deletedAt         DateTime? @map("deleted_at")
+
+  lines             GoodsReceiptLine[]
+
+  @@index([warehouseId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([poNumber])
+  @@index([deletedAt])
+  @@map("goods_receipts")
+}
+
+model GoodsReceiptLine {
+  id                Int       @id @default(autoincrement())
+
+  goodsReceiptId    Int       @map("goods_receipt_id")
+  goodsReceipt      GoodsReceipt @relation(fields: [goodsReceiptId], references: [id], onDelete: Cascade)
+
+  itemId            Int       @map("item_id")
+  item              Item      @relation(fields: [itemId], references: [id])
+
+  lotCode           String    @map("lot_code")
+  color             String?   @map("color")
+  size              String?   @map("size")
+  manufactureDate   DateTime? @map("manufacture_date") @db.Date
+  expiryDate        DateTime? @map("expiry_date") @db.Date
+
+  quantity          Decimal   @map("quantity") @db.Decimal(18, 3)
+
+  storageLocationId Int?      @map("storage_location_id")
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id])
+
+  // Dien vao sau khi CONFIRMED — tro toi Lot that su duoc tao/cap nhat
+  lotId             Int?      @map("lot_id")
+  lot               Lot?      @relation(fields: [lotId], references: [id])
+
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([goodsReceiptId])
+  @@index([itemId])
+  @@index([lotId])
+  @@map("goods_receipt_lines")
+}
+
+// ---------------------------------------------------------------------------
+// StockLedgerEntry — so cai ton kho, nen tang dung chung cho nhieu module.
+// Tao boi Module 2 (nhap kho), sau nay Module 4 (the kho) se so huu va mo
+// rong (bao gom truy van so du ton, bao cao...).
+// Quy uoc: `quantity` la SO CO DAU — duong khi cong ton (nhap), am khi tru
+// ton (xuat) — de tinh so du chi can SUM() truc tiep, khong can logic rieng
+// theo tung loai movement.
+// ---------------------------------------------------------------------------
+enum StockMovementType {
+  RECEIPT      // Nhap kho
+  ISSUE        // Xuat kho
+  TRANSFER_IN  // Nhan tu kho khac chuyen den
+  TRANSFER_OUT // Chuyen di kho khac
+  ADJUSTMENT   // Dieu chinh thu cong (VD: sau kiem ke)
+  RETURN       // Tra hang (chi ap dung Color Kitchen theo spec)
+
+  @@map("stock_movement_type")
+}
+
+model StockLedgerEntry {
+  id                Int       @id @default(autoincrement())
+
+  lotId             Int       @map("lot_id")
+  lot               Lot       @relation(fields: [lotId], references: [id])
+
+  itemId            Int       @map("item_id") // denormalized, tien truy van nhanh khong can join qua Lot
+  item              Item      @relation(fields: [itemId], references: [id])
+
+  warehouseId       Int       @map("warehouse_id")
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id])
+
+  storageLocationId Int?      @map("storage_location_id")
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id])
+
+  movementType      StockMovementType @map("movement_type")
+  quantity          Decimal   @map("quantity") @db.Decimal(18, 3) // co dau, xem quy uoc o tren
+
+  referenceType     String    @map("reference_type") // VD: "GOODS_RECEIPT"
+  referenceId       Int       @map("reference_id")   // VD: id cua GoodsReceipt
+
+  note              String?   @map("note")
+
+  createdAt         DateTime  @default(now()) @map("created_at")
+  createdBy         Int?      @map("created_by")
+
+  @@index([lotId])
+  @@index([itemId])
+  @@index([warehouseId])
+  @@index([referenceType, referenceId])
+  @@map("stock_ledger_entries")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE 3: QC (kiem tra chat luong)
+// Luong trang thai PHIEU KIEM (quy trinh, tach rieng voi KET QUA kiem):
+//   DRAFT -> PENDING_APPROVAL -> APPROVED (cap nhat Lot.qcStatus that su)
+//                             \-> REJECTED -> (reopen) -> DRAFT
+//
+// KET QUA kiem (`result`) dung lai enum QcStatus co san tu Module 1, chi
+// duoc phep la 1 trong 3 gia tri: PASSED / FAILED / PARTIALLY_PASSED.
+// Anh xa voi ngon ngu nghiep vu cua Sep:
+//   PASSED            = Dat
+//   FAILED            = Rejected (Khong dat)
+//   PARTIALLY_PASSED  = Marginal Accepted (Dat co dieu kien)
+// (PENDING_DISPOSITION la trang thai Module xu ly hang loi se gan sau cho
+//  lo FAILED chua quyet dinh huy/tra NCC/ha cap — khong phai ket qua QC truc
+//  tiep, xem ghi chu goc trong enum QcStatus o Module 1.)
+//
+// Bat buoc truoc khi gui duyet: phai co ket qua + it nhat 1 anh chup.
+// ---------------------------------------------------------------------------
+enum QcInspectionStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+
+  @@map("qc_inspection_status")
+}
+
+model QcInspection {
+  id             Int       @id @default(autoincrement())
+
+  lotId          Int       @map("lot_id")
+  lot            Lot       @relation(fields: [lotId], references: [id])
+
+  inspectorId    Int?      @map("inspector_id") // nguoi thuc hien kiem tra vat ly
+
+  result         QcStatus? @map("result") // chi PASSED/FAILED/PARTIALLY_PASSED, kiem tra o service
+  notes          String?   @map("notes")
+
+  status         QcInspectionStatus @default(DRAFT) @map("status")
+  submittedAt    DateTime? @map("submitted_at")
+  approvedAt     DateTime? @map("approved_at")
+  approvedBy     Int?      @map("approved_by")
+  approver       User?     @relation("QcInspectionApprover", fields: [approvedBy], references: [id])
+  rejectedReason String?   @map("rejected_reason")
+
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdBy      Int?      @map("created_by")
+  updatedBy      Int?      @map("updated_by")
+  deletedAt      DateTime? @map("deleted_at")
+
+  images         QcInspectionImage[]
+
+  @@index([lotId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("qc_inspections")
+}
+
+model QcInspectionImage {
+  id               Int      @id @default(autoincrement())
+
+  qcInspectionId   Int      @map("qc_inspection_id")
+  qcInspection     QcInspection @relation(fields: [qcInspectionId], references: [id], onDelete: Cascade)
+
+  filePath         String   @map("file_path") // duong dan tuong doi tren dia (vd: uploads/qc/xxx.jpg)
+  originalFileName String?  @map("original_file_name")
+
+  uploadedAt       DateTime @default(now()) @map("uploaded_at")
+  uploadedBy       Int?     @map("uploaded_by")
+
+  @@index([qcInspectionId])
+  @@map("qc_inspection_images")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE: Xuat kho (Issue Request) — duyet da cap
+// Luong trang thai:
+//   DRAFT -> PENDING_HEAD_APPROVAL -> PENDING_BOD_APPROVAL -> APPROVED -> ISSUED
+//                                  \-> REJECTED (o bat ky cap nao) -> reopen -> DRAFT
+//
+// Khi ISSUED: tu dong phan bo theo FEFO (First-Expired-First-Out) tren cac
+// Lot cua item da PASSED/PARTIALLY_PASSED QC trong kho, tao StockLedgerEntry
+// am (tru ton). Neu tong ton kha dung khong du, van xuat duoc phan con lai
+// (partial issue) — `issuedQuantity` < `requestedQuantity` la hop le.
+// ---------------------------------------------------------------------------
+enum IssueRequestStatus {
+  DRAFT
+  PENDING_HEAD_APPROVAL
+  PENDING_BOD_APPROVAL
+  APPROVED
+  ISSUED
+  REJECTED
+
+  @@map("issue_request_status")
+}
+
+model IssueRequest {
+  id           Int       @id @default(autoincrement())
+  code         String    @unique @map("code") // Tu sinh: ISS-{year}-{id}
+
+  warehouseId  Int       @map("warehouse_id")
+  warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
+
+  requesterId  Int       @map("requester_id")
+  requester    User      @relation("IssueRequestRequester", fields: [requesterId], references: [id])
+
+  departmentId Int       @map("department_id") // phong ban cua nguoi yeu cau (denormalized)
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  reason       String?   @map("reason")
+
+  status       IssueRequestStatus @default(DRAFT) @map("status")
+
+  submittedAt       DateTime? @map("submitted_at")
+
+  headApprovedAt    DateTime? @map("head_approved_at")
+  headApprovedBy    Int?      @map("head_approved_by")
+  headApprover      User?     @relation("IssueRequestHeadApprover", fields: [headApprovedBy], references: [id])
+
+  bodApprovedAt     DateTime? @map("bod_approved_at")
+  bodApprovedBy     Int?      @map("bod_approved_by")
+  bodApprover       User?     @relation("IssueRequestBodApprover", fields: [bodApprovedBy], references: [id])
+
+  issuedAt          DateTime? @map("issued_at")
+  issuedBy          Int?      @map("issued_by")
+  issuer            User?     @relation("IssueRequestIssuer", fields: [issuedBy], references: [id])
+
+  rejectedReason    String?   @map("rejected_reason")
+
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         Int?      @map("created_by")
+  updatedBy         Int?      @map("updated_by")
+  deletedAt         DateTime? @map("deleted_at")
+
+  lines             IssueRequestLine[]
+
+  @@index([warehouseId])
+  @@index([requesterId])
+  @@index([departmentId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("issue_requests")
+}
+
+model IssueRequestLine {
+  id              Int       @id @default(autoincrement())
+
+  issueRequestId  Int       @map("issue_request_id")
+  issueRequest    IssueRequest @relation(fields: [issueRequestId], references: [id], onDelete: Cascade)
+
+  itemId          Int       @map("item_id")
+  item            Item      @relation(fields: [itemId], references: [id])
+
+  requestedQuantity Decimal @map("requested_quantity") @db.Decimal(18, 3)
+  issuedQuantity    Decimal? @map("issued_quantity") @db.Decimal(18, 3) // dien khi ISSUED, co the < requested (xuat mot phan)
+
+  note            String?   @map("note")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([issueRequestId])
+  @@index([itemId])
+  @@map("issue_request_lines")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE: Dieu chuyen kho (Warehouse Transfer)
+// Luong trang thai (khong can duyet da cap — Sep chua yeu cau):
+//   DRAFT -> SHIPPED -> RECEIVED
+//                    \-> CANCELLED (chi khi con DRAFT)
+//
+// Co che "khong mat hang giua chung": dung 1 kho ao IN_TRANSIT lam diem
+// trung gian (xem prisma/seed.ts). Khi SHIPPED: tru ton kho nguon + cong
+// ton kho trung chuyen. Khi RECEIVED: tru ton kho trung chuyen + cong ton
+// kho dich. Tai bat ky thoi diem nao, tong ton kho toan he thong luon khop.
+// ---------------------------------------------------------------------------
+enum WarehouseTransferStatus {
+  DRAFT
+  SHIPPED
+  RECEIVED
+  CANCELLED
+
+  @@map("warehouse_transfer_status")
+}
+
+model WarehouseTransfer {
+  id                 Int       @id @default(autoincrement())
+  code               String    @unique @map("code") // Tu sinh: TRF-{year}-{id}
+
+  sourceWarehouseId  Int       @map("source_warehouse_id")
+  sourceWarehouse    Warehouse @relation("TransferSourceWarehouse", fields: [sourceWarehouseId], references: [id])
+
+  destWarehouseId    Int       @map("dest_warehouse_id")
+  destWarehouse      Warehouse @relation("TransferDestWarehouse", fields: [destWarehouseId], references: [id])
+
+  reason             String?   @map("reason")
+
+  status             WarehouseTransferStatus @default(DRAFT) @map("status")
+
+  shippedAt          DateTime? @map("shipped_at")
+  shippedBy          Int?      @map("shipped_by")
+  shipper            User?     @relation("TransferShipper", fields: [shippedBy], references: [id])
+
+  receivedAt         DateTime? @map("received_at")
+  receivedBy         Int?      @map("received_by")
+  receiver           User?     @relation("TransferReceiver", fields: [receivedBy], references: [id])
+
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  createdBy          Int?      @map("created_by")
+  creator            User?     @relation("TransferCreator", fields: [createdBy], references: [id])
+  updatedBy          Int?      @map("updated_by")
+  deletedAt          DateTime? @map("deleted_at")
+
+  lines              WarehouseTransferLine[]
+
+  @@index([sourceWarehouseId])
+  @@index([destWarehouseId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("warehouse_transfers")
+}
+
+model WarehouseTransferLine {
+  id                  Int      @id @default(autoincrement())
+
+  warehouseTransferId Int      @map("warehouse_transfer_id")
+  warehouseTransfer   WarehouseTransfer @relation(fields: [warehouseTransferId], references: [id], onDelete: Cascade)
+
+  lotId               Int      @map("lot_id")
+  lot                 Lot      @relation(fields: [lotId], references: [id])
+
+  quantity            Decimal  @map("quantity") @db.Decimal(18, 3)
+
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@index([warehouseTransferId])
+  @@index([lotId])
+  @@map("warehouse_transfer_lines")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE: Kiem ke (Stocktake)
+// Kiem ke toan bo 1 kho tai 1 thoi diem (khong xoay vong theo khu vuc).
+// Khi bat dau: tao StocktakeLock cho kho do — cac module Nhap/Xuat/Dieu
+// chuyen kho PHAI kiem tra khoa nay truoc khi ghi StockLedgerEntry (xem
+// src/common/stocktake-lock.util.ts, da duoc goi trong 3 module do).
+//
+// Dung sai: dung Warehouse.stocktakeTolerancePercent (mac dinh 0%). Neu
+// chenh lech vuot dung sai o bat ky dong nao, KHONG cho hoan tat binh
+// thuong — can ADMIN dung forceComplete kem ly do.
+// ---------------------------------------------------------------------------
+enum StocktakeStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("stocktake_status")
+}
+
+model Stocktake {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @map("code") // Tu sinh: STK-{year}-{id}
+
+  warehouseId Int       @map("warehouse_id")
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  status      StocktakeStatus @default(IN_PROGRESS) @map("status")
+
+  startedAt   DateTime  @default(now()) @map("started_at")
+  startedBy   Int?      @map("started_by")
+
+  completedAt DateTime? @map("completed_at")
+  completedBy Int?      @map("completed_by")
+
+  cancelledAt DateTime? @map("cancelled_at")
+  cancelledBy Int?      @map("cancelled_by")
+
+  forceCompletedReason String? @map("force_completed_reason")
+
+  note        String?   @map("note")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  lines       StocktakeLine[]
+  lock        StocktakeLock?
+
+  @@index([warehouseId])
+  @@index([status])
+  @@map("stocktakes")
+}
+
+model StocktakeLine {
+  id              Int       @id @default(autoincrement())
+
+  stocktakeId     Int       @map("stocktake_id")
+  stocktake       Stocktake @relation(fields: [stocktakeId], references: [id], onDelete: Cascade)
+
+  lotId           Int       @map("lot_id")
+  lot             Lot       @relation(fields: [lotId], references: [id])
+
+  systemQuantity  Decimal   @map("system_quantity") @db.Decimal(18, 3) // ton theo he thong luc bat dau kiem ke
+  countedQuantity Decimal?  @map("counted_quantity") @db.Decimal(18, 3) // ton dem thuc te
+  variance        Decimal?  @map("variance") @db.Decimal(18, 3) // = counted - system, tinh luc hoan tat
+
+  countedAt       DateTime? @map("counted_at")
+  countedBy       Int?      @map("counted_by")
+
+  note            String?   @map("note")
+
+  @@index([stocktakeId])
+  @@index([lotId])
+  @@map("stocktake_lines")
+}
+
+// Ban ghi khoa rieng — 1-1 voi Stocktake dang IN_PROGRESS. Tach rieng khoi
+// Stocktake de cac module khac chi can query bang nay (gon nhe), khong can
+// biet chi tiet noi dung kiem ke.
+model StocktakeLock {
+  id          Int       @id @default(autoincrement())
+
+  stocktakeId Int       @unique @map("stocktake_id")
+  stocktake   Stocktake @relation(fields: [stocktakeId], references: [id], onDelete: Cascade)
+
+  warehouseId Int       @map("warehouse_id")
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  lockedAt    DateTime  @default(now()) @map("locked_at")
+  lockedBy    Int?      @map("locked_by")
+
+  releasedAt  DateTime? @map("released_at") // NULL = dang khoa (active)
+  releasedBy  Int?      @map("released_by")
+
+  @@index([warehouseId, releasedAt])
+  @@map("stocktake_locks")
+}
