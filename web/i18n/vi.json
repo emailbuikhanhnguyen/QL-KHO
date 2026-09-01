@@ -320,5 +320,141 @@
     "invalidQuantity": "Vui lòng nhập số đếm hợp lệ.",
     "saving": "Đang lưu...",
     "invalidManualId": "Vui lòng nhập đúng ID lô hàng (số)."
+  },
+  "help": {
+    "pageTitle": "Trợ giúp",
+    "pageSubtitle": "Hướng dẫn sử dụng nhanh cho từng phần của hệ thống",
+    "backToTop": "↑ Về đầu trang",
+    "sections": {
+      "gettingStarted": {
+        "title": "Bắt đầu",
+        "intro": "Vài điều cơ bản trước khi dùng hệ thống.",
+        "steps": [
+          "Đăng nhập bằng email và mật khẩu được cấp.",
+          "Chọn ngôn ngữ hiển thị (VI / EN / 中文) ở góc trên bên phải — lựa chọn được ghi nhớ cho lần sau, không cần chọn lại mỗi lần vào.",
+          "Từ Trang chủ, chọn đúng ô tương ứng để vào module cần dùng.",
+          "Bấm biểu tượng Trợ giúp (❓) ở bất kỳ trang nào để quay lại đây, đúng phần liên quan tới trang đang xem."
+        ]
+      },
+      "goodsReceipt": {
+        "title": "Nhập kho",
+        "intro": "Dùng khi nhận hàng từ nhà cung cấp về kho.",
+        "steps": [
+          "Vào Nhập kho → bấm Tạo phiếu mới.",
+          "Chọn đúng kho, nhà cung cấp, điền số PO / Packing List / Invoice nếu có.",
+          "Thêm từng dòng hàng: chọn vật tư, nhập mã lô, số lượng.",
+          "Bấm Tạo phiếu — phiếu ở trạng thái Nháp, chưa ảnh hưởng tồn kho.",
+          "Mở phiếu vừa tạo, bấm Gửi duyệt.",
+          "Trưởng bộ phận (hoặc Admin) vào duyệt — sau khi duyệt, hệ thống tự tạo Lô hàng và cộng tồn kho.",
+          "Sau khi duyệt, có thể bấm \"Xem QR\" ở từng dòng để in tem dán lên hàng thật."
+        ]
+      },
+      "qc": {
+        "title": "QC — Kiểm tra chất lượng",
+        "intro": "Bắt buộc thực hiện trước khi vật tư được phép xuất kho.",
+        "steps": [
+          "Vào QC → Tạo phiếu kiểm mới → chọn lô hàng cần kiểm (chỉ hiện lô đang chờ kiểm).",
+          "Chọn kết quả sơ bộ: Đạt / Đạt có điều kiện / Không đạt.",
+          "Bắt buộc chụp và tải lên ít nhất 1 ảnh trước khi gửi duyệt — hệ thống sẽ chặn nếu thiếu ảnh.",
+          "Bấm Gửi duyệt.",
+          "QC Manager (hoặc Admin) duyệt — lô hàng cập nhật trạng thái tương ứng; chỉ lô Đạt / Đạt có điều kiện mới xuất kho được."
+        ]
+      },
+      "issueRequest": {
+        "title": "Xuất kho",
+        "intro": "Bất kỳ ai cũng tạo được yêu cầu; cần qua 2 cấp duyệt trước khi thủ kho thực xuất.",
+        "steps": [
+          "Vào Xuất kho → Tạo yêu cầu mới → chọn kho, thêm vật tư và số lượng cần.",
+          "Bấm Gửi duyệt.",
+          "Trưởng bộ phận của người tạo yêu cầu duyệt cấp 1.",
+          "Ban Giám Đốc (BOD) duyệt cấp 2.",
+          "Thủ kho bấm Thực xuất — hệ thống tự động chọn đúng lô hết hạn sớm nhất trước (FEFO).",
+          "Nếu tồn kho không đủ, hệ thống vẫn xuất được phần có thể, không báo lỗi toàn bộ."
+        ]
+      },
+      "transfer": {
+        "title": "Điều chuyển kho",
+        "intro": "Dùng khi chuyển hàng giữa 2 kho khác nhau trong công ty.",
+        "steps": [
+          "Vào Điều chuyển kho → Tạo phiếu mới → chọn kho nguồn, kho đích, lô hàng và số lượng.",
+          "Thủ kho kho nguồn bấm Xác nhận xuất.",
+          "Thủ kho kho đích bấm Xác nhận nhận.",
+          "Trong lúc chờ xác nhận nhận, hàng ở trạng thái \"đang vận chuyển\" — không mất tồn kho ở đâu cả."
+        ]
+      },
+      "reports": {
+        "title": "Báo cáo",
+        "intro": "Xem tồn kho và lịch sử giao dịch, xuất được ra Excel.",
+        "steps": [
+          "Tab \"Tồn kho hiện tại\" — xem số lượng đang có theo từng vật tư/kho.",
+          "Tab \"Lịch sử biến động\" — xem từng giao dịch (nhập, xuất, chuyển kho, điều chỉnh), lọc theo loại/thời gian.",
+          "Bấm \"Xuất Excel\" ở mỗi tab để tải file về máy."
+        ]
+      },
+      "scan": {
+        "title": "Quét QR Kiểm kê",
+        "intro": "Dùng điện thoại để kiểm kê nhanh, không cần gõ tay tìm lô hàng.",
+        "steps": [
+          "Trước tiên cần 1 phiên Kiểm kê đang mở cho đúng kho (hiện tạo qua Swagger, chưa có giao diện web riêng).",
+          "Mở trang này bằng trình duyệt điện thoại, cho phép quyền Camera.",
+          "Đưa camera vào tem QR dán trên lô hàng — hệ thống tự tìm đúng dòng cần đếm.",
+          "Nhập số đếm thực tế → Xác nhận — camera tự bật lại để quét lô tiếp theo.",
+          "Nếu không quét được (tem hỏng, đèn yếu), dùng ô nhập tay ID lô hàng."
+        ]
+      },
+      "permissions": {
+        "title": "Phân quyền — Ai được làm gì",
+        "intro": "Mỗi Kho thuộc 1 Phòng ban quản lý; mỗi người dùng cũng thuộc 1 Phòng ban. Thao tác ảnh hưởng tới 1 kho cụ thể sẽ bị chặn nếu phòng ban không khớp — trừ Admin (luôn được phép).",
+        "roleColLabel": "Vai trò",
+        "descColLabel": "Được làm gì",
+        "roles": [
+          [
+            "ADMIN",
+            "Toàn quyền, bỏ qua mọi kiểm tra phòng ban"
+          ],
+          [
+            "WAREHOUSE_STAFF",
+            "Thủ kho — thao tác trong phạm vi kho của phòng ban mình"
+          ],
+          [
+            "QC_MANAGER",
+            "Duyệt kết quả kiểm tra chất lượng"
+          ],
+          [
+            "DEPT_HEAD",
+            "Trưởng bộ phận — duyệt cấp 1 cho phiếu xuất kho"
+          ],
+          [
+            "BOD",
+            "Ban Giám Đốc — duyệt cấp cuối cho phiếu xuất kho"
+          ],
+          [
+            "REQUESTER",
+            "Chỉ tạo được yêu cầu xuất kho, không duyệt được gì"
+          ]
+        ]
+      },
+      "faq": {
+        "title": "Câu hỏi thường gặp",
+        "items": [
+          [
+            "Tại sao tôi không tạo được phiếu ở 1 kho nào đó?",
+            "Kiểm tra lại bạn có thuộc đúng phòng ban quản lý kho đó không — mỗi kho chỉ nhân viên đúng phòng ban mới thao tác được (trừ Admin)."
+          ],
+          [
+            "Tại sao QC không cho gửi duyệt?",
+            "Phải có ít nhất 1 ảnh chụp và đã chọn kết quả kiểm tra trước khi gửi duyệt."
+          ],
+          [
+            "Xuất kho báo thiếu tồn thì sao?",
+            "Hệ thống vẫn xuất được phần tồn hiện có, không chặn toàn bộ — kiểm tra số lượng thực xuất trong chi tiết phiếu."
+          ],
+          [
+            "Đổi ngôn ngữ ở đâu?",
+            "Bấm nút VI / EN / 中文 ở góc trên bên phải mỗi trang — lựa chọn được ghi nhớ cho các lần sau."
+          ]
+        ]
+      }
+    }
   }
 }

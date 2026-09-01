@@ -320,5 +320,141 @@
     "invalidQuantity": "Please enter a valid count.",
     "saving": "Saving...",
     "invalidManualId": "Please enter a valid lot ID (number)."
+  },
+  "help": {
+    "pageTitle": "Help",
+    "pageSubtitle": "Quick usage guide for each part of the system",
+    "backToTop": "↑ Back to top",
+    "sections": {
+      "gettingStarted": {
+        "title": "Getting Started",
+        "intro": "A few basics before using the system.",
+        "steps": [
+          "Sign in with your assigned email and password.",
+          "Choose your display language (VI / EN / 中文) in the top-right corner — your choice is remembered for next time.",
+          "From the Home page, click the card for the module you need.",
+          "Click the Help icon (❓) on any page to come back here, jumped straight to the relevant section."
+        ]
+      },
+      "goodsReceipt": {
+        "title": "Goods Receipt",
+        "intro": "Use this when receiving goods from a supplier into the warehouse.",
+        "steps": [
+          "Go to Goods Receipt → click Create New.",
+          "Select the warehouse and supplier, fill in PO / Packing List / Invoice numbers if available.",
+          "Add each line: select the item, enter the lot code and quantity.",
+          "Click Create — the receipt is saved as Draft and does not yet affect stock.",
+          "Open the new receipt and click Submit.",
+          "The Department Head (or Admin) approves it — once approved, the system automatically creates a Lot and updates stock.",
+          "After approval, click \"View QR\" on each line to print a tag for the physical goods."
+        ]
+      },
+      "qc": {
+        "title": "QC — Quality Inspection",
+        "intro": "Required before an item is allowed to be issued from stock.",
+        "steps": [
+          "Go to QC → Create New Inspection → select the lot to inspect (only lots awaiting inspection are shown).",
+          "Choose a preliminary result: Passed / Partially Passed / Failed.",
+          "You must take and upload at least one photo before submitting — the system blocks submission without one.",
+          "Click Submit.",
+          "The QC Manager (or Admin) approves it — the lot's status updates accordingly; only Passed / Partially Passed lots can be issued."
+        ]
+      },
+      "issueRequest": {
+        "title": "Issue",
+        "intro": "Anyone can create a request; it goes through 2 approval levels before warehouse staff release the stock.",
+        "steps": [
+          "Go to Issue → Create New Request → select the warehouse, add items and quantities needed.",
+          "Click Submit.",
+          "The requester's Department Head approves at level 1.",
+          "The BOD approves at level 2.",
+          "Warehouse staff click Issue — the system automatically picks the lot expiring soonest first (FEFO).",
+          "If stock is insufficient, the system still issues what's available instead of blocking the whole request."
+        ]
+      },
+      "transfer": {
+        "title": "Warehouse Transfer",
+        "intro": "Use this when moving stock between two different warehouses within the company.",
+        "steps": [
+          "Go to Warehouse Transfer → Create New → select source warehouse, destination warehouse, lot and quantity.",
+          "Source warehouse staff click Confirm Ship.",
+          "Destination warehouse staff click Confirm Receive.",
+          "While awaiting receipt confirmation, the goods are marked \"in transit\" — stock is never lost from the total."
+        ]
+      },
+      "reports": {
+        "title": "Reports",
+        "intro": "View current stock and transaction history, and export to Excel.",
+        "steps": [
+          "\"Current Stock\" tab — view the quantity on hand for each item/warehouse.",
+          "\"Transaction History\" tab — view individual transactions (receipts, issues, transfers, adjustments), filterable by type/date.",
+          "Click \"Export Excel\" on either tab to download a file."
+        ]
+      },
+      "scan": {
+        "title": "QR Scan Stocktake",
+        "intro": "Use your phone for fast counting without manually searching for lots.",
+        "steps": [
+          "An open Stocktake session for the correct warehouse is required first (currently created via Swagger, no dedicated web screen yet).",
+          "Open this page on your phone's browser and allow Camera access.",
+          "Point the camera at the QR tag on the lot — the system automatically finds the right line to count.",
+          "Enter the actual counted quantity → Confirm — the camera automatically resumes to scan the next lot.",
+          "If scanning fails (damaged tag, poor light), use the manual lot ID entry field."
+        ]
+      },
+      "permissions": {
+        "title": "Permissions — Who Can Do What",
+        "intro": "Each Warehouse belongs to one managing Department; each user also belongs to one Department. Actions affecting a specific warehouse are blocked if the department doesn't match — except for Admin (always allowed).",
+        "roleColLabel": "Role",
+        "descColLabel": "What they can do",
+        "roles": [
+          [
+            "ADMIN",
+            "Full access, bypasses all department checks"
+          ],
+          [
+            "WAREHOUSE_STAFF",
+            "Warehouse staff — operates within their own department's warehouse"
+          ],
+          [
+            "QC_MANAGER",
+            "Approves quality inspection results"
+          ],
+          [
+            "DEPT_HEAD",
+            "Department Head — approves issue requests at level 1"
+          ],
+          [
+            "BOD",
+            "Board of Directors — final approval level for issue requests"
+          ],
+          [
+            "REQUESTER",
+            "Can only create issue requests, cannot approve anything"
+          ]
+        ]
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "items": [
+          [
+            "Why can't I create a document for a certain warehouse?",
+            "Check whether you belong to the department that manages that warehouse — only staff from the matching department can operate on it (except Admin)."
+          ],
+          [
+            "Why won't QC let me submit?",
+            "You must have at least one photo and a selected result before submitting."
+          ],
+          [
+            "What happens if there isn't enough stock to issue?",
+            "The system still issues whatever is available instead of blocking the entire request — check the actual issued quantity in the request detail."
+          ],
+          [
+            "Where do I change the language?",
+            "Click the VI / EN / 中文 button in the top-right corner of any page — your choice is remembered for next time."
+          ]
+        ]
+      }
+    }
   }
 }

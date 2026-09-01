@@ -54,6 +54,25 @@ function t(key) {
   return typeof node === "string" ? node : key;
 }
 
+// Giong t() nhung KHONG gioi han chi tra ve string — dung khi can lay
+// nguyen 1 mang hoac object tu tu dien (VD: danh sach cac buoc huong dan,
+// danh sach cau hoi FAQ...). Tra ve null neu khong tim thay (khac voi t()
+// tra ve chinh key, vi gia tri null de kiem tra "co ton tai hay khong"
+// hon la hien thi nham ra man hinh).
+function tRaw(key) {
+  if (!currentDictionary) return null;
+  const parts = key.split(".");
+  let node = currentDictionary;
+  for (const p of parts) {
+    if (node && typeof node === "object" && p in node) {
+      node = node[p];
+    } else {
+      return null;
+    }
+  }
+  return node;
+}
+
 // Dich rieng cho cac gia tri enum trang thai (DRAFT, PENDING_APPROVAL...) —
 // dung o moi noi hien thi badge trang thai.
 function tStatus(statusCode) {

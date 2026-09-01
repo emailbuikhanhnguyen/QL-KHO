@@ -244,9 +244,25 @@ function renderTopbar(activePage) {
     <div class="brand">Kho NPL</div>
     <nav>${navHtml}</nav>
     <div class="user-info">
+      <a href="/help.html${getHelpAnchorFor(activePage)}" title="Trợ giúp" style="color:#cfd8f5; font-size:18px; text-decoration:none;">❓</a>
       ${safeLangSwitcher}
       <span>${user ? user.fullName + " (" + user.role + ")" : ""}</span>
       <button class="logout" onclick="logout()">${safeT("common.logout", "Đăng xuất")}</button>
     </div>
   `;
+}
+
+// Anh xa "dang o trang nao" -> "phan Tro giup tuong ung" — bam nut ❓ o
+// bat ky trang nao cung nhay thang toi dung muc lien quan, khong phai
+// luon phai cuon tu dau.
+function getHelpAnchorFor(activePage) {
+  const map = {
+    dashboard: "#gettingStarted",
+    "goods-receipts": "#goodsReceipt",
+    qc: "#qc",
+    issue: "#issueRequest",
+    transfer: "#transfer",
+    reports: "#reports",
+  };
+  return map[activePage] ? map[activePage] : "";
 }
