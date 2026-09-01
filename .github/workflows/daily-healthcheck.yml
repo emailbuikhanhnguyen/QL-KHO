@@ -1,0 +1,37 @@
+name: Daily Health Check
+
+on:
+  schedule:
+    # 19:00 UTC = 02:00 gio Viet Nam (UTC+7) hom sau.
+    # Danh thuc Render free (dang co the "ngu") + Supabase free (tranh
+    # tu dong pause sau 7 ngay khong hoat dong), dong thoi tu kiem tra
+    # luong Nhap kho -> QC -> Xuat kho con hoat dong dung khong.
+    - cron: '0 19 * * *'
+  workflow_dispatch: {} # cho phep bam chay tay tu tab "Actions" tren GitHub de test truoc
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cai dat nodemailer (chi can 1 goi nay de gui email)
+        run: npm install nodemailer --no-save
+
+      - name: Chay health check + gui bao cao email
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          SYSTEM_HEALTHCHECK_PASSWORD: ${{ secrets.SYSTEM_HEALTHCHECK_PASSWORD }}
+          SYSTEM_TEST_WAREHOUSE_ID: ${{ secrets.SYSTEM_TEST_WAREHOUSE_ID }}
+          HEALTHCHECK_ITEM_ID: ${{ secrets.HEALTHCHECK_ITEM_ID }}
+          HEALTHCHECK_SUPPLIER_ID: ${{ secrets.HEALTHCHECK_SUPPLIER_ID }}
+          REPORT_TO_EMAIL: ${{ secrets.REPORT_TO_EMAIL }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: node scripts/daily-healthcheck.js
