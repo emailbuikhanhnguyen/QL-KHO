@@ -5,6 +5,9 @@ const prisma = new PrismaClient();
 
 // Cach dung:
 //   npm run admin:set-password -- admin@congty.com MatKhauMoiCuaBan123
+//
+// Luu y: mat khau moi nen co it nhat 8 ky tu, nen co chu hoa/thuong/so
+// de kho doan hon.
 
 async function main() {
   const [, , email, newPassword] = process.argv;

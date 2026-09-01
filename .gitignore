@@ -1,7 +1,26 @@
+# Dependencies
 node_modules/
-dist/
-.env
-*.log
 
-# File anh upload tu Module 3 (QC) — khong commit vao git, can backup rieng
+# Build output
+dist/
+
+# Bien moi truong — TUYET DOI khong commit, chua mat khau Supabase that + JWT_SECRET
+.env
+.env.local
+.env.*.local
+
+# Log
+*.log
+npm-debug.log*
+
+# File anh upload tu Module 3 (QC) — du lieu that cua nguoi dung, khong
+# commit vao git, can backup rieng (khong phai backup source code)
 uploads/
+
+# Coverage report (khi chay npm run test:cov)
+coverage/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
