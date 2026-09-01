@@ -1,10 +1,12 @@
 requireAuth();
-renderTopbar("qc");
 
 let lotsCache = [];
 let itemsCache = [];
 
 (async function init() {
+  await loadI18n();
+  renderTopbar("qc");
+  applyTranslations();
   await loadDropdownData();
   await loadList();
 })();
@@ -20,12 +22,12 @@ async function loadDropdownData() {
   const eligibleLots = lotsCache.filter((l) => l.qcStatus === "PENDING" || l.qcStatus === "IN_PROGRESS");
   const lotSelect = document.getElementById("f_lotId");
   if (eligibleLots.length === 0) {
-    lotSelect.innerHTML = `<option value="">— Không có lô nào cần kiểm —</option>`;
+    lotSelect.innerHTML = `<option value="">${t("qc.noEligibleLots")}</option>`;
   } else {
     lotSelect.innerHTML = eligibleLots
       .map((l) => {
         const item = itemsCache.find((i) => i.id === l.itemId);
-        return `<option value="${l.id}">${l.lotCode} — ${item ? item.name : "#" + l.itemId} (${l.qcStatus})</option>`;
+        return `<option value="${l.id}">${l.lotCode} — ${item ? item.name : "#" + l.itemId} (${tStatus(l.qcStatus)})</option>`;
       })
       .join("");
   }
@@ -50,7 +52,7 @@ async function loadList() {
   }
   const inspections = res.data.data;
   if (inspections.length === 0) {
-    container.innerHTML = `<div class="empty-state">Chưa có phiếu QC nào.</div>`;
+    container.innerHTML = `<div class="empty-state">${t("qc.emptyState")}</div>`;
     return;
   }
 
@@ -61,7 +63,7 @@ async function loadList() {
         <td>#${q.id}</td>
         <td>${itemNameForLot(q.lotId)}</td>
         <td>${q.result ? statusBadge(q.result) : "—"}</td>
-        <td>${q.images.length} ảnh</td>
+        <td>${q.images.length} ${t("qc.imageCountSuffix")}</td>
         <td>${statusBadge(q.status)}</td>
         <td>${formatDateTime(q.createdAt)}</td>
       </tr>`
@@ -70,7 +72,14 @@ async function loadList() {
 
   container.innerHTML = `
     <table>
-      <thead><tr><th>ID</th><th>Lô hàng</th><th>Kết quả</th><th>Ảnh</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead>
+      <thead><tr>
+        <th>${t("qc.tableId")}</th>
+        <th>${t("qc.tableLot")}</th>
+        <th>${t("qc.tableResult")}</th>
+        <th>${t("qc.tableImages")}</th>
+        <th>${t("qc.tableStatus")}</th>
+        <th>${t("qc.tableDate")}</th>
+      </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -90,7 +99,7 @@ async function submitCreateForm() {
   hideError("createError");
   const lotId = Number(document.getElementById("f_lotId").value);
   if (!lotId) {
-    showError("createError", "Vui lòng chọn lô hàng.");
+    showError("createError", t("qc.selectLotRequired"));
     return;
   }
   const result = document.getElementById("f_result").value || undefined;
@@ -98,7 +107,7 @@ async function submitCreateForm() {
 
   const btn = document.getElementById("createSubmitBtn");
   btn.disabled = true;
-  btn.textContent = "Đang tạo...";
+  btn.textContent = t("common.loading");
 
   const res = await apiFetch("/qc-inspections", {
     method: "POST",
@@ -106,7 +115,7 @@ async function submitCreateForm() {
   });
 
   btn.disabled = false;
-  btn.textContent = "Tạo phiếu (DRAFT)";
+  btn.textContent = t("qc.submitCreateBtn");
 
   if (!res.ok) {
     showError("createError", extractErrorMessage(res.data));
@@ -114,7 +123,7 @@ async function submitCreateForm() {
   }
 
   toggleCreateForm();
-  await loadDropdownData(); // lot vua tao phieu co the doi qcStatus -> IN_PROGRESS
+  await loadDropdownData();
   await loadList();
   openDetail(res.data.id);
 }
@@ -150,37 +159,37 @@ async function renderDetail() {
   let actionsHtml = "";
   if (q.status === "DRAFT") {
     actionsHtml = `
-      <button class="btn btn-primary" onclick="doAction('submit')">Gửi duyệt</button>
-      <button class="btn btn-danger" onclick="doDelete()">Xóa phiếu</button>`;
+      <button class="btn btn-primary" onclick="doAction('submit')">${t("qc.submitForApproval")}</button>
+      <button class="btn btn-danger" onclick="doDelete()">${t("qc.deleteInspection")}</button>`;
   } else if (q.status === "PENDING_APPROVAL") {
     actionsHtml = `
-      <button class="btn btn-success" onclick="doAction('approve')">✔ Duyệt</button>
-      <button class="btn btn-danger" onclick="doReject()">✕ Từ chối</button>`;
+      <button class="btn btn-success" onclick="doAction('approve')">${t("qc.approve")}</button>
+      <button class="btn btn-danger" onclick="doReject()">${t("qc.reject")}</button>`;
   } else if (q.status === "REJECTED") {
-    actionsHtml = `<button class="btn btn-secondary" onclick="doAction('reopen')">Mở lại để sửa</button>`;
+    actionsHtml = `<button class="btn btn-secondary" onclick="doAction('reopen')">${t("qc.reopen")}</button>`;
   }
 
   const uploadHtml =
     q.status === "DRAFT"
       ? `
       <div class="form-row" style="margin-top: 12px;">
-        <label>Thêm ảnh chụp phiếu kiểm hàng</label>
+        <label>${t("qc.uploadLabel")}</label>
         <input type="file" id="imageFileInput" accept="image/jpeg,image/png,image/webp" onchange="handleImageUpload()" />
       </div>`
       : "";
 
   document.getElementById("detailContainer").innerHTML = `
     <div class="detail-grid">
-      <div class="detail-field"><div class="label">Lô hàng</div><div class="value">${itemNameForLot(q.lotId)}</div></div>
-      <div class="detail-field"><div class="label">Kết quả</div><div class="value">${q.result ? statusBadge(q.result) : "Chưa chọn"}</div></div>
-      <div class="detail-field"><div class="label">Trạng thái</div><div class="value">${statusBadge(q.status)}</div></div>
-      <div class="detail-field"><div class="label">Ngày tạo</div><div class="value">${formatDateTime(q.createdAt)}</div></div>
+      <div class="detail-field"><div class="label">${t("qc.tableLot")}</div><div class="value">${itemNameForLot(q.lotId)}</div></div>
+      <div class="detail-field"><div class="label">${t("qc.tableResult")}</div><div class="value">${q.result ? statusBadge(q.result) : t("qc.resultNotChosen")}</div></div>
+      <div class="detail-field"><div class="label">${t("qc.tableStatus")}</div><div class="value">${statusBadge(q.status)}</div></div>
+      <div class="detail-field"><div class="label">${t("qc.tableDate")}</div><div class="value">${formatDateTime(q.createdAt)}</div></div>
     </div>
-    ${q.notes ? `<p><strong>Ghi chú:</strong> ${q.notes}</p>` : ""}
-    ${q.rejectedReason ? `<div class="error-box show">Lý do từ chối: ${q.rejectedReason}</div>` : ""}
+    ${q.notes ? `<p><strong>${t("qc.notesLabel")}:</strong> ${q.notes}</p>` : ""}
+    ${q.rejectedReason ? `<div class="error-box show">${t("qc.rejectedReasonLabel")}: ${q.rejectedReason}</div>` : ""}
 
-    <h3>Ảnh đính kèm (${q.images.length})</h3>
-    <div id="imagesContainer">Đang tải ảnh...</div>
+    <h3>${t("qc.attachedImages")} (${q.images.length})</h3>
+    <div id="imagesContainer">${t("common.loading")}</div>
     ${uploadHtml}
 
     <div class="btn-row">${actionsHtml}</div>
@@ -192,12 +201,12 @@ async function renderDetail() {
 async function renderImages(images, canDelete) {
   const container = document.getElementById("imagesContainer");
   if (images.length === 0) {
-    container.innerHTML = `<p style="color: var(--muted); font-size: 13px;">Chưa có ảnh nào.</p>`;
+    container.innerHTML = `<p style="color: var(--muted); font-size: 13px;">${t("qc.noImages")}</p>`;
     return;
   }
 
   container.innerHTML = images
-    .map((img) => `<span class="image-thumb" id="thumb_${img.id}">Đang tải...</span>`)
+    .map((img) => `<span class="image-thumb" id="thumb_${img.id}">${t("common.loading")}</span>`)
     .join("");
 
   for (const img of images) {
@@ -209,7 +218,7 @@ async function renderImages(images, canDelete) {
       : "";
     thumb.innerHTML = url
       ? `<img src="${url}" alt="anh QC" />${deleteBtn}`
-      : `<span style="font-size:11px; color: var(--danger);">Lỗi tải ảnh</span>`;
+      : `<span style="font-size:11px; color: var(--danger);">${t("qc.imageLoadError")}</span>`;
   }
 }
 
@@ -225,13 +234,13 @@ async function handleImageUpload() {
     showError("detailError", extractErrorMessage(res.data));
     return;
   }
-  showSuccess("detailSuccess", "Đã thêm ảnh.");
+  showSuccess("detailSuccess", t("qc.imageAdded"));
   await renderDetail();
   await loadList();
 }
 
 async function deleteImage(imageId) {
-  if (!confirm("Xóa ảnh này?")) return;
+  if (!confirm(t("qc.deleteImageConfirm"))) return;
   const res = await apiFetch(`/qc-inspections/images/${imageId}`, { method: "DELETE" });
   if (!res.ok) {
     showError("detailError", extractErrorMessage(res.data));
@@ -248,14 +257,14 @@ async function doAction(action) {
     showError("detailError", extractErrorMessage(res.data));
     return;
   }
-  showSuccess("detailSuccess", "Thao tác thành công.");
+  showSuccess("detailSuccess", t("qc.actionSuccess"));
   await loadDropdownData();
   await renderDetail();
   await loadList();
 }
 
 async function doReject() {
-  const reason = prompt("Nhập lý do từ chối:");
+  const reason = prompt(t("qc.rejectReasonPrompt"));
   if (!reason) return;
   hideError("detailError");
   const res = await apiFetch(`/qc-inspections/${currentDetailId}/reject`, {
@@ -271,7 +280,7 @@ async function doReject() {
 }
 
 async function doDelete() {
-  if (!confirm("Xóa phiếu QC này? Không thể hoàn tác.")) return;
+  if (!confirm(t("qc.deleteConfirm"))) return;
   const res = await apiFetch(`/qc-inspections/${currentDetailId}`, { method: "DELETE" });
   if (!res.ok) {
     showError("detailError", extractErrorMessage(res.data));

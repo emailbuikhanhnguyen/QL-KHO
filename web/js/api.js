@@ -211,8 +211,7 @@ const STATUS_BADGE_MAP = {
 
 function statusBadge(status) {
   const cls = STATUS_BADGE_MAP[status] || "badge-gray";
-  // Hien nhan da dich (tStatus tu i18n.js) thay vi ma enum tho — mau sac
-  // badge van dua theo dung ma goc, chi phan chu hien thi la duoc dich.
+  // Fallback an toan neu i18n.js chua duoc tai (trang chua chuyen doi xong)
   const label = typeof tStatus === "function" ? tStatus(status) : status;
   return `<span class="badge ${cls}">${label}</span>`;
 }
@@ -221,18 +220,23 @@ function renderTopbar(activePage) {
   const user = getCurrentUser();
   const el = document.getElementById("topbar");
   if (!el) return;
+  // Fallback an toan: neu trang nao do (dang chuyen doi dan) chua kip tai
+  // i18n.js, KHONG duoc de crash ca trang — dung tam nhan tieng Viet mac dinh.
+  const safeT = typeof t === "function" ? t : (key, fallback) => fallback || key;
+  const safeLangSwitcher = typeof renderLanguageSwitcher === "function" ? renderLanguageSwitcher() : "";
+
   const links = [
-    { href: "/dashboard.html", key: "dashboard", labelKey: "nav.dashboard" },
-    { href: "/goods-receipts.html", key: "goods-receipts", labelKey: "nav.goodsReceipt" },
-    { href: "/qc-inspections.html", key: "qc", labelKey: "nav.qc" },
-    { href: "/issue-requests.html", key: "issue", labelKey: "nav.issue" },
-    { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer" },
-    { href: "/reports.html", key: "reports", labelKey: "nav.reports" },
+    { href: "/dashboard.html", key: "dashboard", labelKey: "nav.dashboard", fallback: "Trang chủ" },
+    { href: "/goods-receipts.html", key: "goods-receipts", labelKey: "nav.goodsReceipt", fallback: "Nhập kho" },
+    { href: "/qc-inspections.html", key: "qc", labelKey: "nav.qc", fallback: "QC" },
+    { href: "/issue-requests.html", key: "issue", labelKey: "nav.issue", fallback: "Xuất kho" },
+    { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer", fallback: "Điều chuyển" },
+    { href: "/reports.html", key: "reports", labelKey: "nav.reports", fallback: "Báo cáo" },
   ];
   const navHtml = links
     .map(
       (l) =>
-        `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${t(l.labelKey)}</a>`
+        `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${safeT(l.labelKey, l.fallback)}</a>`
     )
     .join("");
 
@@ -240,9 +244,9 @@ function renderTopbar(activePage) {
     <div class="brand">Kho NPL</div>
     <nav>${navHtml}</nav>
     <div class="user-info">
-      ${renderLanguageSwitcher()}
+      ${safeLangSwitcher}
       <span>${user ? user.fullName + " (" + user.role + ")" : ""}</span>
-      <button class="logout" onclick="logout()">${t("common.logout")}</button>
+      <button class="logout" onclick="logout()">${safeT("common.logout", "Đăng xuất")}</button>
     </div>
   `;
 }

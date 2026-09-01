@@ -38,7 +38,7 @@ async function loadDropdownData() {
   supSelect.innerHTML = suppliersCache.map((s) => `<option value="${s.id}">${s.name}</option>`).join("");
 
   if (itemsCache.length === 0) {
-    showError("createError", "Chưa có Vật tư nào trong hệ thống. Vào Swagger (/api/docs) tạo Item trước.");
+    showError("createError", t("goodsReceipt.noItemsWarning"));
   }
 }
 
@@ -181,7 +181,7 @@ async function submitCreateForm() {
   hideError("createError");
   const lines = collectLines();
   if (lines.length === 0) {
-    showError("createError", "Cần ít nhất 1 dòng hàng hợp lệ (đủ mã lô + số lượng).");
+    showError("createError", t("goodsReceipt.needAtLeastOneLine"));
     return;
   }
 

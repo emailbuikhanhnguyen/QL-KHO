@@ -10,50 +10,50 @@
   <div class="topbar" id="topbar"></div>
 
   <div class="page">
-    <h1>Điều chuyển kho</h1>
-    <p class="subtitle">Chuyển hàng giữa 2 kho — kho nguồn xuất → kho đích xác nhận nhận</p>
+    <h1 data-i18n="transfer.title">Điều chuyển kho</h1>
+    <p class="subtitle" data-i18n="transfer.subtitle">Chuyển hàng giữa 2 kho — kho nguồn xuất → kho đích xác nhận nhận</p>
 
     <div class="card" id="listCard">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Danh sách phiếu điều chuyển</h2>
-        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()">+ Tạo phiếu điều chuyển</button>
+        <h2 style="margin:0;" data-i18n="transfer.listTitle">Danh sách phiếu điều chuyển</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="transfer.createBtn">+ Tạo phiếu điều chuyển</button>
       </div>
-      <div id="listContainer" style="margin-top: 16px;">Đang tải...</div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
 
     <div class="card" id="createCard" style="display:none;">
-      <h2>Tạo phiếu điều chuyển</h2>
+      <h2 data-i18n="transfer.createTitle">Tạo phiếu điều chuyển</h2>
       <div class="error-box" id="createError"></div>
 
       <div class="form-grid">
         <div class="form-row">
-          <label>Kho nguồn *</label>
+          <label data-i18n="transfer.sourceLabel">Kho nguồn *</label>
           <select id="f_sourceWarehouseId"></select>
         </div>
         <div class="form-row">
-          <label>Kho đích *</label>
+          <label data-i18n="transfer.destLabel">Kho đích *</label>
           <select id="f_destWarehouseId"></select>
         </div>
       </div>
       <div class="form-row">
-        <label>Lý do</label>
+        <label data-i18n="transfer.reasonLabel">Lý do</label>
         <textarea id="f_reason"></textarea>
       </div>
 
-      <h3>Lô hàng cần chuyển</h3>
+      <h3 data-i18n="transfer.linesTitle">Lô hàng cần chuyển</h3>
       <div id="linesContainer"></div>
-      <button class="btn btn-outline btn-sm" onclick="addLine()">+ Thêm dòng</button>
+      <button class="btn btn-outline btn-sm" onclick="addLine()" data-i18n="transfer.addLineBtn">+ Thêm dòng</button>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn">Tạo phiếu (DRAFT)</button>
-        <button class="btn btn-outline" onclick="toggleCreateForm()">Hủy</button>
+        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn" data-i18n="transfer.submitCreateBtn">Tạo phiếu (DRAFT)</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="transfer.cancelBtn">Hủy</button>
       </div>
     </div>
 
     <div class="card" id="detailCard" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Chi tiết phiếu <span id="detailCode"></span></h2>
-        <button class="btn btn-outline btn-sm" onclick="closeDetail()">Đóng</button>
+        <h2 style="margin:0;"><span data-i18n="transfer.detailTitle">Chi tiết phiếu</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="transfer.closeBtn">Đóng</button>
       </div>
       <div class="success-box" id="detailSuccess"></div>
       <div class="error-box" id="detailError"></div>
@@ -61,6 +61,7 @@
     </div>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/warehouse-transfers.js"></script>
 </body>

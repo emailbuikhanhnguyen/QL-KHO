@@ -8,9 +8,13 @@ let isPaused = false;
 const LOT_QR_PREFIX = "KHO-LOT-";
 
 // -------------------------------------------------------------------------
-// Khoi dong camera quet QR ngay khi vao trang
+// Khoi tao: tai i18n truoc, roi moi bat camera quet QR
 // -------------------------------------------------------------------------
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
+  await loadI18n();
+  applyTranslations();
+  document.getElementById("langSwitcherSlot").innerHTML = renderLanguageSwitcher();
+
   html5QrCode = new Html5Qrcode("qr-reader");
   html5QrCode
     .start(
@@ -22,10 +26,7 @@ window.addEventListener("load", () => {
       }
     )
     .catch((err) => {
-      showStatus(
-        "Không mở được camera. Kiểm tra đã cho phép quyền camera cho trình duyệt chưa, hoặc dùng ô nhập thủ công bên dưới.",
-        "error"
-      );
+      showStatus(t("scan.cameraError"), "error");
     });
 });
 
@@ -33,13 +34,13 @@ function onScanSuccess(decodedText) {
   if (isPaused) return; // dang xu ly ket qua truoc, bo qua quet lien tuc
 
   if (!decodedText.startsWith(LOT_QR_PREFIX)) {
-    showStatus("Mã QR không đúng định dạng của hệ thống Kho NPL.", "error");
+    showStatus(t("scan.invalidQrFormat"), "error");
     return;
   }
 
   const lotId = Number(decodedText.replace(LOT_QR_PREFIX, ""));
   if (!lotId) {
-    showStatus("Không đọc được mã lô từ QR này.", "error");
+    showStatus(t("scan.cannotReadLotId"), "error");
     return;
   }
 
@@ -62,7 +63,7 @@ function resumeScanning() {
 // Tra cuu dong kiem ke tuong ung voi lo vua quet
 // -------------------------------------------------------------------------
 async function lookupLot(lotId) {
-  showStatus("Đang tìm lô hàng...", "");
+  showStatus(t("scan.searching"), "");
 
   const res = await apiFetch(`/stocktakes/find-line-by-lot?lotId=${lotId}`);
 
@@ -81,7 +82,7 @@ async function lookupLot(lotId) {
   const lotCode = line.lot ? line.lot.lotCode : "";
 
   document.getElementById("resultItemName").textContent = itemName;
-  document.getElementById("resultLotCode").textContent = `Mã lô: ${lotCode}`;
+  document.getElementById("resultLotCode").textContent = `${t("qc.tableLot")}: ${lotCode}`;
   document.getElementById("resultSystemQty").textContent = formatNumber(line.systemQuantity);
 
   const countedInput = document.getElementById("countedQtyInput");
@@ -98,13 +99,13 @@ async function lookupLot(lotId) {
 async function confirmCount() {
   const countedQuantity = Number(document.getElementById("countedQtyInput").value);
   if (countedQuantity === null || countedQuantity === undefined || isNaN(countedQuantity)) {
-    showStatus("Vui lòng nhập số đếm hợp lệ.", "error");
+    showStatus(t("scan.invalidQuantity"), "error");
     return;
   }
 
   const btn = document.getElementById("confirmBtn");
   btn.disabled = true;
-  btn.textContent = "Đang lưu...";
+  btn.textContent = t("scan.saving");
 
   const res = await apiFetch(`/stocktakes/${currentStocktakeId}/lines/${currentLineId}`, {
     method: "PUT",
@@ -112,14 +113,14 @@ async function confirmCount() {
   });
 
   btn.disabled = false;
-  btn.textContent = "✔ Xác nhận & Quét tiếp";
+  btn.textContent = t("scan.confirmBtn");
 
   if (!res.ok) {
     showStatus(extractErrorMessage(res.data), "error");
     return;
   }
 
-  showStatus("Đã lưu. Quét lô tiếp theo...", "success");
+  showStatus(t("scan.savedNext"), "success");
   setTimeout(resumeScanning, 1200);
 }
 
@@ -133,7 +134,7 @@ function toggleManualEntry() {
 function lookupManual() {
   const lotId = Number(document.getElementById("manualLotId").value);
   if (!lotId) {
-    showStatus("Vui lòng nhập đúng ID lô hàng (số).", "error");
+    showStatus(t("scan.invalidManualId"), "error");
     return;
   }
   pauseScanning();

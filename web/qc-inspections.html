@@ -10,50 +10,50 @@
   <div class="topbar" id="topbar"></div>
 
   <div class="page">
-    <h1>QC — Kiểm tra chất lượng</h1>
-    <p class="subtitle">Tạo phiếu kiểm, chụp ảnh, gửi duyệt và duyệt để cập nhật trạng thái lô hàng</p>
+    <h1 data-i18n="qc.title">QC — Kiểm tra chất lượng</h1>
+    <p class="subtitle" data-i18n="qc.subtitle">Tạo phiếu kiểm, chụp ảnh, gửi duyệt và duyệt để cập nhật trạng thái lô hàng</p>
 
     <div class="card" id="listCard">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Danh sách phiếu kiểm</h2>
-        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()">+ Tạo phiếu kiểm mới</button>
+        <h2 style="margin:0;" data-i18n="qc.listTitle">Danh sách phiếu kiểm</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="qc.createBtn">+ Tạo phiếu kiểm mới</button>
       </div>
-      <div id="listContainer" style="margin-top: 16px;">Đang tải...</div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
 
     <div class="card" id="createCard" style="display:none;">
-      <h2>Tạo phiếu kiểm mới</h2>
+      <h2 data-i18n="qc.createTitle">Tạo phiếu kiểm mới</h2>
       <div class="error-box" id="createError"></div>
 
       <div class="form-row">
-        <label>Lô hàng cần kiểm *</label>
+        <label data-i18n="qc.lotLabel">Lô hàng cần kiểm *</label>
         <select id="f_lotId"></select>
-        <div class="hint">Chỉ hiển thị các lô đang chờ kiểm (PENDING) hoặc đang kiểm (IN_PROGRESS)</div>
+        <div class="hint" data-i18n="qc.lotHint">Chỉ hiển thị các lô đang chờ kiểm (PENDING) hoặc đang kiểm (IN_PROGRESS)</div>
       </div>
       <div class="form-row">
-        <label>Kết quả sơ bộ</label>
+        <label data-i18n="qc.resultLabel">Kết quả sơ bộ</label>
         <select id="f_result">
-          <option value="">— Chưa chọn (điền sau) —</option>
-          <option value="PASSED">Đạt (PASSED)</option>
-          <option value="PARTIALLY_PASSED">Đạt có điều kiện (PARTIALLY_PASSED)</option>
-          <option value="FAILED">Không đạt (FAILED)</option>
+          <option value="" data-i18n="qc.resultNotChosen">— Chưa chọn (điền sau) —</option>
+          <option value="PASSED" data-i18n="qc.resultPassed">Đạt (PASSED)</option>
+          <option value="PARTIALLY_PASSED" data-i18n="qc.resultPartial">Đạt có điều kiện (PARTIALLY_PASSED)</option>
+          <option value="FAILED" data-i18n="qc.resultFailed">Không đạt (FAILED)</option>
         </select>
       </div>
       <div class="form-row">
-        <label>Ghi chú</label>
+        <label data-i18n="qc.noteLabel">Ghi chú</label>
         <textarea id="f_notes"></textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn">Tạo phiếu (DRAFT)</button>
-        <button class="btn btn-outline" onclick="toggleCreateForm()">Hủy</button>
+        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn" data-i18n="qc.submitCreateBtn">Tạo phiếu (DRAFT)</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="qc.cancelBtn">Hủy</button>
       </div>
     </div>
 
     <div class="card" id="detailCard" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Chi tiết phiếu QC #<span id="detailId"></span></h2>
-        <button class="btn btn-outline btn-sm" onclick="closeDetail()">Đóng</button>
+        <h2 style="margin:0;"><span data-i18n="qc.detailTitle">Chi tiết phiếu QC</span> #<span id="detailId"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="qc.closeBtn">Đóng</button>
       </div>
       <div class="success-box" id="detailSuccess"></div>
       <div class="error-box" id="detailError"></div>
@@ -61,6 +61,7 @@
     </div>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/qc-inspections.js"></script>
 </body>

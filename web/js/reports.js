@@ -1,10 +1,12 @@
 requireAuth();
-renderTopbar("reports");
 
 let itemsCache = [];
 let warehousesCache = [];
 
 (async function init() {
+  await loadI18n();
+  renderTopbar("reports");
+  applyTranslations();
   await loadDropdownData();
   await loadBalance();
 })();
@@ -65,7 +67,7 @@ async function loadBalance() {
   const qs = buildQueryParams(itemId, warehouseId);
 
   const container = document.getElementById("balanceContainer");
-  container.innerHTML = "Đang tải...";
+  container.innerHTML = t("common.loading");
 
   const res = await apiFetch(`/stock-ledger/balance?${qs}`);
   if (!res.ok) {
@@ -75,7 +77,7 @@ async function loadBalance() {
 
   const rows = res.data;
   if (rows.length === 0) {
-    container.innerHTML = `<div class="empty-state">Không có dữ liệu tồn kho phù hợp.</div>`;
+    container.innerHTML = `<div class="empty-state">${t("reports.emptyBalance")}</div>`;
     return;
   }
 
@@ -94,7 +96,13 @@ async function loadBalance() {
 
   container.innerHTML = `
     <table>
-      <thead><tr><th>Mã VT</th><th>Tên vật tư</th><th>Kho</th><th>Tồn hiện tại</th><th>Đơn vị</th></tr></thead>
+      <thead><tr>
+        <th>${t("reports.tableItemCode")}</th>
+        <th>${t("reports.tableItemName")}</th>
+        <th>${t("reports.tableWarehouse")}</th>
+        <th>${t("reports.tableCurrentBalance")}</th>
+        <th>${t("reports.tableUnit")}</th>
+      </tr></thead>
       <tbody>${rowsHtml}</tbody>
     </table>`;
 }
@@ -106,7 +114,7 @@ async function exportBalance() {
 
   const result = await apiDownloadFile(`/stock-ledger/balance/export?${qs}`, "ton-kho.xlsx");
   if (!result.ok) {
-    alert("Xuất Excel thất bại: " + extractErrorMessage(result.data));
+    alert(t("reports.exportFailedAlert") + extractErrorMessage(result.data));
   }
 }
 
@@ -120,7 +128,7 @@ async function loadHistory() {
   const qs = buildQueryParams(itemId, warehouseId, { movementType, limit: 100 });
 
   const container = document.getElementById("historyContainer");
-  container.innerHTML = "Đang tải...";
+  container.innerHTML = t("common.loading");
 
   const res = await apiFetch(`/stock-ledger/transactions?${qs}`);
   if (!res.ok) {
@@ -130,7 +138,7 @@ async function loadHistory() {
 
   const rows = res.data.data;
   if (rows.length === 0) {
-    container.innerHTML = `<div class="empty-state">Không có giao dịch nào phù hợp.</div>`;
+    container.innerHTML = `<div class="empty-state">${t("reports.emptyHistory")}</div>`;
     return;
   }
 
@@ -152,10 +160,17 @@ async function loadHistory() {
 
   container.innerHTML = `
     <table>
-      <thead><tr><th>Ngày</th><th>Loại</th><th>Vật tư</th><th>Lô</th><th>Kho</th><th>Số lượng</th></tr></thead>
+      <thead><tr>
+        <th>${t("reports.tableDate")}</th>
+        <th>${t("reports.tableType")}</th>
+        <th>${t("reports.itemLabel")}</th>
+        <th>${t("reports.tableLot")}</th>
+        <th>${t("reports.warehouseLabel")}</th>
+        <th>${t("reports.tableQuantity")}</th>
+      </tr></thead>
       <tbody>${rowsHtml}</tbody>
     </table>
-    <p style="color: var(--muted); font-size: 12px; margin-top: 10px;">Hiển thị tối đa 100 giao dịch gần nhất. Dùng nút "Xuất Excel" để lấy đầy đủ.</p>`;
+    <p style="color: var(--muted); font-size: 12px; margin-top: 10px;">${t("reports.historyLimitNote")}</p>`;
 }
 
 async function exportHistory() {
@@ -166,6 +181,6 @@ async function exportHistory() {
 
   const result = await apiDownloadFile(`/stock-ledger/transactions/export?${qs}`, "lich-su-ton-kho.xlsx");
   if (!result.ok) {
-    alert("Xuất Excel thất bại: " + extractErrorMessage(result.data));
+    alert(t("reports.exportFailedAlert") + extractErrorMessage(result.data));
   }
 }

@@ -1,11 +1,13 @@
 requireAuth();
-renderTopbar("issue");
 
 let warehousesCache = [];
 let itemsCache = [];
 let lineCounter = 0;
 
 (async function init() {
+  await loadI18n();
+  renderTopbar("issue");
+  applyTranslations();
   await loadDropdownData();
   await loadList();
 })();
@@ -15,7 +17,10 @@ async function loadDropdownData() {
     apiFetch("/warehouses?limit=100"),
     apiFetch("/items?limit=100"),
   ]);
-  warehousesCache = wh.ok ? wh.data.data : [];
+  const SYSTEM_WAREHOUSE_CODES = ["IN_TRANSIT", "SYSTEM_TEST"];
+  warehousesCache = (wh.ok ? wh.data.data : []).filter(
+    (w) => !SYSTEM_WAREHOUSE_CODES.includes(w.code)
+  );
   itemsCache = it.ok ? it.data.data : [];
 
   const whSelect = document.getElementById("f_warehouseId");
@@ -39,7 +44,7 @@ async function loadList() {
   }
   const requests = res.data.data;
   if (requests.length === 0) {
-    container.innerHTML = `<div class="empty-state">Chưa có phiếu xuất nào.</div>`;
+    container.innerHTML = `<div class="empty-state">${t("issueRequest.emptyState")}</div>`;
     return;
   }
 
@@ -50,7 +55,7 @@ async function loadList() {
         <tr class="clickable" onclick="openDetail(${r.id})">
           <td><strong>${r.code}</strong></td>
           <td>${warehouse ? warehouse.name : "#" + r.warehouseId}</td>
-          <td>${r.lines.length} dòng</td>
+          <td>${r.lines.length} ${t("issueRequest.lineCount")}</td>
           <td>${statusBadge(r.status)}</td>
           <td>${formatDateTime(r.createdAt)}</td>
         </tr>`;
@@ -59,7 +64,13 @@ async function loadList() {
 
   container.innerHTML = `
     <table>
-      <thead><tr><th>Mã phiếu</th><th>Kho</th><th>Số dòng</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead>
+      <thead><tr>
+        <th>${t("issueRequest.tableCode")}</th>
+        <th>${t("issueRequest.tableWarehouse")}</th>
+        <th>${t("issueRequest.tableLines")}</th>
+        <th>${t("issueRequest.tableStatus")}</th>
+        <th>${t("issueRequest.tableDate")}</th>
+      </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -87,19 +98,19 @@ function addLine() {
   div.className = "line-item";
   div.id = `line_${id}`;
   div.innerHTML = `
-    <button class="remove-line" onclick="removeLine(${id})">✕ Xóa dòng</button>
+    <button class="remove-line" onclick="removeLine(${id})">${t("issueRequest.removeLine")}</button>
     <div class="form-grid">
       <div class="form-row">
-        <label>Vật tư *</label>
+        <label>${t("issueRequest.itemLabel")}</label>
         <select id="line_${id}_itemId">${itemOptions}</select>
       </div>
       <div class="form-row">
-        <label>Số lượng yêu cầu *</label>
+        <label>${t("issueRequest.quantityLabel")}</label>
         <input type="number" id="line_${id}_quantity" min="0.001" step="0.001" />
       </div>
     </div>
     <div class="form-row">
-      <label>Ghi chú</label>
+      <label>${t("issueRequest.noteLabel")}</label>
       <input type="text" id="line_${id}_note" />
     </div>
   `;
@@ -131,7 +142,7 @@ async function submitCreateForm() {
   hideError("createError");
   const lines = collectLines();
   if (lines.length === 0) {
-    showError("createError", "Cần ít nhất 1 dòng hàng hợp lệ (đủ vật tư + số lượng).");
+    showError("createError", t("issueRequest.needAtLeastOneLine"));
     return;
   }
 
@@ -143,12 +154,12 @@ async function submitCreateForm() {
 
   const btn = document.getElementById("createSubmitBtn");
   btn.disabled = true;
-  btn.textContent = "Đang tạo...";
+  btn.textContent = t("common.loading");
 
   const res = await apiFetch("/issue-requests", { method: "POST", body: JSON.stringify(body) });
 
   btn.disabled = false;
-  btn.textContent = "Tạo yêu cầu (DRAFT)";
+  btn.textContent = t("issueRequest.submitCreateBtn");
 
   if (!res.ok) {
     showError("createError", extractErrorMessage(res.data));
@@ -180,15 +191,6 @@ function closeDetail() {
   currentDetailId = null;
 }
 
-const STAGE_LABEL = {
-  DRAFT: "Đang soạn",
-  PENDING_HEAD_APPROVAL: "Chờ Trưởng bộ phận duyệt",
-  PENDING_BOD_APPROVAL: "Chờ BOD duyệt",
-  APPROVED: "Đã duyệt — chờ xuất kho",
-  ISSUED: "Đã xuất kho",
-  REJECTED: "Đã bị từ chối",
-};
-
 async function renderDetail() {
   const res = await apiFetch(`/issue-requests/${currentDetailId}`);
   if (!res.ok) {
@@ -196,7 +198,7 @@ async function renderDetail() {
     return;
   }
   const r = res.data;
-  document.getElementById("detailCode").textContent = `${r.code} — ${statusBadge(r.status)}`;
+  document.getElementById("detailCode").innerHTML = `${r.code} — ${statusBadge(r.status)}`;
 
   const warehouse = warehousesCache.find((w) => w.id === r.warehouseId);
 
@@ -215,47 +217,52 @@ async function renderDetail() {
   let actionsHtml = "";
   if (r.status === "DRAFT") {
     actionsHtml = `
-      <button class="btn btn-primary" onclick="doAction('submit')">Gửi duyệt</button>
-      <button class="btn btn-danger" onclick="doDelete()">Xóa phiếu</button>`;
+      <button class="btn btn-primary" onclick="doAction('submit')">${t("issueRequest.submitForApproval")}</button>
+      <button class="btn btn-danger" onclick="doDelete()">${t("issueRequest.deleteRequest")}</button>`;
   } else if (r.status === "PENDING_HEAD_APPROVAL") {
     actionsHtml = `
-      <button class="btn btn-success" onclick="doAction('approve-head')">✔ Trưởng bộ phận duyệt</button>
-      <button class="btn btn-danger" onclick="doReject()">✕ Từ chối</button>`;
+      <button class="btn btn-success" onclick="doAction('approve-head')">${t("issueRequest.approveHead")}</button>
+      <button class="btn btn-danger" onclick="doReject()">${t("issueRequest.reject")}</button>`;
   } else if (r.status === "PENDING_BOD_APPROVAL") {
     actionsHtml = `
-      <button class="btn btn-success" onclick="doAction('approve-bod')">✔ BOD duyệt</button>
-      <button class="btn btn-danger" onclick="doReject()">✕ Từ chối</button>`;
+      <button class="btn btn-success" onclick="doAction('approve-bod')">${t("issueRequest.approveBod")}</button>
+      <button class="btn btn-danger" onclick="doReject()">${t("issueRequest.reject")}</button>`;
   } else if (r.status === "APPROVED") {
-    actionsHtml = `<button class="btn btn-primary" onclick="doAction('issue')">🚚 Thực xuất (tự động FEFO)</button>`;
+    actionsHtml = `<button class="btn btn-primary" onclick="doAction('issue')">${t("issueRequest.issueBtn")}</button>`;
   } else if (r.status === "REJECTED") {
-    actionsHtml = `<button class="btn btn-secondary" onclick="doAction('reopen')">Mở lại để sửa</button>`;
+    actionsHtml = `<button class="btn btn-secondary" onclick="doAction('reopen')">${t("issueRequest.reopen")}</button>`;
   }
 
   // Thanh tien trinh truc quan qua 5 giai doan
   const stages = ["DRAFT", "PENDING_HEAD_APPROVAL", "PENDING_BOD_APPROVAL", "APPROVED", "ISSUED"];
   const currentIdx = r.status === "REJECTED" ? -1 : stages.indexOf(r.status);
   const progressHtml = r.status === "REJECTED"
-    ? `<div class="badge badge-danger" style="font-size:13px;">Đã bị từ chối ở một cấp duyệt</div>`
+    ? `<div class="badge badge-danger" style="font-size:13px;">${t("issueRequest.stage.REJECTED")}</div>`
     : stages
         .map((s, i) => {
           const done = i < currentIdx;
           const active = i === currentIdx;
           const cls = done ? "badge-success" : active ? "badge-info" : "badge-gray";
-          return `<span class="badge ${cls}">${i + 1}. ${STAGE_LABEL[s]}</span>`;
+          return `<span class="badge ${cls}">${i + 1}. ${t("issueRequest.stage." + s)}</span>`;
         })
         .join(" → ");
 
   document.getElementById("detailContainer").innerHTML = `
     <div style="margin-bottom: 16px; line-height: 2.2;">${progressHtml}</div>
     <div class="detail-grid">
-      <div class="detail-field"><div class="label">Kho xuất</div><div class="value">${warehouse ? warehouse.name : "—"}</div></div>
-      <div class="detail-field"><div class="label">Lý do</div><div class="value">${r.reason || "—"}</div></div>
-      <div class="detail-field"><div class="label">Ngày tạo</div><div class="value">${formatDateTime(r.createdAt)}</div></div>
+      <div class="detail-field"><div class="label">${t("issueRequest.detailWarehouse")}</div><div class="value">${warehouse ? warehouse.name : "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("issueRequest.detailReason")}</div><div class="value">${r.reason || "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("issueRequest.detailDate")}</div><div class="value">${formatDateTime(r.createdAt)}</div></div>
     </div>
-    ${r.rejectedReason ? `<div class="error-box show">Lý do từ chối: ${r.rejectedReason}</div>` : ""}
-    <h3>Dòng hàng</h3>
+    ${r.rejectedReason ? `<div class="error-box show">${t("issueRequest.rejectedReasonLabel")}: ${r.rejectedReason}</div>` : ""}
+    <h3>${t("issueRequest.linesTitle")}</h3>
     <table>
-      <thead><tr><th>Vật tư</th><th>SL yêu cầu</th><th>SL thực xuất</th><th>Ghi chú</th></tr></thead>
+      <thead><tr>
+        <th>${t("issueRequest.tableItem")}</th>
+        <th>${t("issueRequest.tableRequestedQty")}</th>
+        <th>${t("issueRequest.tableIssuedQty")}</th>
+        <th>${t("issueRequest.tableNote")}</th>
+      </tr></thead>
       <tbody>${linesHtml}</tbody>
     </table>
     <div class="btn-row">${actionsHtml}</div>
@@ -269,13 +276,13 @@ async function doAction(action) {
     showError("detailError", extractErrorMessage(res.data));
     return;
   }
-  showSuccess("detailSuccess", "Thao tác thành công.");
+  showSuccess("detailSuccess", t("issueRequest.actionSuccess"));
   await renderDetail();
   await loadList();
 }
 
 async function doReject() {
-  const reason = prompt("Nhập lý do từ chối:");
+  const reason = prompt(t("issueRequest.rejectReasonPrompt"));
   if (!reason) return;
   hideError("detailError");
   const res = await apiFetch(`/issue-requests/${currentDetailId}/reject`, {
@@ -291,7 +298,7 @@ async function doReject() {
 }
 
 async function doDelete() {
-  if (!confirm("Xóa phiếu này? Không thể hoàn tác.")) return;
+  if (!confirm(t("issueRequest.deleteConfirm"))) return;
   const res = await apiFetch(`/issue-requests/${currentDetailId}`, { method: "DELETE" });
   if (!res.ok) {
     showError("detailError", extractErrorMessage(res.data));

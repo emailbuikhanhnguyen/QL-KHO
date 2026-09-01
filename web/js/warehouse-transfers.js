@@ -1,5 +1,4 @@
 requireAuth();
-renderTopbar("transfer");
 
 let warehousesCache = [];
 let lotsCache = [];
@@ -7,6 +6,9 @@ let itemsCache = [];
 let lineCounter = 0;
 
 (async function init() {
+  await loadI18n();
+  renderTopbar("transfer");
+  applyTranslations();
   await loadDropdownData();
   await loadList();
 })();
@@ -24,7 +26,7 @@ async function loadDropdownData() {
   const srcSelect = document.getElementById("f_sourceWarehouseId");
   const dstSelect = document.getElementById("f_destWarehouseId");
   const options = warehousesCache
-    .filter((w) => w.code !== "IN_TRANSIT") // khong cho chon lam nguon/dich thu cong
+    .filter((w) => w.code !== "IN_TRANSIT" && w.code !== "SYSTEM_TEST") // khong cho chon lam nguon/dich thu cong
     .map((w) => `<option value="${w.id}">${w.name}</option>`)
     .join("");
   srcSelect.innerHTML = options;
@@ -55,26 +57,32 @@ async function loadList() {
   }
   const transfers = res.data.data;
   if (transfers.length === 0) {
-    container.innerHTML = `<div class="empty-state">Chưa có phiếu điều chuyển nào.</div>`;
+    container.innerHTML = `<div class="empty-state">${t("transfer.emptyState")}</div>`;
     return;
   }
 
   const rows = transfers
     .map(
-      (t) => `
-      <tr class="clickable" onclick="openDetail(${t.id})">
-        <td><strong>${t.code}</strong></td>
-        <td>${warehouseName(t.sourceWarehouseId)} → ${warehouseName(t.destWarehouseId)}</td>
-        <td>${t.lines.length} dòng</td>
-        <td>${statusBadge(t.status)}</td>
-        <td>${formatDateTime(t.createdAt)}</td>
+      (t2) => `
+      <tr class="clickable" onclick="openDetail(${t2.id})">
+        <td><strong>${t2.code}</strong></td>
+        <td>${warehouseName(t2.sourceWarehouseId)} → ${warehouseName(t2.destWarehouseId)}</td>
+        <td>${t2.lines.length}</td>
+        <td>${statusBadge(t2.status)}</td>
+        <td>${formatDateTime(t2.createdAt)}</td>
       </tr>`
     )
     .join("");
 
   container.innerHTML = `
     <table>
-      <thead><tr><th>Mã phiếu</th><th>Tuyến</th><th>Số dòng</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead>
+      <thead><tr>
+        <th>${t("transfer.tableCode")}</th>
+        <th>${t("transfer.tableRoute")}</th>
+        <th>${t("transfer.tableLines")}</th>
+        <th>${t("transfer.tableStatus")}</th>
+        <th>${t("transfer.tableDate")}</th>
+      </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -102,14 +110,14 @@ function addLine() {
   div.className = "line-item";
   div.id = `line_${id}`;
   div.innerHTML = `
-    <button class="remove-line" onclick="removeLine(${id})">✕ Xóa dòng</button>
+    <button class="remove-line" onclick="removeLine(${id})">${t("transfer.removeLine")}</button>
     <div class="form-grid">
       <div class="form-row">
-        <label>Lô hàng *</label>
+        <label>${t("transfer.lotLabel")}</label>
         <select id="line_${id}_lotId">${lotOptions}</select>
       </div>
       <div class="form-row">
-        <label>Số lượng *</label>
+        <label>${t("transfer.quantityLabel")}</label>
         <input type="number" id="line_${id}_quantity" min="0.001" step="0.001" />
       </div>
     </div>
@@ -141,13 +149,13 @@ async function submitCreateForm() {
   const destWarehouseId = Number(document.getElementById("f_destWarehouseId").value);
 
   if (sourceWarehouseId === destWarehouseId) {
-    showError("createError", "Kho nguồn và kho đích phải khác nhau.");
+    showError("createError", t("transfer.sourceDestMustDiffer"));
     return;
   }
 
   const lines = collectLines();
   if (lines.length === 0) {
-    showError("createError", "Cần ít nhất 1 dòng hàng hợp lệ.");
+    showError("createError", t("transfer.needAtLeastOneLine"));
     return;
   }
 
@@ -160,12 +168,12 @@ async function submitCreateForm() {
 
   const btn = document.getElementById("createSubmitBtn");
   btn.disabled = true;
-  btn.textContent = "Đang tạo...";
+  btn.textContent = t("common.loading");
 
   const res = await apiFetch("/warehouse-transfers", { method: "POST", body: JSON.stringify(body) });
 
   btn.disabled = false;
-  btn.textContent = "Tạo phiếu (DRAFT)";
+  btn.textContent = t("transfer.submitCreateBtn");
 
   if (!res.ok) {
     showError("createError", extractErrorMessage(res.data));
@@ -203,10 +211,10 @@ async function renderDetail() {
     showError("detailError", extractErrorMessage(res.data));
     return;
   }
-  const t = res.data;
-  document.getElementById("detailCode").textContent = `${t.code} — ${statusBadge(t.status)}`;
+  const tr = res.data;
+  document.getElementById("detailCode").innerHTML = `${tr.code} — ${statusBadge(tr.status)}`;
 
-  const linesHtml = t.lines
+  const linesHtml = tr.lines
     .map(
       (l) => `
       <tr>
@@ -217,24 +225,24 @@ async function renderDetail() {
     .join("");
 
   let actionsHtml = "";
-  if (t.status === "DRAFT") {
+  if (tr.status === "DRAFT") {
     actionsHtml = `
-      <button class="btn btn-primary" onclick="doAction('ship')">🚚 Kho nguồn xác nhận xuất</button>
-      <button class="btn btn-danger" onclick="doDelete()">Xóa phiếu</button>`;
-  } else if (t.status === "SHIPPED") {
-    actionsHtml = `<button class="btn btn-success" onclick="doAction('receive')">✔ Kho đích xác nhận nhận</button>`;
+      <button class="btn btn-primary" onclick="doAction('ship')">${t("transfer.shipBtn")}</button>
+      <button class="btn btn-danger" onclick="doDelete()">${t("transfer.deleteBtn")}</button>`;
+  } else if (tr.status === "SHIPPED") {
+    actionsHtml = `<button class="btn btn-success" onclick="doAction('receive')">${t("transfer.receiveBtn")}</button>`;
   }
 
   document.getElementById("detailContainer").innerHTML = `
     <div class="detail-grid">
-      <div class="detail-field"><div class="label">Kho nguồn</div><div class="value">${warehouseName(t.sourceWarehouseId)}</div></div>
-      <div class="detail-field"><div class="label">Kho đích</div><div class="value">${warehouseName(t.destWarehouseId)}</div></div>
-      <div class="detail-field"><div class="label">Lý do</div><div class="value">${t.reason || "—"}</div></div>
-      <div class="detail-field"><div class="label">Ngày tạo</div><div class="value">${formatDateTime(t.createdAt)}</div></div>
+      <div class="detail-field"><div class="label">${t("transfer.detailSource")}</div><div class="value">${warehouseName(tr.sourceWarehouseId)}</div></div>
+      <div class="detail-field"><div class="label">${t("transfer.detailDest")}</div><div class="value">${warehouseName(tr.destWarehouseId)}</div></div>
+      <div class="detail-field"><div class="label">${t("transfer.detailReason")}</div><div class="value">${tr.reason || "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("transfer.detailDate")}</div><div class="value">${formatDateTime(tr.createdAt)}</div></div>
     </div>
-    <h3>Lô hàng</h3>
+    <h3>${t("transfer.linesTitle")}</h3>
     <table>
-      <thead><tr><th>Lô hàng</th><th>Số lượng</th></tr></thead>
+      <thead><tr><th>${t("transfer.tableLot")}</th><th>${t("transfer.tableQty")}</th></tr></thead>
       <tbody>${linesHtml}</tbody>
     </table>
     <div class="btn-row">${actionsHtml}</div>
@@ -248,13 +256,13 @@ async function doAction(action) {
     showError("detailError", extractErrorMessage(res.data));
     return;
   }
-  showSuccess("detailSuccess", "Thao tác thành công.");
+  showSuccess("detailSuccess", t("transfer.actionSuccess"));
   await renderDetail();
   await loadList();
 }
 
 async function doDelete() {
-  if (!confirm("Xóa phiếu này? Không thể hoàn tác.")) return;
+  if (!confirm(t("transfer.deleteConfirm"))) return;
   const res = await apiFetch(`/warehouse-transfers/${currentDetailId}`, { method: "DELETE" });
   if (!res.ok) {
     showError("detailError", extractErrorMessage(res.data));

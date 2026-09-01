@@ -9,9 +9,15 @@
     /* Giao dien rieng, toi uu cho man hinh dien thoai luc cam di quet */
     body { background: #0f1220; }
     .scan-page { max-width: 480px; margin: 0 auto; padding: 16px; min-height: 100vh; box-sizing: border-box; }
-    .scan-header { text-align: center; color: #fff; padding: 12px 0 20px; }
+    .scan-header { text-align: center; color: #fff; padding: 12px 0 20px; position: relative; }
     .scan-header h1 { font-size: 18px; margin: 0 0 4px; }
     .scan-header p { font-size: 13px; color: #9aa3c7; margin: 0; }
+    .scan-lang-switcher { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
+    .scan-lang-switcher .lang-btn {
+      background: transparent; border: 1px solid #4a5798; color: #9aa3c7;
+      padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600;
+    }
+    .scan-lang-switcher .lang-btn.active { background: #fff; color: var(--navy); border-color: #fff; }
     #qr-reader { border-radius: 14px; overflow: hidden; border: 3px solid #2e75b6; }
     .result-card {
       background: #fff; border-radius: 14px; padding: 20px; margin-top: 16px; display: none;
@@ -46,37 +52,39 @@
 </head>
 <body>
   <div class="scan-page">
+    <div class="scan-lang-switcher" id="langSwitcherSlot"></div>
     <div class="scan-header">
-      <h1>📷 Quét QR Kiểm kê</h1>
-      <p id="warehouseHint">Đưa camera vào tem QR dán trên lô hàng</p>
+      <h1 data-i18n="scan.title">📷 Quét QR Kiểm kê</h1>
+      <p id="warehouseHint" data-i18n="scan.hint">Đưa camera vào tem QR dán trên lô hàng</p>
     </div>
 
     <div id="qr-reader"></div>
     <div class="status-msg" id="statusMsg"></div>
 
     <div class="manual-toggle">
-      <button onclick="toggleManualEntry()">Không quét được? Nhập mã lô thủ công</button>
+      <button onclick="toggleManualEntry()" data-i18n="scan.manualToggle">Không quét được? Nhập mã lô thủ công</button>
     </div>
     <div class="manual-form" id="manualForm">
-      <input type="number" id="manualLotId" placeholder="Nhập ID lô hàng (số)" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:10px;" />
-      <button class="btn btn-primary big-btn" onclick="lookupManual()">Tìm lô hàng</button>
+      <input type="number" id="manualLotId" placeholder="Nhập ID lô hàng (số)" data-i18n-placeholder="scan.manualPlaceholder" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:10px;" />
+      <button class="btn btn-primary big-btn" onclick="lookupManual()" data-i18n="scan.manualSearchBtn">Tìm lô hàng</button>
     </div>
 
     <div class="result-card" id="resultCard">
       <div class="item-name" id="resultItemName"></div>
       <div class="lot-code" id="resultLotCode"></div>
       <div class="system-qty">
-        <div class="label">Hệ thống ghi nhận</div>
+        <div class="label" data-i18n="scan.systemQtyLabel">Hệ thống ghi nhận</div>
         <div class="value" id="resultSystemQty"></div>
       </div>
-      <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Số đếm thực tế</label>
+      <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;" data-i18n="scan.countedQtyLabel">Số đếm thực tế</label>
       <input type="number" id="countedQtyInput" class="count-input" inputmode="decimal" placeholder="0" />
-      <button class="btn btn-success big-btn" id="confirmBtn" onclick="confirmCount()">✔ Xác nhận & Quét tiếp</button>
+      <button class="btn btn-success big-btn" id="confirmBtn" onclick="confirmCount()" data-i18n="scan.confirmBtn">✔ Xác nhận & Quét tiếp</button>
     </div>
 
-    <p class="scan-again-hint">Sau khi xác nhận, camera tự bật lại để quét lô tiếp theo.</p>
+    <p class="scan-again-hint" data-i18n="scan.rescanHint">Sau khi xác nhận, camera tự bật lại để quét lô tiếp theo.</p>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="/js/stocktake-scan.js"></script>

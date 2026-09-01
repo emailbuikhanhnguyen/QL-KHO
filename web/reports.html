@@ -10,68 +10,69 @@
   <div class="topbar" id="topbar"></div>
 
   <div class="page">
-    <h1>Báo cáo tồn kho</h1>
-    <p class="subtitle">Xem tồn kho hiện tại và lịch sử biến động, xuất được ra Excel</p>
+    <h1 data-i18n="reports.title">Báo cáo tồn kho</h1>
+    <p class="subtitle" data-i18n="reports.subtitle">Xem tồn kho hiện tại và lịch sử biến động, xuất được ra Excel</p>
 
     <div class="tabs">
-      <button class="active" id="tabBalance" onclick="switchTab('balance')">Tồn kho hiện tại</button>
-      <button id="tabHistory" onclick="switchTab('history')">Lịch sử biến động</button>
+      <button class="active" id="tabBalance" onclick="switchTab('balance')" data-i18n="reports.tabBalance">Tồn kho hiện tại</button>
+      <button id="tabHistory" onclick="switchTab('history')" data-i18n="reports.tabHistory">Lịch sử biến động</button>
     </div>
 
     <!-- ============ TON KHO HIEN TAI ============ -->
     <div class="card" id="balanceCard">
       <div class="form-grid cols-3">
         <div class="form-row">
-          <label>Vật tư</label>
-          <select id="balance_itemId"><option value="">— Tất cả —</option></select>
+          <label data-i18n="reports.itemLabel">Vật tư</label>
+          <select id="balance_itemId"><option value="" data-i18n="reports.allOption">— Tất cả —</option></select>
         </div>
         <div class="form-row">
-          <label>Kho</label>
-          <select id="balance_warehouseId"><option value="">— Tất cả —</option></select>
+          <label data-i18n="reports.warehouseLabel">Kho</label>
+          <select id="balance_warehouseId"><option value="" data-i18n="reports.allOption">— Tất cả —</option></select>
         </div>
         <div class="form-row">
           <label>&nbsp;</label>
-          <button class="btn btn-primary" style="width:100%;" onclick="loadBalance()">Xem</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="loadBalance()" data-i18n="reports.viewBtn">Xem</button>
         </div>
       </div>
       <div class="btn-row">
-        <button class="btn btn-success btn-sm" onclick="exportBalance()">📥 Xuất Excel</button>
+        <button class="btn btn-success btn-sm" onclick="exportBalance()" data-i18n="reports.exportExcelBtn">📥 Xuất Excel</button>
       </div>
-      <div id="balanceContainer" style="margin-top: 16px;">Đang tải...</div>
+      <div id="balanceContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
 
     <!-- ============ LICH SU BIEN DONG ============ -->
     <div class="card" id="historyCard" style="display:none;">
       <div class="form-grid cols-3">
         <div class="form-row">
-          <label>Vật tư</label>
-          <select id="history_itemId"><option value="">— Tất cả —</option></select>
+          <label data-i18n="reports.itemLabel">Vật tư</label>
+          <select id="history_itemId"><option value="" data-i18n="reports.allOption">— Tất cả —</option></select>
         </div>
         <div class="form-row">
-          <label>Kho</label>
-          <select id="history_warehouseId"><option value="">— Tất cả —</option></select>
+          <label data-i18n="reports.warehouseLabel">Kho</label>
+          <select id="history_warehouseId"><option value="" data-i18n="reports.allOption">— Tất cả —</option></select>
         </div>
         <div class="form-row">
-          <label>Loại giao dịch</label>
+          <label data-i18n="reports.movementTypeLabel">Loại giao dịch</label>
           <select id="history_movementType">
-            <option value="">— Tất cả —</option>
-            <option value="RECEIPT">Nhập kho</option>
-            <option value="ISSUE">Xuất kho</option>
-            <option value="TRANSFER_IN">Chuyển đến</option>
-            <option value="TRANSFER_OUT">Chuyển đi</option>
-            <option value="ADJUSTMENT">Điều chỉnh</option>
-            <option value="RETURN">Trả hàng</option>
+            <option value="" data-i18n="reports.allOption">— Tất cả —</option>
+            <option value="RECEIPT" data-i18n="status.RECEIPT">Nhập kho</option>
+            <option value="ISSUE" data-i18n="status.ISSUE">Xuất kho</option>
+            <option value="TRANSFER_IN" data-i18n="status.TRANSFER_IN">Chuyển đến</option>
+            <option value="TRANSFER_OUT" data-i18n="status.TRANSFER_OUT">Chuyển đi</option>
+            <option value="ADJUSTMENT" data-i18n="status.ADJUSTMENT">Điều chỉnh</option>
+            <option value="RETURN" data-i18n="status.RETURN">Trả hàng</option>
           </select>
         </div>
       </div>
       <div class="btn-row">
-        <button class="btn btn-primary btn-sm" onclick="loadHistory()">Xem</button>
-        <button class="btn btn-success btn-sm" onclick="exportHistory()">📥 Xuất Excel</button>
+        <button class="btn btn-primary btn-sm" onclick="loadHistory()" data-i18n="reports.viewBtn">Xem</button>
+        <button class="btn btn-success btn-sm" onclick="exportHistory()" data-i18n="reports.exportExcelBtn">📥 Xuất Excel</button>
       </div>
-      <div id="historyContainer" style="margin-top: 16px;">Đang tải...</div>
+      <div id="historyContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/reports.js"></script>
 </body>
