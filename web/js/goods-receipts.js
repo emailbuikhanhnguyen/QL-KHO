@@ -1,5 +1,4 @@
 requireAuth();
-renderTopbar("goods-receipts");
 
 let itemsCache = [];
 let warehousesCache = [];
@@ -7,9 +6,12 @@ let suppliersCache = [];
 let lineCounter = 0;
 
 // -------------------------------------------------------------------------
-// Khoi tao trang
+// Khoi tao trang — PHAI cho i18n tai xong truoc khi ve topbar/dich noi dung
 // -------------------------------------------------------------------------
 (async function init() {
+  await loadI18n();
+  renderTopbar("goods-receipts");
+  applyTranslations();
   await loadDropdownData();
   await loadList();
 })();
@@ -20,7 +22,12 @@ async function loadDropdownData() {
     apiFetch("/suppliers?limit=100"),
     apiFetch("/items?limit=100"),
   ]);
-  warehousesCache = wh.ok ? wh.data.data : [];
+  // Loai bo cac kho "he thong" (IN_TRANSIT, SYSTEM_TEST) khoi dropdown —
+  // nguoi dung that khong bao gio nen chon nham cac kho nay.
+  const SYSTEM_WAREHOUSE_CODES = ["IN_TRANSIT", "SYSTEM_TEST"];
+  warehousesCache = (wh.ok ? wh.data.data : []).filter(
+    (w) => !SYSTEM_WAREHOUSE_CODES.includes(w.code)
+  );
   suppliersCache = sup.ok ? sup.data.data : [];
   itemsCache = it.ok ? it.data.data : [];
 
@@ -47,7 +54,7 @@ async function loadList() {
   }
   const receipts = res.data.data;
   if (receipts.length === 0) {
-    container.innerHTML = `<div class="empty-state">Chưa có phiếu nhập nào. Bấm "Tạo phiếu mới" để bắt đầu.</div>`;
+    container.innerHTML = `<div class="empty-state">${t("goodsReceipt.emptyState")}</div>`;
     return;
   }
 
@@ -58,7 +65,7 @@ async function loadList() {
         <tr class="clickable" onclick="openDetail(${r.id})">
           <td><strong>${r.code}</strong></td>
           <td>${warehouse ? warehouse.name : "#" + r.warehouseId}</td>
-          <td>${r.lines.length} dòng</td>
+          <td>${r.lines.length} ${t("goodsReceipt.lineCount")}</td>
           <td>${statusBadge(r.status)}</td>
           <td>${formatDateTime(r.createdAt)}</td>
         </tr>`;
@@ -67,7 +74,13 @@ async function loadList() {
 
   container.innerHTML = `
     <table>
-      <thead><tr><th>Mã phiếu</th><th>Kho</th><th>Số dòng</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead>
+      <thead><tr>
+        <th>${t("goodsReceipt.tableCode")}</th>
+        <th>${t("goodsReceipt.tableWarehouse")}</th>
+        <th>${t("goodsReceipt.tableLines")}</th>
+        <th>${t("goodsReceipt.tableStatus")}</th>
+        <th>${t("goodsReceipt.tableDate")}</th>
+      </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -95,38 +108,38 @@ function addLine() {
   div.className = "line-item";
   div.id = `line_${id}`;
   div.innerHTML = `
-    <button class="remove-line" onclick="removeLine(${id})">✕ Xóa dòng</button>
+    <button class="remove-line" onclick="removeLine(${id})">${t("goodsReceipt.removeLine")}</button>
     <div class="form-grid">
       <div class="form-row">
-        <label>Vật tư *</label>
+        <label>${t("goodsReceipt.itemLabel")}</label>
         <select id="line_${id}_itemId">${itemOptions}</select>
       </div>
       <div class="form-row">
-        <label>Mã lô *</label>
-        <input type="text" id="line_${id}_lotCode" placeholder="LOT-2026-001" />
+        <label>${t("goodsReceipt.lotCodeLabel")}</label>
+        <input type="text" id="line_${id}_lotCode" placeholder="${t("goodsReceipt.lotCodePlaceholder")}" />
       </div>
     </div>
     <div class="form-grid cols-3">
       <div class="form-row">
-        <label>Màu sắc</label>
+        <label>${t("goodsReceipt.colorLabel")}</label>
         <input type="text" id="line_${id}_color" />
       </div>
       <div class="form-row">
-        <label>Khổ / Size</label>
+        <label>${t("goodsReceipt.sizeLabel")}</label>
         <input type="text" id="line_${id}_size" />
       </div>
       <div class="form-row">
-        <label>Số lượng *</label>
+        <label>${t("goodsReceipt.quantityLabel")}</label>
         <input type="number" id="line_${id}_quantity" min="0.001" step="0.001" />
       </div>
     </div>
     <div class="form-grid">
       <div class="form-row">
-        <label>Ngày sản xuất</label>
+        <label>${t("goodsReceipt.mfgDateLabel")}</label>
         <input type="date" id="line_${id}_manufactureDate" />
       </div>
       <div class="form-row">
-        <label>Hạn sử dụng</label>
+        <label>${t("goodsReceipt.expDateLabel")}</label>
         <input type="date" id="line_${id}_expiryDate" />
       </div>
     </div>
@@ -184,12 +197,12 @@ async function submitCreateForm() {
 
   const btn = document.getElementById("createSubmitBtn");
   btn.disabled = true;
-  btn.textContent = "Đang tạo...";
+  btn.textContent = t("common.loading");
 
   const res = await apiFetch("/goods-receipts", { method: "POST", body: JSON.stringify(body) });
 
   btn.disabled = false;
-  btn.textContent = "Tạo phiếu (DRAFT)";
+  btn.textContent = t("goodsReceipt.submitCreateBtn");
 
   if (!res.ok) {
     showError("createError", extractErrorMessage(res.data));
@@ -228,7 +241,7 @@ async function renderDetail() {
     return;
   }
   const r = res.data;
-  document.getElementById("detailCode").textContent = `${r.code} — ${statusBadge(r.status)}`;
+  document.getElementById("detailCode").innerHTML = `${r.code} — ${statusBadge(r.status)}`;
 
   const warehouse = warehousesCache.find((w) => w.id === r.warehouseId);
   const supplier = suppliersCache.find((s) => s.id === r.supplierId);
@@ -241,8 +254,8 @@ async function renderDetail() {
         <td>${l.lotCode}</td>
         <td>${l.color || "—"}</td>
         <td>${formatNumber(l.quantity)}</td>
-        <td>${l.lotId ? "✅ Đã tạo (#" + l.lotId + ")" : "Chưa tạo"}</td>
-        <td>${l.lotId ? `<button class="btn btn-outline btn-sm" onclick="viewQrCode(${l.lotId})">📷 Xem QR</button>` : "—"}</td>
+        <td>${l.lotId ? "✅ " + t("goodsReceipt.created") + " (#" + l.lotId + ")" : t("goodsReceipt.notCreated")}</td>
+        <td>${l.lotId ? `<button class="btn btn-outline btn-sm" onclick="viewQrCode(${l.lotId})">${t("goodsReceipt.viewQr")}</button>` : "—"}</td>
       </tr>`
     )
     .join("");
@@ -250,29 +263,36 @@ async function renderDetail() {
   let actionsHtml = "";
   if (r.status === "DRAFT") {
     actionsHtml = `
-      <button class="btn btn-primary" onclick="doAction('submit')">Gửi duyệt</button>
-      <button class="btn btn-danger" onclick="doDelete()">Xóa phiếu</button>`;
+      <button class="btn btn-primary" onclick="doAction('submit')">${t("goodsReceipt.submitForApproval")}</button>
+      <button class="btn btn-danger" onclick="doDelete()">${t("goodsReceipt.deleteReceipt")}</button>`;
   } else if (r.status === "PENDING_APPROVAL") {
     actionsHtml = `
-      <button class="btn btn-success" onclick="doAction('approve')">✔ Duyệt</button>
-      <button class="btn btn-danger" onclick="doReject()">✕ Từ chối</button>`;
+      <button class="btn btn-success" onclick="doAction('approve')">${t("goodsReceipt.approve")}</button>
+      <button class="btn btn-danger" onclick="doReject()">${t("goodsReceipt.reject")}</button>`;
   } else if (r.status === "REJECTED") {
-    actionsHtml = `<button class="btn btn-secondary" onclick="doAction('reopen')">Mở lại để sửa</button>`;
+    actionsHtml = `<button class="btn btn-secondary" onclick="doAction('reopen')">${t("goodsReceipt.reopen")}</button>`;
   }
 
   document.getElementById("detailContainer").innerHTML = `
     <div class="detail-grid">
-      <div class="detail-field"><div class="label">Kho</div><div class="value">${warehouse ? warehouse.name : "—"}</div></div>
-      <div class="detail-field"><div class="label">Nhà cung cấp</div><div class="value">${supplier ? supplier.name : "—"}</div></div>
-      <div class="detail-field"><div class="label">Số PO</div><div class="value">${r.poNumber || "—"}</div></div>
-      <div class="detail-field"><div class="label">Packing List</div><div class="value">${r.packingListNumber || "—"}</div></div>
-      <div class="detail-field"><div class="label">Invoice</div><div class="value">${r.invoiceNumber || "—"}</div></div>
-      <div class="detail-field"><div class="label">Ngày tạo</div><div class="value">${formatDateTime(r.createdAt)}</div></div>
+      <div class="detail-field"><div class="label">${t("goodsReceipt.detailWarehouse")}</div><div class="value">${warehouse ? warehouse.name : "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("goodsReceipt.detailSupplier")}</div><div class="value">${supplier ? supplier.name : "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("goodsReceipt.detailPO")}</div><div class="value">${r.poNumber || "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("goodsReceipt.detailPL")}</div><div class="value">${r.packingListNumber || "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("goodsReceipt.detailInvoice")}</div><div class="value">${r.invoiceNumber || "—"}</div></div>
+      <div class="detail-field"><div class="label">${t("goodsReceipt.detailDate")}</div><div class="value">${formatDateTime(r.createdAt)}</div></div>
     </div>
-    ${r.rejectedReason ? `<div class="error-box show">Lý do từ chối: ${r.rejectedReason}</div>` : ""}
-    <h3>Dòng hàng</h3>
+    ${r.rejectedReason ? `<div class="error-box show">${t("goodsReceipt.rejectedReasonLabel")}: ${r.rejectedReason}</div>` : ""}
+    <h3>${t("goodsReceipt.linesTitle")}</h3>
     <table>
-      <thead><tr><th>Vật tư</th><th>Mã lô</th><th>Màu</th><th>Số lượng</th><th>Lot</th><th>Tem QR</th></tr></thead>
+      <thead><tr>
+        <th>${t("goodsReceipt.linesHeaderItem")}</th>
+        <th>${t("goodsReceipt.linesHeaderLotCode")}</th>
+        <th>${t("goodsReceipt.linesHeaderColor")}</th>
+        <th>${t("goodsReceipt.linesHeaderQty")}</th>
+        <th>${t("goodsReceipt.linesHeaderLot")}</th>
+        <th>${t("goodsReceipt.linesHeaderQr")}</th>
+      </tr></thead>
       <tbody>${linesHtml}</tbody>
     </table>
     <div class="btn-row">${actionsHtml}</div>
@@ -286,13 +306,13 @@ async function doAction(action) {
     showError("detailError", extractErrorMessage(res.data));
     return;
   }
-  showSuccess("detailSuccess", "Thao tác thành công.");
+  showSuccess("detailSuccess", t("goodsReceipt.actionSuccess"));
   await renderDetail();
   await loadList();
 }
 
 async function doReject() {
-  const reason = prompt("Nhập lý do từ chối:");
+  const reason = prompt(t("goodsReceipt.rejectReasonPrompt"));
   if (!reason) return;
   hideError("detailError");
   const res = await apiFetch(`/goods-receipts/${currentDetailId}/reject`, {
@@ -308,7 +328,7 @@ async function doReject() {
 }
 
 async function doDelete() {
-  if (!confirm("Xóa phiếu này? Không thể hoàn tác.")) return;
+  if (!confirm(t("goodsReceipt.deleteConfirm"))) return;
   const res = await apiFetch(`/goods-receipts/${currentDetailId}`, { method: "DELETE" });
   if (!res.ok) {
     showError("detailError", extractErrorMessage(res.data));

@@ -108,7 +108,7 @@ export class IssueRequestService {
       where: { id, deletedAt: null },
       include: { lines: { include: { item: true } } },
     });
-    if (!found) throw new NotFoundException(`IssueRequest #${id} not found`);
+    if (!found) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'IssueRequest', id } });
     return found;
   }
 
@@ -160,7 +160,7 @@ export class IssueRequestService {
     this.assertIsOwnerOrAdmin(current, currentUser);
 
     if (current.lines.length === 0) {
-      throw new BadRequestException('Khong the gui duyet phieu khong co dong hang nao');
+      throw new BadRequestException({ key: 'NO_LINES_TO_SUBMIT' });
     }
 
     return this.prisma.issueRequest.update({
@@ -183,10 +183,10 @@ export class IssueRequestService {
 
     if (currentUser.role !== Role.ADMIN) {
       if (currentUser.role !== Role.DEPT_HEAD) {
-        throw new ForbiddenException('Chi Truong bo phan hoac Admin moi duoc duyet cap nay');
+        throw new ForbiddenException({ key: 'ONLY_HEAD_OR_ADMIN_THIS_LEVEL' });
       }
       if (currentUser.departmentId !== current.departmentId) {
-        throw new ForbiddenException('Ban chi duoc duyet phieu cua phong ban minh quan ly');
+        throw new ForbiddenException({ key: 'ONLY_OWN_DEPT_HEAD_CAN_APPROVE' });
       }
     }
 
@@ -209,7 +209,7 @@ export class IssueRequestService {
     this.assertStatus(current, [IssueRequestStatus.PENDING_BOD_APPROVAL], 'duyet (cap BOD)');
 
     if (currentUser.role !== Role.ADMIN && currentUser.role !== Role.BOD) {
-      throw new ForbiddenException('Chi BOD hoac Admin moi duoc duyet cap nay');
+      throw new ForbiddenException({ key: 'ONLY_BOD_OR_ADMIN_THIS_LEVEL' });
     }
 
     return this.prisma.issueRequest.update({
@@ -233,16 +233,17 @@ export class IssueRequestService {
         currentUser.role !== Role.ADMIN &&
         !(currentUser.role === Role.DEPT_HEAD && currentUser.departmentId === current.departmentId)
       ) {
-        throw new ForbiddenException('Chi Truong bo phan cua phong ban nay hoac Admin moi tu choi duoc');
+        throw new ForbiddenException({ key: 'ONLY_DEPT_HEAD_REJECT_THIS_STAGE' });
       }
     } else if (current.status === IssueRequestStatus.PENDING_BOD_APPROVAL) {
       if (currentUser.role !== Role.ADMIN && currentUser.role !== Role.BOD) {
-        throw new ForbiddenException('Chi BOD hoac Admin moi tu choi duoc o cap nay');
+        throw new ForbiddenException({ key: 'ONLY_BOD_REJECT_THIS_STAGE' });
       }
     } else {
-      throw new ConflictException(
-        `Khong the tu choi phieu dang o trang thai '${current.status}'`,
-      );
+      throw new ConflictException({
+        key: 'INVALID_STATUS_TRANSITION',
+        params: { action: 'tu choi', status: current.status },
+      });
     }
 
     return this.prisma.issueRequest.update({
@@ -284,7 +285,7 @@ export class IssueRequestService {
 
     if (currentUser.role !== Role.ADMIN) {
       if (currentUser.role !== Role.WAREHOUSE_STAFF) {
-        throw new ForbiddenException('Chi thu kho hoac Admin moi duoc thuc xuat');
+        throw new ForbiddenException({ key: 'ONLY_WAREHOUSE_STAFF_CAN_ISSUE' });
       }
       await this.assertUserBelongsToWarehouseDept(current.warehouseId, currentUser);
     }
@@ -349,16 +350,17 @@ export class IssueRequestService {
     action: string,
   ) {
     if (!allowed.includes(request.status)) {
-      throw new ConflictException(
-        `Khong the ${action} phieu dang o trang thai '${request.status}'`,
-      );
+      throw new ConflictException({
+        key: 'INVALID_STATUS_TRANSITION',
+        params: { action, status: request.status },
+      });
     }
   }
 
   private assertIsOwnerOrAdmin(request: { requesterId: number }, currentUser: RequestUser) {
     if (currentUser.role === Role.ADMIN) return;
     if (request.requesterId !== currentUser.id) {
-      throw new ForbiddenException('Ban chi duoc thao tac tren phieu do chinh minh tao');
+      throw new ForbiddenException({ key: 'ONLY_OWNER_CAN_MODIFY' });
     }
   }
 
@@ -369,7 +371,7 @@ export class IssueRequestService {
     if (!warehouse?.departmentId) return; // chua gan phong ban -> khong chan
 
     if (warehouse.departmentId !== currentUser.departmentId) {
-      throw new ForbiddenException('Ban khong thuoc phong ban quan ly kho nay');
+      throw new ForbiddenException({ key: 'NOT_IN_YOUR_DEPARTMENT' });
     }
   }
 
@@ -377,13 +379,17 @@ export class IssueRequestService {
     const warehouse = await this.prisma.warehouse.findFirst({
       where: { id: warehouseId, deletedAt: null },
     });
-    if (!warehouse) throw new BadRequestException(`Warehouse #${warehouseId} khong ton tai`);
+    if (!warehouse) {
+      throw new BadRequestException({ key: 'WAREHOUSE_NOT_FOUND', params: { id: warehouseId } });
+    }
   }
 
   private async assertItemsExist(itemIds: number[]) {
     for (const itemId of itemIds) {
       const item = await this.prisma.item.findFirst({ where: { id: itemId, deletedAt: null } });
-      if (!item) throw new BadRequestException(`Item #${itemId} khong ton tai`);
+      if (!item) {
+        throw new BadRequestException({ key: 'ITEM_NOT_FOUND', params: { id: itemId } });
+      }
     }
   }
 

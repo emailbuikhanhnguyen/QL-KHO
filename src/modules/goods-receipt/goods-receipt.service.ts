@@ -110,7 +110,7 @@ export class GoodsReceiptService {
       where: { id, deletedAt: null },
       include: { lines: { include: { item: true, storageLocation: true, lot: true } } },
     });
-    if (!found) throw new NotFoundException(`GoodsReceipt #${id} not found`);
+    if (!found) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'GoodsReceipt', id } });
     return found;
   }
 
@@ -172,7 +172,7 @@ export class GoodsReceiptService {
     await this.assertUserBelongsToWarehouseDept(current.warehouseId, currentUser);
 
     if (current.lines.length === 0) {
-      throw new BadRequestException('Khong the gui duyet phieu khong co dong hang nao');
+      throw new BadRequestException({ key: 'NO_LINES_TO_SUBMIT' });
     }
 
     return this.prisma.goodsReceipt.update({
@@ -319,15 +319,16 @@ export class GoodsReceiptService {
     action: string,
   ) {
     if (!allowed.includes(receipt.status)) {
-      throw new ConflictException(
-        `Khong the ${action} phieu dang o trang thai '${receipt.status}'`,
-      );
+      throw new ConflictException({
+        key: 'INVALID_STATUS_TRANSITION',
+        params: { action, status: receipt.status },
+      });
     }
   }
 
   private assertApproverRole(currentUser: RequestUser) {
     if (currentUser.role !== Role.DEPT_HEAD && currentUser.role !== Role.ADMIN) {
-      throw new ForbiddenException('Chi Truong bo phan hoac Admin moi duoc duyet phieu nhap kho');
+      throw new ForbiddenException({ key: 'ONLY_HEAD_OR_ADMIN_CAN_APPROVE_RECEIPT' });
     }
   }
 
@@ -342,7 +343,7 @@ export class GoodsReceiptService {
     if (!warehouse?.departmentId) return;
 
     if (warehouse.departmentId !== currentUser.departmentId) {
-      throw new ForbiddenException('Ban khong thuoc phong ban quan ly kho nay');
+      throw new ForbiddenException({ key: 'NOT_IN_YOUR_DEPARTMENT' });
     }
   }
 
@@ -350,14 +351,18 @@ export class GoodsReceiptService {
     const warehouse = await this.prisma.warehouse.findFirst({
       where: { id: warehouseId, deletedAt: null },
     });
-    if (!warehouse) throw new BadRequestException(`Warehouse #${warehouseId} khong ton tai`);
+    if (!warehouse) {
+      throw new BadRequestException({ key: 'WAREHOUSE_NOT_FOUND', params: { id: warehouseId } });
+    }
   }
 
   private async assertSupplierExists(supplierId: number) {
     const supplier = await this.prisma.supplier.findFirst({
       where: { id: supplierId, deletedAt: null },
     });
-    if (!supplier) throw new BadRequestException(`Supplier #${supplierId} khong ton tai`);
+    if (!supplier) {
+      throw new BadRequestException({ key: 'SUPPLIER_NOT_FOUND', params: { id: supplierId } });
+    }
   }
 
   private async assertLinesValid(lines: { itemId: number; storageLocationId?: number }[]) {
@@ -365,14 +370,19 @@ export class GoodsReceiptService {
       const item = await this.prisma.item.findFirst({
         where: { id: line.itemId, deletedAt: null },
       });
-      if (!item) throw new BadRequestException(`Item #${line.itemId} khong ton tai`);
+      if (!item) {
+        throw new BadRequestException({ key: 'ITEM_NOT_FOUND', params: { id: line.itemId } });
+      }
 
       if (line.storageLocationId) {
         const loc = await this.prisma.storageLocation.findFirst({
           where: { id: line.storageLocationId, deletedAt: null },
         });
         if (!loc) {
-          throw new BadRequestException(`StorageLocation #${line.storageLocationId} khong ton tai`);
+          throw new BadRequestException({
+            key: 'STORAGE_LOCATION_NOT_FOUND',
+            params: { id: line.storageLocationId },
+          });
         }
       }
     }

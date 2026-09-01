@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { I18nExceptionFilter } from './common/filters/i18n-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  // Dich thong bao loi da duoc gan tag { key, params } sang dung ngon ngu
+  // client yeu cau (header Accept-Language: vi|en|zh). Cac loi khac
+  // (VD: tu ValidationPipe) khong bi anh huong.
+  app.useGlobalFilters(new I18nExceptionFilter());
   app.setGlobalPrefix('api');
 
   // Swagger UI — dung de demo va test API truc tiep tren trinh duyet,

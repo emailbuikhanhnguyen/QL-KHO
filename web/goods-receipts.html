@@ -10,67 +10,67 @@
   <div class="topbar" id="topbar"></div>
 
   <div class="page">
-    <h1>Nhập kho (RM)</h1>
-    <p class="subtitle">Tạo phiếu nhập, kiểm đếm, gửi duyệt và duyệt để cộng tồn kho</p>
+    <h1 data-i18n="goodsReceipt.title">Nhập kho (RM)</h1>
+    <p class="subtitle" data-i18n="goodsReceipt.subtitle">Tạo phiếu nhập, kiểm đếm, gửi duyệt và duyệt để cộng tồn kho</p>
 
     <!-- ============ DANH SACH ============ -->
     <div class="card" id="listCard">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Danh sách phiếu nhập</h2>
-        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()">+ Tạo phiếu mới</button>
+        <h2 style="margin:0;" data-i18n="goodsReceipt.listTitle">Danh sách phiếu nhập</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="goodsReceipt.createBtn">+ Tạo phiếu mới</button>
       </div>
-      <div id="listContainer" style="margin-top: 16px;">Đang tải...</div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
 
     <!-- ============ FORM TAO MOI ============ -->
     <div class="card" id="createCard" style="display:none;">
-      <h2>Tạo phiếu nhập kho mới</h2>
+      <h2 data-i18n="goodsReceipt.createTitle">Tạo phiếu nhập kho mới</h2>
       <div class="error-box" id="createError"></div>
 
       <div class="form-grid">
         <div class="form-row">
-          <label>Kho nhập *</label>
+          <label data-i18n="goodsReceipt.warehouseLabel">Kho nhập *</label>
           <select id="f_warehouseId"></select>
         </div>
         <div class="form-row">
-          <label>Nhà cung cấp *</label>
+          <label data-i18n="goodsReceipt.supplierLabel">Nhà cung cấp *</label>
           <select id="f_supplierId"></select>
         </div>
       </div>
       <div class="form-grid cols-3">
         <div class="form-row">
-          <label>Số PO</label>
-          <input type="text" id="f_poNumber" placeholder="PO-2026-001" />
+          <label data-i18n="goodsReceipt.poLabel">Số PO</label>
+          <input type="text" id="f_poNumber" placeholder="PO-2026-001" data-i18n-placeholder="goodsReceipt.poPlaceholder" />
         </div>
         <div class="form-row">
-          <label>Số Packing List</label>
+          <label data-i18n="goodsReceipt.plLabel">Số Packing List</label>
           <input type="text" id="f_packingListNumber" />
         </div>
         <div class="form-row">
-          <label>Số Invoice</label>
+          <label data-i18n="goodsReceipt.invoiceLabel">Số Invoice</label>
           <input type="text" id="f_invoiceNumber" />
         </div>
       </div>
       <div class="form-row">
-        <label>Ghi chú</label>
+        <label data-i18n="goodsReceipt.noteLabel">Ghi chú</label>
         <textarea id="f_note"></textarea>
       </div>
 
-      <h3>Danh sách hàng nhập</h3>
+      <h3 data-i18n="goodsReceipt.linesTitle">Danh sách hàng nhập</h3>
       <div id="linesContainer"></div>
-      <button class="btn btn-outline btn-sm" onclick="addLine()">+ Thêm dòng hàng</button>
+      <button class="btn btn-outline btn-sm" onclick="addLine()" data-i18n="goodsReceipt.addLineBtn">+ Thêm dòng hàng</button>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn">Tạo phiếu (DRAFT)</button>
-        <button class="btn btn-outline" onclick="toggleCreateForm()">Hủy</button>
+        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn" data-i18n="goodsReceipt.submitCreateBtn">Tạo phiếu (DRAFT)</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="goodsReceipt.cancelBtn">Hủy</button>
       </div>
     </div>
 
     <!-- ============ CHI TIET ============ -->
     <div class="card" id="detailCard" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Chi tiết phiếu <span id="detailCode"></span></h2>
-        <button class="btn btn-outline btn-sm" onclick="closeDetail()">Đóng</button>
+        <h2 style="margin:0;"><span data-i18n="goodsReceipt.detailTitle">Chi tiết phiếu</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="goodsReceipt.closeBtn">Đóng</button>
       </div>
       <div class="success-box" id="detailSuccess"></div>
       <div class="error-box" id="detailError"></div>
@@ -78,6 +78,7 @@
     </div>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/goods-receipts.js"></script>
 </body>

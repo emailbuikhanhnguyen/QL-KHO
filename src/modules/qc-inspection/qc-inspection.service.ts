@@ -85,7 +85,7 @@ export class QcInspectionService {
       where: { id, deletedAt: null },
       include: { images: true, lot: { include: { item: true } } },
     });
-    if (!found) throw new NotFoundException(`QcInspection #${id} not found`);
+    if (!found) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'QcInspection', id } });
     return found;
   }
 
@@ -131,7 +131,7 @@ export class QcInspectionService {
 
   async removeImage(imageId: number, currentUser: RequestUser) {
     const image = await this.prisma.qcInspectionImage.findFirst({ where: { id: imageId } });
-    if (!image) throw new NotFoundException(`QcInspectionImage #${imageId} not found`);
+    if (!image) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'QcInspectionImage', id: imageId } });
 
     const inspection = await this.findOne(image.qcInspectionId);
     this.assertStatus(inspection, [QcInspectionStatus.DRAFT], 'xoa anh');
@@ -148,7 +148,7 @@ export class QcInspectionService {
 
   async getImageById(imageId: number) {
     const image = await this.prisma.qcInspectionImage.findFirst({ where: { id: imageId } });
-    if (!image) throw new NotFoundException(`QcInspectionImage #${imageId} not found`);
+    if (!image) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'QcInspectionImage', id: imageId } });
     return image;
   }
 
@@ -161,10 +161,10 @@ export class QcInspectionService {
     this.assertStatus(current, [QcInspectionStatus.DRAFT], 'gui duyet');
 
     if (!current.result) {
-      throw new BadRequestException('Phai chon ket qua kiem tra truoc khi gui duyet');
+      throw new BadRequestException({ key: 'RESULT_REQUIRED_BEFORE_SUBMIT' });
     }
     if (current.images.length === 0) {
-      throw new BadRequestException('Phai co it nhat 1 anh chup phieu kiem hang truoc khi gui duyet');
+      throw new BadRequestException({ key: 'IMAGE_REQUIRED_BEFORE_SUBMIT' });
     }
 
     return this.prisma.qcInspection.update({
@@ -265,29 +265,31 @@ export class QcInspectionService {
     action: string,
   ) {
     if (!allowed.includes(inspection.status)) {
-      throw new ConflictException(
-        `Khong the ${action} phieu dang o trang thai '${inspection.status}'`,
-      );
+      throw new ConflictException({
+        key: 'INVALID_STATUS_TRANSITION',
+        params: { action, status: inspection.status },
+      });
     }
   }
 
   private assertApproverRole(currentUser: RequestUser) {
     if (currentUser.role !== Role.QC_MANAGER && currentUser.role !== Role.ADMIN) {
-      throw new ForbiddenException('Chi QC Manager hoac Admin moi duoc duyet phieu kiem hang');
+      throw new ForbiddenException({ key: 'ONLY_QC_MANAGER_CAN_APPROVE' });
     }
   }
 
   private assertResultIsValid(result: QcStatus) {
     if (!ALLOWED_QC_RESULTS.includes(result)) {
-      throw new BadRequestException(
-        `Ket qua QC chi duoc la mot trong: ${ALLOWED_QC_RESULTS.join(', ')}`,
-      );
+      throw new BadRequestException({
+        key: 'INVALID_QC_RESULT',
+        params: { allowed: ALLOWED_QC_RESULTS.join(', ') },
+      });
     }
   }
 
   private async assertLotExists(lotId: number) {
     const lot = await this.prisma.lot.findFirst({ where: { id: lotId, deletedAt: null } });
-    if (!lot) throw new BadRequestException(`Lot #${lotId} khong ton tai`);
+    if (!lot) throw new BadRequestException({ key: 'LOT_NOT_FOUND', params: { id: lotId } });
     return lot;
   }
 }

@@ -46,6 +46,9 @@ async function apiFetch(path, options = {}) {
   headers["Content-Type"] = headers["Content-Type"] || "application/json";
   const token = getToken();
   if (token) headers["Authorization"] = `Bearer ${token}`;
+  // Gui kem ngon ngu dang chon de backend tra ve thong bao loi dung ngon
+  // ngu (xem src/common/filters/i18n-exception.filter.ts).
+  headers["Accept-Language"] = typeof getCurrentLang === "function" ? getCurrentLang() : "vi";
 
   let response;
   try {
@@ -79,7 +82,10 @@ async function apiUpload(path, file) {
   try {
     response = await fetch(`${API_BASE}${path}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Accept-Language": typeof getCurrentLang === "function" ? getCurrentLang() : "vi",
+      },
       body: formData,
     });
   } catch (e) {
@@ -117,7 +123,10 @@ async function apiDownloadFile(path, suggestedFilename) {
   const token = getToken();
   try {
     const response = await fetch(`${API_BASE}${path}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Accept-Language": typeof getCurrentLang === "function" ? getCurrentLang() : "vi",
+      },
     });
     if (!response.ok) {
       const data = await response.json().catch(() => null);
@@ -202,7 +211,10 @@ const STATUS_BADGE_MAP = {
 
 function statusBadge(status) {
   const cls = STATUS_BADGE_MAP[status] || "badge-gray";
-  return `<span class="badge ${cls}">${status}</span>`;
+  // Hien nhan da dich (tStatus tu i18n.js) thay vi ma enum tho — mau sac
+  // badge van dua theo dung ma goc, chi phan chu hien thi la duoc dich.
+  const label = typeof tStatus === "function" ? tStatus(status) : status;
+  return `<span class="badge ${cls}">${label}</span>`;
 }
 
 function renderTopbar(activePage) {
@@ -210,17 +222,17 @@ function renderTopbar(activePage) {
   const el = document.getElementById("topbar");
   if (!el) return;
   const links = [
-    { href: "/dashboard.html", label: "Trang chu", key: "dashboard" },
-    { href: "/goods-receipts.html", label: "Nhap kho", key: "goods-receipts" },
-    { href: "/qc-inspections.html", label: "QC", key: "qc" },
-    { href: "/issue-requests.html", label: "Xuat kho", key: "issue" },
-    { href: "/warehouse-transfers.html", label: "Dieu chuyen", key: "transfer" },
-    { href: "/reports.html", label: "Bao cao", key: "reports" },
+    { href: "/dashboard.html", key: "dashboard", labelKey: "nav.dashboard" },
+    { href: "/goods-receipts.html", key: "goods-receipts", labelKey: "nav.goodsReceipt" },
+    { href: "/qc-inspections.html", key: "qc", labelKey: "nav.qc" },
+    { href: "/issue-requests.html", key: "issue", labelKey: "nav.issue" },
+    { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer" },
+    { href: "/reports.html", key: "reports", labelKey: "nav.reports" },
   ];
   const navHtml = links
     .map(
       (l) =>
-        `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${l.label}</a>`
+        `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${t(l.labelKey)}</a>`
     )
     .join("");
 
@@ -228,8 +240,9 @@ function renderTopbar(activePage) {
     <div class="brand">Kho NPL</div>
     <nav>${navHtml}</nav>
     <div class="user-info">
+      ${renderLanguageSwitcher()}
       <span>${user ? user.fullName + " (" + user.role + ")" : ""}</span>
-      <button class="logout" onclick="logout()">Dang xuat</button>
+      <button class="logout" onclick="logout()">${t("common.logout")}</button>
     </div>
   `;
 }

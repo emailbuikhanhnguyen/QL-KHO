@@ -10,65 +10,69 @@
   <div class="topbar" id="topbar"></div>
 
   <div class="page">
-    <h1>Chào mừng trở lại 👋</h1>
+    <h1 data-i18n="dashboard.welcome">Chào mừng trở lại 👋</h1>
     <p class="subtitle" id="welcomeText"></p>
 
     <div class="dash-grid">
       <a href="/goods-receipts.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">📦</div>
-        <h3>Nhập kho</h3>
-        <p>Tạo phiếu nhập, kiểm đếm, gửi duyệt</p>
-        <span class="btn btn-secondary btn-sm">Mở</span>
+        <h3 data-i18n="dashboard.goodsReceiptTitle">Nhập kho</h3>
+        <p data-i18n="dashboard.goodsReceiptDesc">Tạo phiếu nhập, kiểm đếm, gửi duyệt</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
       <a href="/qc-inspections.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">🔍</div>
-        <h3>QC — Kiểm tra chất lượng</h3>
-        <p>Kiểm hàng, chụp ảnh, duyệt kết quả</p>
-        <span class="btn btn-secondary btn-sm">Mở</span>
+        <h3 data-i18n="dashboard.qcTitle">QC — Kiểm tra chất lượng</h3>
+        <p data-i18n="dashboard.qcDesc">Kiểm hàng, chụp ảnh, duyệt kết quả</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
       <a href="/issue-requests.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">🚚</div>
-        <h3>Xuất kho</h3>
-        <p>Yêu cầu xuất, duyệt đa cấp, thực xuất</p>
-        <span class="btn btn-secondary btn-sm">Mở</span>
+        <h3 data-i18n="dashboard.issueTitle">Xuất kho</h3>
+        <p data-i18n="dashboard.issueDesc">Yêu cầu xuất, duyệt đa cấp, thực xuất</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
       <a href="/warehouse-transfers.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">🔄</div>
-        <h3>Điều chuyển kho</h3>
-        <p>Chuyển hàng giữa 2 kho, xác nhận xuất/nhận</p>
-        <span class="btn btn-secondary btn-sm">Mở</span>
+        <h3 data-i18n="dashboard.transferTitle">Điều chuyển kho</h3>
+        <p data-i18n="dashboard.transferDesc">Chuyển hàng giữa 2 kho, xác nhận xuất/nhận</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
       <a href="/reports.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">📊</div>
-        <h3>Báo cáo</h3>
-        <p>Tồn kho hiện tại, lịch sử biến động, xuất Excel</p>
-        <span class="btn btn-secondary btn-sm">Mở</span>
+        <h3 data-i18n="dashboard.reportsTitle">Báo cáo</h3>
+        <p data-i18n="dashboard.reportsDesc">Tồn kho hiện tại, lịch sử biến động, xuất Excel</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
       <a href="/stocktake-scan.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">📷</div>
-        <h3>Quét QR Kiểm kê</h3>
-        <p>Mở bằng điện thoại, quét tem QR dán trên lô hàng</p>
-        <span class="btn btn-secondary btn-sm">Mở</span>
+        <h3 data-i18n="dashboard.scanTitle">Quét QR Kiểm kê</h3>
+        <p data-i18n="dashboard.scanDesc">Mở bằng điện thoại, quét tem QR dán trên lô hàng</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
     </div>
 
     <div class="card" style="margin-top: 30px;">
-      <h2>Ghi chú</h2>
-      <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">
-        Giao diện này phục vụ demo luồng nghiệp vụ lõi: Nhập kho → QC → Xuất kho có duyệt.
-        Các màn hình quản lý danh mục (vật tư, nhà cung cấp, kho...) hiện quản lý qua
+      <h2 data-i18n="dashboard.noteTitle">Ghi chú</h2>
+      <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;" data-i18n="dashboard.noteText">
+        Giao diện này phục vụ demo luồng nghiệp vụ lõi: Nhập kho → QC → Xuất kho có duyệt. Các màn hình quản lý danh mục (vật tư, nhà cung cấp, kho...) hiện quản lý qua
         <a href="/api/docs" target="_blank">Swagger API</a>.
       </p>
     </div>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script>
     requireAuth();
-    renderTopbar("dashboard");
-    const user = getCurrentUser();
-    document.getElementById("welcomeText").textContent =
-      `${user.fullName} — ${user.department ? user.department.name : ""}`;
+    (async function init() {
+      await loadI18n();
+      renderTopbar("dashboard");
+      applyTranslations();
+      const user = getCurrentUser();
+      document.getElementById("welcomeText").textContent =
+        `${user.fullName} — ${user.department ? user.department.name : ""}`;
+    })();
   </script>
 </body>
 </html>

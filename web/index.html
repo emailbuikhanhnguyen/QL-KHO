@@ -9,36 +9,49 @@
 <body>
   <div class="login-wrapper">
     <div class="login-box">
-      <h1>Hệ thống Quản lý Kho NPL</h1>
-      <p class="subtitle">Đăng nhập để tiếp tục</p>
+      <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;" id="langSwitcherSlot"></div>
+      <h1 data-i18n="login.title">Hệ thống Quản lý Kho NPL</h1>
+      <p class="subtitle" data-i18n="login.subtitle">Đăng nhập để tiếp tục</p>
 
       <div class="error-box" id="loginError"></div>
 
       <form id="loginForm">
         <div class="form-row">
-          <label>Email</label>
+          <label data-i18n="login.email">Email</label>
           <input type="email" id="email" required autocomplete="username" />
         </div>
         <div class="form-row">
-          <label>Mật khẩu</label>
+          <label data-i18n="login.password">Mật khẩu</label>
           <input type="password" id="password" required autocomplete="current-password" />
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">Đăng nhập</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn" data-i18n="login.submit">Đăng nhập</button>
       </form>
     </div>
   </div>
 
+  <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script>
     // Neu da dang nhap roi, vao thang dashboard
     if (getToken()) window.location.href = "/dashboard.html";
+
+    (async function init() {
+      await loadI18n();
+      applyTranslations();
+      document.getElementById("langSwitcherSlot").innerHTML = renderLanguageSwitcher();
+      // Nut ngon ngu tren nen sang (trang dang nhap), can style rieng khac topbar toi
+      document.querySelectorAll("#langSwitcherSlot .lang-btn").forEach((btn) => {
+        btn.style.borderColor = "#ccc";
+        btn.style.color = "#666";
+      });
+    })();
 
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       hideError("loginError");
       const btn = document.getElementById("loginBtn");
       btn.disabled = true;
-      btn.textContent = "Đang đăng nhập...";
+      btn.textContent = t("login.loggingIn");
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
@@ -49,7 +62,7 @@
       });
 
       btn.disabled = false;
-      btn.textContent = "Đăng nhập";
+      btn.textContent = t("login.submit");
 
       if (!res.ok) {
         showError("loginError", extractErrorMessage(res.data) || "Email hoặc mật khẩu không đúng");
