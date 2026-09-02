@@ -26,7 +26,8 @@
     "issue": "Issue",
     "transfer": "Transfer",
     "reports": "Reports",
-    "stocktake": "Stocktake"
+    "stocktake": "Stocktake",
+    "qrScan": "Scan QR"
   },
   "login": {
     "title": "NPL Warehouse Management System",

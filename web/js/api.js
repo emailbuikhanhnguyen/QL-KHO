@@ -233,6 +233,7 @@ function renderTopbar(activePage) {
     { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer", fallback: "Điều chuyển" },
     { href: "/reports.html", key: "reports", labelKey: "nav.reports", fallback: "Báo cáo" },
     { href: "/stocktake.html", key: "stocktake", labelKey: "nav.stocktake", fallback: "Kiểm kê" },
+    { href: "/stocktake-scan.html", key: "stocktake-scan", labelKey: "nav.qrScan", fallback: "Quét QR" },
   ];
   const navHtml = links
     .map(

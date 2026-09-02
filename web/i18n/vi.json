@@ -26,7 +26,8 @@
     "issue": "Xuất kho",
     "transfer": "Điều chuyển",
     "reports": "Báo cáo",
-    "stocktake": "Kiểm kê"
+    "stocktake": "Kiểm kê",
+    "qrScan": "Quét QR"
   },
   "login": {
     "title": "Hệ thống Quản lý Kho NPL",

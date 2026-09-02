@@ -26,7 +26,8 @@
     "issue": "出库",
     "transfer": "调拨",
     "reports": "报表",
-    "stocktake": "盘点"
+    "stocktake": "盘点",
+    "qrScan": "扫码"
   },
   "login": {
     "title": "辅料仓库管理系统",
