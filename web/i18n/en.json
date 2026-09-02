@@ -581,5 +581,30 @@
     "warehouseNoStockWarning": "This warehouse has no stock to count.",
     "duplicateActiveWarning": "This warehouse already has another stocktake in progress.",
     "invalidCountEntry": "Please enter a valid counted quantity."
+  },
+  "profile": {
+    "modalTitle": "Your Information",
+    "fullNameLabel": "Full Name",
+    "emailLabel": "Email",
+    "departmentLabel": "Department",
+    "roleLabel": "Role",
+    "dutiesTitle": "Duties & Responsibilities",
+    "viewFullPermissionsLink": "View the full permission matrix →",
+    "roleLabels": {
+      "ADMIN": "Administrator",
+      "WAREHOUSE_STAFF": "Warehouse Staff",
+      "QC_MANAGER": "QC Manager",
+      "DEPT_HEAD": "Department Head",
+      "BOD": "Board of Directors",
+      "REQUESTER": "Requester"
+    },
+    "roleDuties": {
+      "ADMIN": "Full system access — create/edit/delete any data, manage accounts, bypass all department checks. The only role that can override stocktake results when tolerance is exceeded.",
+      "WAREHOUSE_STAFF": "Handles daily operations for your department's warehouse: create and submit goods receipts, release stock once approved, confirm ship/receive for warehouse transfers, start and perform stocktakes.",
+      "QC_MANAGER": "Approves or rejects quality inspection results for any lot in any warehouse — not limited by department.",
+      "DEPT_HEAD": "Gives level-1 approval for issue requests created by staff in your own department.",
+      "BOD": "Gives the final approval for any issue request, after Department Head approval — not limited by department.",
+      "REQUESTER": "Creates issue requests for your own needs — no approval rights or direct stock actions."
+    }
   }
 }

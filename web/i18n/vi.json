@@ -581,5 +581,30 @@
     "warehouseNoStockWarning": "Kho chưa có tồn kho nào để kiểm kê.",
     "duplicateActiveWarning": "Kho này đang có 1 phiên kiểm kê khác chưa hoàn tất.",
     "invalidCountEntry": "Vui lòng nhập số đếm hợp lệ."
+  },
+  "profile": {
+    "modalTitle": "Thông tin của bạn",
+    "fullNameLabel": "Họ và tên",
+    "emailLabel": "Email",
+    "departmentLabel": "Phòng ban",
+    "roleLabel": "Vai trò",
+    "dutiesTitle": "Nhiệm vụ & Chức năng",
+    "viewFullPermissionsLink": "Xem đầy đủ bảng phân quyền →",
+    "roleLabels": {
+      "ADMIN": "Quản trị viên",
+      "WAREHOUSE_STAFF": "Thủ kho",
+      "QC_MANAGER": "Quản lý QC",
+      "DEPT_HEAD": "Trưởng bộ phận",
+      "BOD": "Ban Giám Đốc",
+      "REQUESTER": "Nhân viên đề xuất"
+    },
+    "roleDuties": {
+      "ADMIN": "Toàn quyền trên hệ thống — tạo/sửa/xóa mọi dữ liệu, quản lý tài khoản, bỏ qua mọi kiểm tra phòng ban. Là người duy nhất được ghi đè kết quả kiểm kê khi vượt dung sai cho phép.",
+      "WAREHOUSE_STAFF": "Thao tác nghiệp vụ hàng ngày cho kho thuộc phòng ban mình: tạo/gửi duyệt phiếu nhập kho, thực xuất hàng sau khi được duyệt, xác nhận xuất/nhận khi điều chuyển kho, bắt đầu và thực hiện kiểm kê.",
+      "QC_MANAGER": "Duyệt hoặc từ chối kết quả kiểm tra chất lượng cho mọi lô hàng ở mọi kho — không giới hạn theo phòng ban.",
+      "DEPT_HEAD": "Duyệt cấp 1 cho các yêu cầu xuất kho do nhân viên thuộc phòng ban mình tạo ra.",
+      "BOD": "Duyệt cấp cuối cùng cho mọi yêu cầu xuất kho, sau khi đã qua duyệt cấp Trưởng bộ phận — không giới hạn theo phòng ban.",
+      "REQUESTER": "Tạo yêu cầu xuất kho cho nhu cầu của mình — không có quyền duyệt hay thao tác trực tiếp lên tồn kho."
+    }
   }
 }

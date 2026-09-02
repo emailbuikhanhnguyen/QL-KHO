@@ -581,5 +581,30 @@
     "warehouseNoStockWarning": "该仓库暂无库存可供盘点。",
     "duplicateActiveWarning": "该仓库已有另一个正在进行的盘点会话。",
     "invalidCountEntry": "请输入有效的盘点数量。"
+  },
+  "profile": {
+    "modalTitle": "您的信息",
+    "fullNameLabel": "姓名",
+    "emailLabel": "邮箱",
+    "departmentLabel": "部门",
+    "roleLabel": "角色",
+    "dutiesTitle": "职责与功能",
+    "viewFullPermissionsLink": "查看完整权限表 →",
+    "roleLabels": {
+      "ADMIN": "管理员",
+      "WAREHOUSE_STAFF": "仓库人员",
+      "QC_MANAGER": "质检经理",
+      "DEPT_HEAD": "部门主管",
+      "BOD": "董事会",
+      "REQUESTER": "申请人"
+    },
+    "roleDuties": {
+      "ADMIN": "拥有系统完全权限——可创建/编辑/删除任何数据、管理账号、跳过所有部门检查。是唯一可在盘点超出误差范围时强制覆盖结果的角色。",
+      "WAREHOUSE_STAFF": "负责本部门仓库的日常操作：创建并提交入库单、审批后发放库存、确认仓库调拨的发出/接收、开始并执行盘点。",
+      "QC_MANAGER": "审批或拒绝任意仓库任意批次的质检结果——不受部门限制。",
+      "DEPT_HEAD": "对本部门员工创建的出库申请进行第一级审批。",
+      "BOD": "在部门主管审批之后，对任何出库申请进行最终审批——不受部门限制。",
+      "REQUESTER": "为自己的需求创建出库申请——没有审批权限，也不能直接操作库存。"
+    }
   }
 }

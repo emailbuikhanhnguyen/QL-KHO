@@ -504,6 +504,16 @@ Trong `warehouse-transfers.js`, vòng lặp `.map((t) => ...)` từng dùng `t` 
 
 Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 
+## 1.20. Cập nhật 02/09/2026 — Bấm vào tên để xem "Tôi là ai, nhiệm vụ của tôi là gì"
+
+**Ý tưởng**: khi nhiều người khác vai trò cùng test hệ thống, mỗi người chỉ cần biết "riêng tôi làm được gì" — không cần đọc cả bảng phân quyền đầy đủ.
+
+**Đã làm**: tên người dùng ở góc trên bên phải (mọi trang) giờ **bấm được** — mở modal hiển thị Họ tên, Email, Phòng ban, Vai trò (đã dịch, VD "Thủ kho" thay vì chỉ "WAREHOUSE_STAFF"), và đoạn mô tả **nhiệm vụ cụ thể theo đúng vai trò đang đăng nhập** — kèm link tới bảng phân quyền đầy đủ trong Trợ giúp nếu cần xem thêm.
+
+**Kỹ thuật**: không cần gọi thêm API — toàn bộ dữ liệu (kể cả `department`) đã có sẵn trong thông tin đăng nhập lưu ở trình duyệt. Thêm 18 key dịch mới (6 vai trò × nhãn + mô tả nhiệm vụ), tổng 396 key khớp tuyệt đối 3 ngôn ngữ.
+
+**Đã tự kiểm tra bằng cách chạy thật hàm `showProfileModal()`** (không chỉ tin cấu trúc dữ liệu đúng) — mô phỏng đủ 2 trường hợp: vai trò Thủ kho (tiếng Việt) và vai trò Admin không có phòng ban (tiếng Anh, kiểm tra riêng trường hợp `department = null` hiển thị đúng dấu "—").
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

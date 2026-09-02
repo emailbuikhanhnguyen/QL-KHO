@@ -183,3 +183,32 @@ tr.clickable:hover { background: #f9fafc; }
 .dash-card .icon { font-size: 32px; margin-bottom: 10px; }
 .dash-card h3 { margin: 0 0 6px; color: var(--navy); }
 .dash-card p { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+
+/* ==== Modal thong tin ca nhan (profile) — dung chung, hien qua topbar ==== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15, 18, 32, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px;
+}
+.modal-box {
+  background: #fff; border-radius: 12px; padding: 24px; max-width: 480px; width: 100%;
+  max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.modal-box h2 { margin: 0; color: var(--navy); font-size: 20px; }
+.modal-close-btn {
+  background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted);
+  line-height: 1; padding: 4px 8px;
+}
+.modal-close-btn:hover { color: var(--text); }
+.profile-field { margin-bottom: 12px; }
+.profile-field .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.profile-field .value { font-size: 15px; color: var(--text); font-weight: 600; }
+.profile-duties-box {
+  background: #f7f8fc; border-radius: 8px; padding: 14px; margin-top: 6px;
+  font-size: 13.5px; line-height: 1.6; color: var(--text);
+}
+.user-name-btn {
+  background: none; border: none; cursor: pointer; color: inherit; font: inherit;
+  text-decoration: underline; text-decoration-style: dotted; padding: 0;
+}
+.user-name-btn:hover { color: #fff; }

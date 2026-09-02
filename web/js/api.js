@@ -247,10 +247,63 @@ function renderTopbar(activePage) {
     <div class="user-info">
       <a href="/help.html${getHelpAnchorFor(activePage)}" title="Trợ giúp" style="color:#cfd8f5; font-size:18px; text-decoration:none;">❓</a>
       ${safeLangSwitcher}
-      <span>${user ? user.fullName + " (" + user.role + ")" : ""}</span>
+      <button class="user-name-btn" onclick="showProfileModal()">${user ? user.fullName + " (" + user.role + ")" : ""}</button>
       <button class="logout" onclick="logout()">${safeT("common.logout", "Đăng xuất")}</button>
     </div>
+    <div class="modal-overlay" id="profileModalOverlay" style="display:none;" onclick="if(event.target===this) closeProfileModal()">
+      <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2>${safeT("profile.modalTitle", "Thông tin của bạn")}</h2>
+          <button class="modal-close-btn" onclick="closeProfileModal()">✕</button>
+        </div>
+        <div id="profileModalBody"></div>
+      </div>
+    </div>
   `;
+}
+
+// Hien modal "Thong tin cua ban" — lay du lieu ngay tu user dang luu trong
+// localStorage (khong can goi API them), dich noi dung nhiem vu theo dung
+// vai tro cua nguoi dang dang nhap.
+function showProfileModal() {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  const roleLabel = (typeof tRaw === "function" && tRaw(`profile.roleLabels.${user.role}`)) || user.role;
+  const duties = (typeof tRaw === "function" && tRaw(`profile.roleDuties.${user.role}`)) || "";
+  const safeT2 = typeof t === "function" ? t : (key, fallback) => fallback || key;
+
+  document.getElementById("profileModalBody").innerHTML = `
+    <div class="profile-field">
+      <div class="label">${safeT2("profile.fullNameLabel", "Họ và tên")}</div>
+      <div class="value">${user.fullName}</div>
+    </div>
+    <div class="profile-field">
+      <div class="label">${safeT2("profile.emailLabel", "Email")}</div>
+      <div class="value">${user.email}</div>
+    </div>
+    <div class="profile-field">
+      <div class="label">${safeT2("profile.departmentLabel", "Phòng ban")}</div>
+      <div class="value">${user.department ? user.department.name : "—"}</div>
+    </div>
+    <div class="profile-field">
+      <div class="label">${safeT2("profile.roleLabel", "Vai trò")}</div>
+      <div class="value">${roleLabel} <span style="color:var(--muted); font-weight:400;">(${user.role})</span></div>
+    </div>
+    <div class="profile-field">
+      <div class="label">${safeT2("profile.dutiesTitle", "Nhiệm vụ & Chức năng")}</div>
+      <div class="profile-duties-box">${duties}</div>
+    </div>
+    <a href="/help.html#permissions" style="display:inline-block; margin-top:4px; color:var(--navy); font-weight:600; font-size:13.5px;">
+      ${safeT2("profile.viewFullPermissionsLink", "Xem đầy đủ bảng phân quyền →")}
+    </a>
+  `;
+  document.getElementById("profileModalOverlay").style.display = "flex";
+}
+
+function closeProfileModal() {
+  const el = document.getElementById("profileModalOverlay");
+  if (el) el.style.display = "none";
 }
 
 // Anh xa "dang o trang nao" -> "phan Tro giup tuong ung" — bam nut ❓ o
