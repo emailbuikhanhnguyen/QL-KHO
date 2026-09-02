@@ -212,3 +212,32 @@ tr.clickable:hover { background: #f9fafc; }
   text-decoration: underline; text-decoration-style: dotted; padding: 0;
 }
 .user-name-btn:hover { color: #fff; }
+
+/* ==== Responsive cho dien thoai — quan trong vi Kiem ke thuong dung dien thoai ==== */
+
+/* Boc bang trong div nay (tu dong bang JS, xem api.js) — neu bang qua
+   nhieu cot khong vua man hinh, CHI RIENG BANG do cuon ngang, khong keo
+   tran ca trang. */
+.table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 640px) {
+  .page { padding: 16px 12px 40px; }
+
+  /* Topbar: cho phep wrap xuong dong thay vi ep ca 4-5 khoi tren 1 hang
+     ngang co dinh (day la nguyen nhan chinh gay tran ngang moi trang). */
+  .topbar { flex-wrap: wrap; gap: 8px 0; padding: 10px 14px; }
+  .topbar nav { flex-wrap: wrap; gap: 4px 0; order: 3; width: 100%; justify-content: center; }
+  .topbar nav a { margin: 0 8px; padding: 4px 0; }
+  .topbar .user-info { flex-wrap: wrap; justify-content: center; width: 100%; order: 2; gap: 8px 12px; }
+
+  /* Form nhieu cot -> ve 1 cot cho de bam tren man hinh hep */
+  .form-grid, .form-grid.cols-3 { grid-template-columns: 1fr; }
+
+  /* Trang dang nhap: bo chieu rong co dinh 380px, dung % de tu co gian */
+  .login-box { width: 100%; max-width: 380px; padding: 24px; box-sizing: border-box; }
+  .login-wrapper { padding: 16px; box-sizing: border-box; }
+
+  /* Cac o luoi (Dashboard, chi tiet phieu) cung ve 1 cot cho de doc */
+  .dash-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+}

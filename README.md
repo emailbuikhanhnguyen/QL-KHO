@@ -528,6 +528,19 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 
 **Cách cập nhật phiên bản cho các lần sau**: mở `package.json`, sửa trường `"version"` thành ngày hiện tại (VD: `"2026.09.15.1"`, tăng số cuối nếu deploy nhiều lần trong cùng ngày) — trang Đăng nhập sẽ tự động hiện đúng số mới sau khi deploy, không cần sửa gì thêm ở nơi khác.
 
+## 1.22. Cập nhật 02/09/2026 — Sửa lỗi tràn màn hình ngang trên điện thoại
+
+**Vấn đề**: CSS trước đây chưa từng có `@media` query cho di động — chỉ tối ưu cho desktop. Quan trọng vì Kiểm kê thường dùng điện thoại.
+
+**3 nguyên nhân gây tràn ngang đã xác nhận và sửa:**
+1. `.login-box` cố định 380px — nhiều điện thoại phổ thông chỉ rộng 360-375px, tràn ngay từ trang đăng nhập → đổi sang `width: 100%; max-width: 380px`
+2. **Topbar 7 mục menu không wrap xuống dòng** — thủ phạm chính, ảnh hưởng mọi trang có menu → thêm `flex-wrap: wrap`, các khối (logo/menu/thông tin user) tự xuống dòng riêng khi màn hình hẹp
+3. Bảng nhiều cột (Nhập kho có 6 cột) không có cơ chế cuộn ngang riêng → thêm cơ chế **tự động bọc mọi bảng** bằng `MutationObserver` trong `api.js` (không cần sửa tay từng file HTML, tự áp dụng cho cả module thêm sau này)
+
+**Đã tự kiểm tra bằng cách render thật ở đúng độ rộng 360px** (kích thước điện thoại Android phổ biến nhất) bằng `wkhtmltoimage` — xác nhận cả trang Đăng nhập lẫn Topbar không còn tràn ngang, đọc rõ ràng, dễ bấm.
+
+**Không đổi file HTML nào** — chỉ sửa `style.css` (thêm phần responsive) và `api.js` (thêm cơ chế tự động bọc bảng), nên không cần `npm test`/`npm run build`, chỉ cần deploy lại phần giao diện web.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

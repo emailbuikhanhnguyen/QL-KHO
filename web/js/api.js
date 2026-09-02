@@ -321,3 +321,39 @@ function getHelpAnchorFor(activePage) {
   };
   return map[activePage] ? map[activePage] : "";
 }
+
+// -------------------------------------------------------------------------
+// Tu dong boc moi <table> trong 1 div co the cuon ngang rieng — tranh
+// tinh trang bang nhieu cot (VD: Nhap kho co 6 cot) lam tran ca trang tren
+// man hinh dien thoai. Quan trong vi Kiem ke thuong dung dien thoai.
+//
+// Dung MutationObserver de tu dong ap dung cho CA table duoc render dong
+// bang JS sau khi tai trang (hau het cac trang deu fetch du lieu roi moi
+// ve bang, khong phai table co san tu dau) — khong can goi tay o tung noi,
+// va tu dong hoat dong voi ca trang/module them sau nay.
+// -------------------------------------------------------------------------
+function wrapTableForMobileScroll(table) {
+  if (table.parentElement && table.parentElement.classList.contains("table-scroll-wrapper")) return;
+  const wrapper = document.createElement("div");
+  wrapper.className = "table-scroll-wrapper";
+  table.parentNode.insertBefore(wrapper, table);
+  wrapper.appendChild(table);
+}
+
+function initTableScrollWrapping() {
+  document.querySelectorAll("table").forEach(wrapTableForMobileScroll);
+  const observer = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      m.addedNodes.forEach((node) => {
+        if (node.nodeType !== 1) return; // chi xu ly element node
+        if (node.tagName === "TABLE") wrapTableForMobileScroll(node);
+        if (node.querySelectorAll) node.querySelectorAll("table").forEach(wrapTableForMobileScroll);
+      });
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Script nay nam cuoi body (sau khi DOM da dung), nen goi ngay khong can
+// doi DOMContentLoaded.
+initTableScrollWrapping();
