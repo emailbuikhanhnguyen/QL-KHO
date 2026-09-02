@@ -10,8 +10,10 @@
   <div class="login-wrapper">
     <div class="login-box">
       <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;" id="langSwitcherSlot"></div>
-      <h1 data-i18n="login.title">Hệ thống Quản lý Kho NPL</h1>
-      <p class="subtitle" data-i18n="login.subtitle">Đăng nhập để tiếp tục</p>
+      <img src="/images/logo.png" alt="S.E.C." style="display:block; margin: 0 auto 16px; height: 40px;" />
+      <h1 data-i18n="login.title" style="text-align:center;">Hệ thống Quản lý Kho NPL</h1>
+      <p class="subtitle" data-i18n="login.subtitle" style="text-align:center;">Đăng nhập để tiếp tục</p>
+      <p style="text-align:center; color:var(--muted); font-size:12px; margin:-8px 0 16px;" id="versionLabel"></p>
 
       <div class="error-box" id="loginError"></div>
 
@@ -44,6 +46,16 @@
         btn.style.borderColor = "#ccc";
         btn.style.color = "#666";
       });
+
+      // Hien so phien ban — lay tu package.json qua API, khong hardcode o
+      // day de tranh quen cap nhat lech nhau giua nhieu noi.
+      try {
+        const res = await fetch("/api/app-info");
+        const info = await res.json();
+        document.getElementById("versionLabel").textContent = "v" + info.version;
+      } catch (e) {
+        // Khong hien gi neu loi — khong quan trong bang viec form dang nhap van hoat dong binh thuong
+      }
     })();
 
     document.getElementById("loginForm").addEventListener("submit", async (e) => {

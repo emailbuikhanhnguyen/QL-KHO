@@ -514,6 +514,20 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 
 **Đã tự kiểm tra bằng cách chạy thật hàm `showProfileModal()`** (không chỉ tin cấu trúc dữ liệu đúng) — mô phỏng đủ 2 trường hợp: vai trò Thủ kho (tiếng Việt) và vai trò Admin không có phòng ban (tiếng Anh, kiểm tra riêng trường hợp `department = null` hiển thị đúng dấu "—").
 
+## 1.21. Cập nhật 02/09/2026 — Logo + số phiên bản trên trang Đăng nhập
+
+**Ý tưởng bắt nguồn từ 1 tool nội bộ khác của công ty (IT Asset Inventory)** — có cùng logo S.E.C. + số phiên bản nhỏ hiển thị ngay dưới tên app trên màn hình đăng nhập.
+
+**Đã làm:**
+- Thêm logo S.E.C. lên đầu trang Đăng nhập (`web/images/logo.png`)
+- Đổi cách đặt số phiên bản sang định dạng theo ngày: `2026.09.02.1` (thay vì `0.1.0` semantic version cũ) — dễ biết ngay bản đang chạy là mới hay cũ
+- **Endpoint công khai mới** `GET /api/app-info` (không cần đăng nhập, vì trang login cần gọi được trước khi có token) — đọc trực tiếp `package.json` bằng `fs.readFileSync`, trả về `{ name, version }`
+- Trang Đăng nhập tự gọi endpoint này lúc tải trang, hiển thị `v{version}` ngay dưới tiêu đề
+
+**Lưu ý kỹ thuật quan trọng — vì sao không dùng `import ... from 'package.json'` (cách thường thấy)**: dự án này từng gặp sự cố nghiêm trọng nhiều lần khi sửa `tsconfig.json` (mất cả buổi debug lỗi deploy). Cách `import` trực tiếp file JSON đòi hỏi bật thêm `resolveJsonModule` trong `tsconfig.json` — để tránh động vào file này thêm 1 lần nữa, chọn cách đọc file bằng `fs.readFileSync` lúc chạy (runtime), không cần sửa bất kỳ cấu hình biên dịch nào.
+
+**Cách cập nhật phiên bản cho các lần sau**: mở `package.json`, sửa trường `"version"` thành ngày hiện tại (VD: `"2026.09.15.1"`, tăng số cuối nếu deploy nhiều lần trong cùng ngày) — trang Đăng nhập sẽ tự động hiện đúng số mới sau khi deploy, không cần sửa gì thêm ở nơi khác.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

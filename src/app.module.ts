@@ -20,6 +20,7 @@ import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
 import { StocktakeModule } from './modules/stocktake/stocktake.module';
 import { HealthCheckModule } from './modules/health-check/health-check.module';
+import { AppInfoModule } from './modules/app-info/app-info.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { HealthCheckModule } from './modules/health-check/health-check.module';
     StockLedgerModule,
     StocktakeModule,
     HealthCheckModule,
+    AppInfoModule,
   ],
 })
 export class AppModule {}
