@@ -337,6 +337,52 @@
           "Click the Help icon (❓) on any page to come back here, jumped straight to the relevant section."
         ]
       },
+      "demoAccounts": {
+        "title": "Demo Accounts",
+        "intro": "Use these to sign in as different roles while testing the system.",
+        "accountColLabels": [
+          "Email",
+          "Password",
+          "Role"
+        ],
+        "accounts": [
+          [
+            "admin@congty.com",
+            "Admin@1234",
+            "Admin — Full access"
+          ],
+          [
+            "kho.rm@sec.com",
+            "Demo@123456",
+            "Warehouse staff — Raw Materials (RM)"
+          ],
+          [
+            "kho.fg@sec.com",
+            "Demo@123456",
+            "Warehouse staff — Finished Goods"
+          ],
+          [
+            "qc@sec.com",
+            "Demo@123456",
+            "QC Manager"
+          ],
+          [
+            "head.pmc@sec.com",
+            "Demo@123456",
+            "PMC Department Head"
+          ],
+          [
+            "nv.pmc@sec.com",
+            "Demo@123456",
+            "PMC Staff"
+          ],
+          [
+            "bod@sec.com",
+            "Demo@123456",
+            "Board of Directors"
+          ]
+        ]
+      },
       "goodsReceipt": {
         "title": "Goods Receipt",
         "intro": "Use this when receiving goods from a supplier into the warehouse.",
@@ -443,6 +489,33 @@
           [
             "REQUESTER",
             "Can only create issue requests, cannot approve anything"
+          ]
+        ],
+        "moduleRulesTitle": "Department-check rules per module",
+        "moduleRules": [
+          [
+            "Master Data (Items, Suppliers...)",
+            "No department check — any WAREHOUSE_STAFF can edit for any warehouse"
+          ],
+          [
+            "Goods Receipt",
+            "Checked against the department managing the RECEIVING warehouse"
+          ],
+          [
+            "QC",
+            "No department check — QC_MANAGER can approve for any warehouse"
+          ],
+          [
+            "Issue",
+            "Level-1 approval checks the REQUESTER's department; releasing stock checks the ISSUING warehouse's department"
+          ],
+          [
+            "Warehouse Transfer",
+            "Ship confirmation checks the SOURCE warehouse's department; receive confirmation checks the DESTINATION warehouse's department"
+          ],
+          [
+            "Stocktake",
+            "Every action requires the correct department managing that warehouse — the strictest rule in the system. Tolerance override is Admin-only"
           ]
         ]
       },

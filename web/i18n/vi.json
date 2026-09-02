@@ -337,6 +337,52 @@
           "Bấm biểu tượng Trợ giúp (❓) ở bất kỳ trang nào để quay lại đây, đúng phần liên quan tới trang đang xem."
         ]
       },
+      "demoAccounts": {
+        "title": "Tài khoản Demo",
+        "intro": "Dùng để đăng nhập thử ở mọi vai trò khi test hệ thống.",
+        "accountColLabels": [
+          "Email",
+          "Mật khẩu",
+          "Vai trò"
+        ],
+        "accounts": [
+          [
+            "admin@congty.com",
+            "Admin@1234",
+            "Admin — Toàn quyền"
+          ],
+          [
+            "kho.rm@sec.com",
+            "Demo@123456",
+            "Thủ kho — Kho nguyên phụ liệu (RM)"
+          ],
+          [
+            "kho.fg@sec.com",
+            "Demo@123456",
+            "Thủ kho — Kho thành phẩm"
+          ],
+          [
+            "qc@sec.com",
+            "Demo@123456",
+            "QC Manager"
+          ],
+          [
+            "head.pmc@sec.com",
+            "Demo@123456",
+            "Trưởng phòng PMC"
+          ],
+          [
+            "nv.pmc@sec.com",
+            "Demo@123456",
+            "Nhân viên PMC"
+          ],
+          [
+            "bod@sec.com",
+            "Demo@123456",
+            "Ban Giám Đốc"
+          ]
+        ]
+      },
       "goodsReceipt": {
         "title": "Nhập kho",
         "intro": "Dùng khi nhận hàng từ nhà cung cấp về kho.",
@@ -443,6 +489,33 @@
           [
             "REQUESTER",
             "Chỉ tạo được yêu cầu xuất kho, không duyệt được gì"
+          ]
+        ],
+        "moduleRulesTitle": "Quy tắc kiểm tra phòng ban theo từng module",
+        "moduleRules": [
+          [
+            "Danh mục (Vật tư, NCC...)",
+            "Không kiểm tra phòng ban — mọi WAREHOUSE_STAFF sửa được ở mọi kho"
+          ],
+          [
+            "Nhập kho",
+            "Theo phòng ban quản lý KHO đang nhập"
+          ],
+          [
+            "QC",
+            "Không kiểm tra phòng ban — QC_MANAGER duyệt được mọi kho"
+          ],
+          [
+            "Xuất kho",
+            "Duyệt cấp 1 theo phòng ban NGƯỜI TẠO phiếu; lúc Thực xuất theo phòng ban KHO xuất"
+          ],
+          [
+            "Điều chuyển kho",
+            "Xác nhận xuất theo phòng ban kho NGUỒN; xác nhận nhận theo phòng ban kho ĐÍCH"
+          ],
+          [
+            "Kiểm kê",
+            "Mọi hành động đều theo đúng phòng ban quản lý kho — chặt nhất trong toàn hệ thống. Riêng Ghi đè vượt dung sai chỉ dành cho Admin"
           ]
         ]
       },

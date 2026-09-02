@@ -3,6 +3,7 @@ requireAuth();
 // Thu tu hien thi cac phan — khop voi thu tu cac module tren Dashboard.
 const SECTION_ORDER = [
   "gettingStarted",
+  "demoAccounts",
   "goodsReceipt",
   "qc",
   "issueRequest",
@@ -58,22 +59,48 @@ function renderHelpPage() {
 }
 
 function renderSection(key, sec) {
+  // Ghep noi nhieu khoi noi dung lien tiep (khong con la if/else loai tru
+  // nhau) — cho phep 1 muc vua co bang vai tro, vua co bang ghi chu rieng
+  // tung module (VD: muc "Phan quyen").
   let bodyHtml = "";
 
   if (Array.isArray(sec.steps)) {
-    bodyHtml = `<ol>${sec.steps.map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ol>`;
-  } else if (Array.isArray(sec.roles)) {
+    bodyHtml += `<ol>${sec.steps.map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ol>`;
+  }
+
+  if (Array.isArray(sec.roles)) {
     const rows = sec.roles
       .map(([role, desc]) => `<tr><td><code>${escapeHtml(role)}</code></td><td>${escapeHtml(desc)}</td></tr>`)
       .join("");
-    bodyHtml = `
+    bodyHtml += `
       <table>
         <thead><tr><th>${escapeHtml(sec.roleColLabel)}</th><th>${escapeHtml(sec.descColLabel)}</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
-  } else if (Array.isArray(sec.items)) {
+  }
+
+  // Bang 2 cot tuy y (module / ghi chu) — dung cho phan "quy tac theo tung
+  // module" trong muc Phan quyen.
+  if (Array.isArray(sec.moduleRules)) {
+    bodyHtml += `<h3 style="margin-top:18px;">${escapeHtml(sec.moduleRulesTitle || "")}</h3>`;
+    const rows = sec.moduleRules
+      .map(([mod, rule]) => `<tr><td><strong>${escapeHtml(mod)}</strong></td><td>${escapeHtml(rule)}</td></tr>`)
+      .join("");
+    bodyHtml += `<table><tbody>${rows}</tbody></table>`;
+  }
+
+  // Bang N cot tuy y theo sec.accountColLabels — dung cho muc Tai khoan Demo.
+  if (Array.isArray(sec.accounts) && Array.isArray(sec.accountColLabels)) {
+    const headHtml = sec.accountColLabels.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
+    const rows = sec.accounts
+      .map((row) => `<tr>${row.map((cell, i) => (i === 0 ? `<td><code>${escapeHtml(cell)}</code></td>` : `<td>${escapeHtml(cell)}</td>`)).join("")}</tr>`)
+      .join("");
+    bodyHtml += `<table><thead><tr>${headHtml}</tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  if (Array.isArray(sec.items)) {
     // FAQ: moi item la [cau hoi, cau tra loi]
-    bodyHtml = sec.items
+    bodyHtml += sec.items
       .map(
         ([q, a]) => `
         <div class="faq-item">

@@ -494,6 +494,16 @@ Trong `warehouse-transfers.js`, vòng lặp `.map((t) => ...)` từng dùng `t` 
 
 **Giờ đây, module Kiểm kê là module cuối cùng có đầy đủ giao diện web** — không còn module nào phải thao tác qua Swagger nữa (trừ các màn hình quản lý danh mục nền tảng như Item/Supplier, vốn ít thay đổi và không nằm trong phạm vi demo nghiệp vụ chính).
 
+## 1.19. Cập nhật 02/09/2026 — Mở rộng module Trợ giúp: Phân quyền chi tiết + Tài khoản Demo
+
+**Thay đổi kỹ thuật đáng chú ý**: `help.js` trước đây chỉ hiển thị được **1 trong 3 kiểu nội dung** cho mỗi mục (danh sách bước / bảng vai trò / FAQ — dùng if/else loại trừ nhau). Đã sửa lại để **ghép nối được nhiều khối nội dung liên tiếp** trong cùng 1 mục — nhờ vậy mục "Phân quyền" giờ có **cả 2 bảng**: bảng vai trò (như cũ) + bảng mới "Quy tắc kiểm tra phòng ban theo từng module" (Nhập kho, QC, Xuất kho, Điều chuyển kho, Kiểm kê... mỗi module kiểm tra phòng ban theo tiêu chí khác nhau).
+
+**Mục mới "Tài khoản Demo"** — liệt kê đủ 7 tài khoản (Admin + 6 vai trò) ngay trong app, không cần mở file Word riêng khi đang test đổi qua lại nhiều vai trò.
+
+**Đã tự kiểm tra bằng cách chạy thật `renderSection()`** với dữ liệu thật (không chỉ tin cấu trúc JSON đúng) — xác nhận số lượng thẻ `<table>`/`<tr>` cân bằng đúng dự kiến, rồi **render ra ảnh thật bằng `wkhtmltoimage`** để xem trực quan trước khi giao (bắt được 1 lỗi hiển thị dấu tiếng Việt do file test tạm thiếu khai báo charset — xác nhận đây chỉ là lỗi file test, không phải lỗi code thật, vì `help.html` gốc đã khai báo UTF-8 đầy đủ).
+
+Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:
