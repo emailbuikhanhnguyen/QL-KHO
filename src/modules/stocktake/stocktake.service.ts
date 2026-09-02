@@ -58,9 +58,10 @@ export class StocktakeService {
     });
 
     if (currentBalances.length === 0) {
-      throw new BadRequestException(
-        `Kho '${warehouse.name}' hien khong co ton kho nao de kiem ke.`,
-      );
+      throw new BadRequestException({
+        key: 'NO_STOCK_TO_COUNT',
+        params: { warehouse: warehouse.name },
+      });
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -128,7 +129,7 @@ export class StocktakeService {
       where: { id },
       include: { lines: { include: { lot: { include: { item: true } } } } },
     });
-    if (!found) throw new NotFoundException(`Stocktake #${id} not found`);
+    if (!found) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'Stocktake', id } });
     return found;
   }
 
@@ -151,9 +152,7 @@ export class StocktakeService {
     });
 
     if (!line) {
-      throw new NotFoundException(
-        `Lo hang nay khong nam trong phien kiem ke nao dang mo. Kiem tra lai da bat dau kiem ke dung kho chua.`,
-      );
+      throw new NotFoundException({ key: 'LOT_NOT_IN_ACTIVE_STOCKTAKE' });
     }
 
     return line;
@@ -173,7 +172,7 @@ export class StocktakeService {
     await this.assertUserBelongsToWarehouseDept(stocktake.warehouseId, currentUser);
 
     const line = stocktake.lines.find((l) => l.id === lineId);
-    if (!line) throw new NotFoundException(`StocktakeLine #${lineId} not found`);
+    if (!line) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'StocktakeLine', id: lineId } });
 
     return this.prisma.stocktakeLine.update({
       where: { id: lineId },
@@ -195,7 +194,7 @@ export class StocktakeService {
 
   async forceComplete(stocktakeId: number, dto: ForceCompleteDto, currentUser: RequestUser) {
     if (currentUser.role !== Role.ADMIN) {
-      throw new ForbiddenException('Chi Admin moi duoc ghi de vuot dung sai kiem ke');
+      throw new ForbiddenException({ key: 'ONLY_ADMIN_CAN_FORCE_COMPLETE' });
     }
     return this.doComplete(stocktakeId, currentUser, true, dto.reason);
   }
@@ -214,9 +213,10 @@ export class StocktakeService {
 
     const uncounted = stocktake.lines.filter((l) => l.countedQuantity === null);
     if (uncounted.length > 0) {
-      throw new BadRequestException(
-        `Con ${uncounted.length} dong hang chua duoc dem. Phai dem het truoc khi hoan tat.`,
-      );
+      throw new BadRequestException({
+        key: 'UNCOUNTED_LINES_REMAINING',
+        params: { count: uncounted.length },
+      });
     }
 
     const warehouse = await this.prisma.warehouse.findUniqueOrThrow({
@@ -244,7 +244,8 @@ export class StocktakeService {
       const outOfTolerance = checks.filter((c) => !c.withinTolerance);
       if (outOfTolerance.length > 0) {
         throw new ConflictException({
-          message: `Co ${outOfTolerance.length} dong hang chenh lech vuot dung sai cho phep (${tolerancePercent}%). Can kiem tra lai hoac dung Admin de ghi de.`,
+          key: 'TOLERANCE_EXCEEDED',
+          params: { count: outOfTolerance.length, tolerance: tolerancePercent },
           outOfTolerance: outOfTolerance.map((c) => ({
             lineId: c.lineId,
             lotId: c.lotId,
@@ -341,9 +342,10 @@ export class StocktakeService {
     action: string,
   ) {
     if (!allowed.includes(stocktake.status)) {
-      throw new ConflictException(
-        `Khong the ${action} phien kiem ke dang o trang thai '${stocktake.status}'`,
-      );
+      throw new ConflictException({
+        key: 'INVALID_STATUS_TRANSITION',
+        params: { action, status: stocktake.status },
+      });
     }
   }
 
@@ -354,7 +356,7 @@ export class StocktakeService {
     });
     if (!warehouse?.departmentId) return;
     if (warehouse.departmentId !== currentUser.departmentId) {
-      throw new ForbiddenException('Ban khong thuoc phong ban quan ly kho nay');
+      throw new ForbiddenException({ key: 'NOT_IN_YOUR_DEPARTMENT' });
     }
   }
 
@@ -362,7 +364,7 @@ export class StocktakeService {
     const warehouse = await this.prisma.warehouse.findFirst({
       where: { id: warehouseId, deletedAt: null },
     });
-    if (!warehouse) throw new BadRequestException(`Warehouse #${warehouseId} khong ton tai`);
+    if (!warehouse) throw new BadRequestException({ key: 'WAREHOUSE_NOT_FOUND', params: { id: warehouseId } });
     return warehouse;
   }
 
@@ -371,9 +373,10 @@ export class StocktakeService {
       where: { warehouseId, status: StocktakeStatus.IN_PROGRESS },
     });
     if (active) {
-      throw new ConflictException(
-        `Kho nay dang co phien kiem ke '${active.code}' chua hoan tat. Phai hoan tat/huy truoc khi bat dau phien moi.`,
-      );
+      throw new ConflictException({
+        key: 'DUPLICATE_ACTIVE_STOCKTAKE',
+        params: { code: active.code },
+      });
     }
   }
 

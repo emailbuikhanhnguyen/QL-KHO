@@ -25,7 +25,8 @@
     "qc": "QC",
     "issue": "Issue",
     "transfer": "Transfer",
-    "reports": "Reports"
+    "reports": "Reports",
+    "stocktake": "Stocktake"
   },
   "login": {
     "title": "NPL Warehouse Management System",
@@ -391,11 +392,22 @@
           "Click \"Export Excel\" on either tab to download a file."
         ]
       },
+      "stocktakeManagement": {
+        "title": "Stocktake",
+        "intro": "Count physical stock and reconcile against the system quantity per lot.",
+        "steps": [
+          "Go to Stocktake → click Start New Stocktake → select the warehouse to count.",
+          "The system automatically snapshots current stock per lot and locks that warehouse's Receipt/Issue/Transfer transactions while counting is in progress.",
+          "Enter the actual counted quantity for each line — either type it directly on a computer, or use your phone to scan QR tags for faster counting (see \"QR Scan Stocktake\" below).",
+          "Once every line is counted, click Complete Stocktake — the system automatically adjusts stock to match the counted quantities.",
+          "If any line's variance exceeds the allowed tolerance, the system blocks completion — only Admin can override and complete, with a mandatory reason."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
-        "intro": "Use your phone for fast counting without manually searching for lots.",
+        "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
         "steps": [
-          "An open Stocktake session for the correct warehouse is required first (currently created via Swagger, no dedicated web screen yet).",
+          "Make sure a stocktake session is already open for the correct warehouse (start it on the Stocktake page on a computer).",
           "Open this page on your phone's browser and allow Camera access.",
           "Point the camera at the QR tag on the lot — the system automatically finds the right line to count.",
           "Enter the actual counted quantity → Confirm — the camera automatically resumes to scan the next lot.",
@@ -456,5 +468,45 @@
         ]
       }
     }
+  },
+  "stocktake": {
+    "title": "Stocktake",
+    "subtitle": "Count physical stock and reconcile against system quantity per lot",
+    "listTitle": "Stocktake Sessions",
+    "createBtn": "+ Start New Stocktake",
+    "createTitle": "Start New Stocktake Session",
+    "warehouseLabel": "Warehouse to count *",
+    "noteLabel": "Note",
+    "submitCreateBtn": "Start",
+    "cancelBtn": "Cancel",
+    "tableCode": "Code",
+    "tableWarehouse": "Warehouse",
+    "tableStatus": "Status",
+    "tableLines": "Lines",
+    "tableDate": "Started",
+    "emptyState": "No stocktake sessions yet. Click \"Start New Stocktake\" to create one.",
+    "detailTitle": "Stocktake Detail",
+    "closeBtn": "Close",
+    "linesHeaderItem": "Item",
+    "linesHeaderLotCode": "Lot Code",
+    "linesHeaderSystemQty": "System Qty",
+    "linesHeaderCountedQty": "Counted Qty",
+    "linesHeaderVariance": "Variance",
+    "linesHeaderAction": "Action",
+    "notCountedYet": "Not counted",
+    "saveCount": "Save",
+    "completeBtn": "✔ Complete Stocktake",
+    "cancelStocktakeBtn": "Cancel Session",
+    "forceCompleteBtn": "Override & Complete (Admin)",
+    "scanLinkText": "📷 Use your phone to scan QR for faster counting",
+    "toleranceLabel": "Allowed tolerance",
+    "uncountedWarning": "{{count}} lines still uncounted — all lines must be counted before completing.",
+    "toleranceExceededTitle": "Some lines exceed the allowed tolerance",
+    "toleranceExceededDesc": "Please recheck the counts, or use an Admin account to override and complete.",
+    "forceCompleteReasonPrompt": "Enter reason for overriding tolerance:",
+    "cancelConfirm": "Cancel this stocktake session? This cannot be undone.",
+    "warehouseNoStockWarning": "This warehouse has no stock to count.",
+    "duplicateActiveWarning": "This warehouse already has another stocktake in progress.",
+    "invalidCountEntry": "Please enter a valid counted quantity."
   }
 }

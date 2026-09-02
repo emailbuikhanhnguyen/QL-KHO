@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kiểm kê — Kho NPL</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .variance-ok { color: var(--green, #1e7b34); font-weight: 600; }
+    .variance-bad { color: #c00; font-weight: 600; }
+    .count-input-inline { width: 110px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; }
+    .scan-link-banner {
+      background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px;
+      padding: 10px 14px; margin-bottom: 16px; font-size: 13.5px;
+    }
+    .scan-link-banner a { color: var(--navy); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="stocktake.title">Kiểm kê</h1>
+    <p class="subtitle" data-i18n="stocktake.subtitle">Đếm thực tế và đối chiếu với tồn kho hệ thống theo từng lô hàng</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="stocktake.listTitle">Danh sách phiên kiểm kê</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="stocktake.createBtn">+ Bắt đầu kiểm kê mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="stocktake.createTitle">Bắt đầu phiên kiểm kê mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label data-i18n="stocktake.warehouseLabel">Kho cần kiểm kê *</label>
+        <select id="f_warehouseId"></select>
+      </div>
+      <div class="form-row">
+        <label data-i18n="stocktake.noteLabel">Ghi chú</label>
+        <textarea id="f_note"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" id="createSubmitBtn" data-i18n="stocktake.submitCreateBtn">Bắt đầu</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="stocktake.cancelBtn">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="stocktake.detailTitle">Chi tiết phiên kiểm kê</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="stocktake.closeBtn">Đóng</button>
+      </div>
+      <div class="scan-link-banner">
+        <span data-i18n="stocktake.scanLinkText">📷 Dùng điện thoại quét QR để đếm nhanh hơn</span> —
+        <a href="/stocktake-scan.html" target="_blank">stocktake-scan.html</a>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/stocktake.js"></script>
+</body>
+</html>

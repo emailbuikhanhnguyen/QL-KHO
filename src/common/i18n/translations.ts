@@ -145,4 +145,34 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     en: 'You can only modify requests that you created',
     zh: '您只能操作自己创建的申请',
   },
+  NO_STOCK_TO_COUNT: {
+    vi: "Kho '{{warehouse}}' hiện không có tồn kho nào để kiểm kê",
+    en: "Warehouse '{{warehouse}}' currently has no stock to count",
+    zh: '仓库「{{warehouse}}」目前没有可盘点的库存',
+  },
+  LOT_NOT_IN_ACTIVE_STOCKTAKE: {
+    vi: 'Lô hàng này không nằm trong phiên kiểm kê nào đang mở. Kiểm tra lại đã bắt đầu kiểm kê đúng kho chưa',
+    en: 'This lot is not part of any open stocktake session. Check that a stocktake has been started for the correct warehouse',
+    zh: '该批次不属于任何正在进行的盘点会话。请检查是否已为正确的仓库开始盘点',
+  },
+  ONLY_ADMIN_CAN_FORCE_COMPLETE: {
+    vi: 'Chỉ Admin mới được ghi đè vượt dung sai kiểm kê',
+    en: 'Only Admin can override the stocktake tolerance',
+    zh: '只有管理员才能强制覆盖盘点误差范围',
+  },
+  UNCOUNTED_LINES_REMAINING: {
+    vi: 'Còn {{count}} dòng hàng chưa được đếm. Phải đếm hết trước khi hoàn tất',
+    en: '{{count}} lines are still uncounted. All lines must be counted before completing',
+    zh: '还有 {{count}} 行尚未盘点。必须全部盘点完毕才能完成',
+  },
+  TOLERANCE_EXCEEDED: {
+    vi: 'Có {{count}} dòng hàng chênh lệch vượt dung sai cho phép ({{tolerance}}%). Cần kiểm tra lại hoặc dùng Admin để ghi đè',
+    en: '{{count}} lines exceed the allowed tolerance ({{tolerance}}%). Please recheck or use an Admin account to override',
+    zh: '有 {{count}} 行差异超出允许的误差范围（{{tolerance}}%）。请重新核对或使用管理员账号强制覆盖',
+  },
+  DUPLICATE_ACTIVE_STOCKTAKE: {
+    vi: "Kho này đang có phiên kiểm kê '{{code}}' chưa hoàn tất. Phải hoàn tất/hủy trước khi bắt đầu phiên mới",
+    en: "This warehouse already has an unfinished stocktake session '{{code}}'. It must be completed/cancelled before starting a new one",
+    zh: '该仓库已有未完成的盘点会话「{{code}}」。必须先完成/取消该会话才能开始新的盘点',
+  },
 };

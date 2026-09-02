@@ -25,7 +25,8 @@
     "qc": "QC",
     "issue": "Xuất kho",
     "transfer": "Điều chuyển",
-    "reports": "Báo cáo"
+    "reports": "Báo cáo",
+    "stocktake": "Kiểm kê"
   },
   "login": {
     "title": "Hệ thống Quản lý Kho NPL",
@@ -391,11 +392,22 @@
           "Bấm \"Xuất Excel\" ở mỗi tab để tải file về máy."
         ]
       },
+      "stocktakeManagement": {
+        "title": "Kiểm kê",
+        "intro": "Đếm thực tế và đối chiếu với tồn kho hệ thống theo từng lô hàng.",
+        "steps": [
+          "Vào Kiểm kê → bấm Bắt đầu kiểm kê mới → chọn kho cần kiểm.",
+          "Hệ thống tự động chụp lại tồn kho hiện tại theo từng lô, khóa các giao dịch Nhập/Xuất/Điều chuyển của kho đó lại trong lúc kiểm kê.",
+          "Nhập số đếm thực tế cho từng dòng — có thể gõ trực tiếp trên máy tính, hoặc dùng điện thoại quét mã QR để đếm nhanh hơn (xem phần \"Quét QR Kiểm kê\" bên dưới).",
+          "Đếm xong hết các dòng, bấm Hoàn tất kiểm kê — hệ thống tự điều chỉnh tồn kho theo số đếm thực tế.",
+          "Nếu có dòng chênh lệch vượt dung sai cho phép, hệ thống sẽ chặn lại — chỉ Admin mới được ghi đè và hoàn tất, kèm lý do bắt buộc."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
-        "intro": "Dùng điện thoại để kiểm kê nhanh, không cần gõ tay tìm lô hàng.",
+        "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
         "steps": [
-          "Trước tiên cần 1 phiên Kiểm kê đang mở cho đúng kho (hiện tạo qua Swagger, chưa có giao diện web riêng).",
+          "Đảm bảo đã có 1 phiên Kiểm kê đang mở cho đúng kho (bắt đầu ở trang Kiểm kê trên máy tính).",
           "Mở trang này bằng trình duyệt điện thoại, cho phép quyền Camera.",
           "Đưa camera vào tem QR dán trên lô hàng — hệ thống tự tìm đúng dòng cần đếm.",
           "Nhập số đếm thực tế → Xác nhận — camera tự bật lại để quét lô tiếp theo.",
@@ -456,5 +468,45 @@
         ]
       }
     }
+  },
+  "stocktake": {
+    "title": "Kiểm kê",
+    "subtitle": "Đếm thực tế và đối chiếu với tồn kho hệ thống theo từng lô hàng",
+    "listTitle": "Danh sách phiên kiểm kê",
+    "createBtn": "+ Bắt đầu kiểm kê mới",
+    "createTitle": "Bắt đầu phiên kiểm kê mới",
+    "warehouseLabel": "Kho cần kiểm kê *",
+    "noteLabel": "Ghi chú",
+    "submitCreateBtn": "Bắt đầu",
+    "cancelBtn": "Hủy",
+    "tableCode": "Mã phiên",
+    "tableWarehouse": "Kho",
+    "tableStatus": "Trạng thái",
+    "tableLines": "Số dòng",
+    "tableDate": "Ngày bắt đầu",
+    "emptyState": "Chưa có phiên kiểm kê nào. Bấm \"Bắt đầu kiểm kê mới\" để tạo.",
+    "detailTitle": "Chi tiết phiên kiểm kê",
+    "closeBtn": "Đóng",
+    "linesHeaderItem": "Vật tư",
+    "linesHeaderLotCode": "Mã lô",
+    "linesHeaderSystemQty": "Tồn hệ thống",
+    "linesHeaderCountedQty": "Số đếm thực tế",
+    "linesHeaderVariance": "Chênh lệch",
+    "linesHeaderAction": "Thao tác",
+    "notCountedYet": "Chưa đếm",
+    "saveCount": "Lưu",
+    "completeBtn": "✔ Hoàn tất kiểm kê",
+    "cancelStocktakeBtn": "Hủy phiên",
+    "forceCompleteBtn": "Ghi đè & Hoàn tất (Admin)",
+    "scanLinkText": "📷 Dùng điện thoại quét QR để đếm nhanh hơn",
+    "toleranceLabel": "Dung sai cho phép",
+    "uncountedWarning": "Còn {{count}} dòng chưa đếm — phải đếm hết trước khi hoàn tất.",
+    "toleranceExceededTitle": "Có dòng chênh lệch vượt dung sai cho phép",
+    "toleranceExceededDesc": "Cần kiểm tra lại số đếm, hoặc dùng tài khoản Admin để ghi đè và hoàn tất.",
+    "forceCompleteReasonPrompt": "Nhập lý do ghi đè vượt dung sai:",
+    "cancelConfirm": "Hủy phiên kiểm kê này? Không thể hoàn tác.",
+    "warehouseNoStockWarning": "Kho chưa có tồn kho nào để kiểm kê.",
+    "duplicateActiveWarning": "Kho này đang có 1 phiên kiểm kê khác chưa hoàn tất.",
+    "invalidCountEntry": "Vui lòng nhập số đếm hợp lệ."
   }
 }

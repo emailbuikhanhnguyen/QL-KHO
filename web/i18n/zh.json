@@ -25,7 +25,8 @@
     "qc": "质检",
     "issue": "出库",
     "transfer": "调拨",
-    "reports": "报表"
+    "reports": "报表",
+    "stocktake": "盘点"
   },
   "login": {
     "title": "辅料仓库管理系统",
@@ -391,11 +392,22 @@
           "在任一标签页点击“导出 Excel”下载文件。"
         ]
       },
+      "stocktakeManagement": {
+        "title": "盘点",
+        "intro": "按批次盘点实际库存并与系统数量核对。",
+        "steps": [
+          "进入盘点 → 点击开始新盘点 → 选择要盘点的仓库。",
+          "系统会自动按批次记录当前库存快照，并在盘点期间锁定该仓库的入库/出库/调拨交易。",
+          "为每一行输入实际盘点数量——可以直接在电脑上输入，也可以用手机扫描二维码更快地盘点（见下方“扫码盘点”）。",
+          "所有行盘点完毕后，点击完成盘点——系统会自动按盘点数量调整库存。",
+          "如果某行差异超出允许的误差范围，系统会阻止完成——只有管理员可以强制覆盖并完成，且必须填写原因。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
-        "intro": "用手机快速盘点，无需手动查找批次。",
+        "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
         "steps": [
-          "首先需要针对正确仓库已开启一个盘点会话（目前通过 Swagger 创建，暂无专属网页界面）。",
+          "确保已经为正确的仓库开启了一个盘点会话（在电脑上的“盘点”页面开始）。",
           "在手机浏览器中打开此页面，并允许使用摄像头。",
           "将摄像头对准批次上的二维码标签——系统会自动找到需要盘点的对应行。",
           "输入实际盘点数量 → 确认——摄像头会自动恢复以扫描下一个批次。",
@@ -456,5 +468,45 @@
         ]
       }
     }
+  },
+  "stocktake": {
+    "title": "盘点",
+    "subtitle": "按批次盘点实际库存并与系统数量核对",
+    "listTitle": "盘点会话列表",
+    "createBtn": "+ 开始新盘点",
+    "createTitle": "开始新的盘点会话",
+    "warehouseLabel": "盘点仓库 *",
+    "noteLabel": "备注",
+    "submitCreateBtn": "开始",
+    "cancelBtn": "取消",
+    "tableCode": "编号",
+    "tableWarehouse": "仓库",
+    "tableStatus": "状态",
+    "tableLines": "明细行数",
+    "tableDate": "开始日期",
+    "emptyState": "暂无盘点会话。点击“开始新盘点”创建。",
+    "detailTitle": "盘点详情",
+    "closeBtn": "关闭",
+    "linesHeaderItem": "物料",
+    "linesHeaderLotCode": "批次号",
+    "linesHeaderSystemQty": "系统库存",
+    "linesHeaderCountedQty": "实际盘点数量",
+    "linesHeaderVariance": "差异",
+    "linesHeaderAction": "操作",
+    "notCountedYet": "尚未盘点",
+    "saveCount": "保存",
+    "completeBtn": "✔ 完成盘点",
+    "cancelStocktakeBtn": "取消会话",
+    "forceCompleteBtn": "强制覆盖并完成（管理员）",
+    "scanLinkText": "📷 使用手机扫描二维码以更快盘点",
+    "toleranceLabel": "允许的误差范围",
+    "uncountedWarning": "还有 {{count}} 行尚未盘点——必须全部盘点完毕才能完成。",
+    "toleranceExceededTitle": "部分明细差异超出允许误差范围",
+    "toleranceExceededDesc": "请重新核对盘点数量，或使用管理员账号强制覆盖并完成。",
+    "forceCompleteReasonPrompt": "请输入强制覆盖误差的原因：",
+    "cancelConfirm": "确定取消此盘点会话吗？此操作无法撤销。",
+    "warehouseNoStockWarning": "该仓库暂无库存可供盘点。",
+    "duplicateActiveWarning": "该仓库已有另一个正在进行的盘点会话。",
+    "invalidCountEntry": "请输入有效的盘点数量。"
   }
 }

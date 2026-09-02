@@ -46,6 +46,11 @@ describe('i18n.util', () => {
       expect(result).toContain('mot-hanh-dong-la-chua-tung-co');
     });
 
+    it('dich dung key co 2 tham so cung luc (TOLERANCE_EXCEEDED)', () => {
+      const result = translateMessage('TOLERANCE_EXCEEDED', 'en', { count: 3, tolerance: 5 });
+      expect(result).toBe('3 lines exceed the allowed tolerance (5%). Please recheck or use an Admin account to override');
+    });
+
     it('tra ve chinh key neu khong tim thay ban dich (de de phat hien thieu sot)', () => {
       expect(translateMessage('KEY_KHONG_TON_TAI', 'vi', {})).toBe('KEY_KHONG_TON_TAI');
     });

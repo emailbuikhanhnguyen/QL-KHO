@@ -232,6 +232,7 @@ function renderTopbar(activePage) {
     { href: "/issue-requests.html", key: "issue", labelKey: "nav.issue", fallback: "Xuất kho" },
     { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer", fallback: "Điều chuyển" },
     { href: "/reports.html", key: "reports", labelKey: "nav.reports", fallback: "Báo cáo" },
+    { href: "/stocktake.html", key: "stocktake", labelKey: "nav.stocktake", fallback: "Kiểm kê" },
   ];
   const navHtml = links
     .map(
@@ -263,6 +264,7 @@ function getHelpAnchorFor(activePage) {
     issue: "#issueRequest",
     transfer: "#transfer",
     reports: "#reports",
+    stocktake: "#stocktakeManagement",
   };
   return map[activePage] ? map[activePage] : "";
 }

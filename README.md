@@ -469,6 +469,31 @@ Hàm `renderTopbar()` (dùng chung mọi trang) ban đầu gọi thẳng `t()` v
 
 Trong `warehouse-transfers.js`, vòng lặp `.map((t) => ...)` từng dùng `t` làm tên biến cục bộ — trùng tên với hàm dịch toàn cục `t()`, gây "shadow" (biến cục bộ che mất hàm toàn cục) làm mọi lời gọi `t("key")` bên trong vòng lặp đó bị lỗi. Đã đổi tên biến thành `t2` để tránh xung đột.
 
+## 1.17. Cập nhật 01/09/2026 — Module Trợ giúp trong app (thay vì chatbot AI)
+
+**Quyết định**: sau khi cân nhắc giữa module hướng dẫn tĩnh và chatbot AI, chọn module tĩnh — tận dụng được toàn bộ hạ tầng đa ngôn ngữ đã có, không phát sinh chi phí API, rủi ro trả lời sai gần như bằng 0.
+
+**Nội dung**: biên soạn lại từ `huong-dan-demo.md` và `so-do-phan-quyen.md` thành 9 mục tra cứu nhanh: Bắt đầu, Nhập kho, QC, Xuất kho, Điều chuyển kho, Báo cáo, Quét QR, Phân quyền, Câu hỏi thường gặp — dịch đầy đủ 3 ngôn ngữ (thêm 31 key mới vào từ điển, tổng cộng nay là **329 key**, vẫn khớp tuyệt đối giữa `vi`/`en`/`zh`).
+
+**Kỹ thuật đáng chú ý**: thêm hàm `tRaw(key)` vào `i18n.js` — khác với `t()` (chỉ trả về chuỗi), `tRaw()` lấy nguyên mảng/object từ từ điển, dùng để render danh sách bước hướng dẫn, bảng phân quyền, danh sách FAQ trực tiếp từ dữ liệu JSON thay vì phải gắn `data-i18n` cho từng dòng riêng lẻ trong HTML — giảm đáng kể số lượng thẻ cần gắn tay.
+
+**Truy cập**: nút **❓** ở góc trên bên phải (topbar) trên mọi trang — bấm vào sẽ nhảy thẳng tới đúng mục liên quan tới trang đang xem (VD: đang ở trang QC, bấm ❓ sẽ nhảy thẳng tới mục "QC" trong Trợ giúp, không cần cuộn tìm). Cũng có ô riêng trên Dashboard.
+
+## 1.18. Cập nhật 02/09/2026 — Hoàn thiện giao diện web Kiểm kê (không còn phụ thuộc Swagger)
+
+**Bối cảnh**: Backend Kiểm kê đã hoàn thành từ lâu (khóa giao dịch, dung sai, FEFO snapshot...), nhưng chưa có giao diện web — phải thao tác qua Swagger. Nay đã có đầy đủ giao diện, đồng bộ phong cách với các module khác.
+
+**Đã làm:**
+- Trang mới `web/stocktake.html` + `web/js/stocktake.js` — danh sách phiên, tạo mới, nhập số đếm trực tiếp trên máy tính (bổ sung cho cách quét QR bằng điện thoại đã có), hoàn tất/hủy/ghi đè dung sai (Admin)
+- Màu chênh lệch (xanh/đỏ) tính đúng theo % dung sai thật của từng kho, không so cứng bằng 0
+- Chuyển toàn bộ 11 thông báo lỗi tiếng Việt cứng trong `StocktakeService` sang cơ chế dịch — nay **tất cả 4 module lõi** (GoodsReceipt, QcInspection, IssueRequest, Stocktake) đều dịch được lỗi đầy đủ 3 ngôn ngữ
+- **Cải tiến Exception Filter**: trước đây khi dịch message sẽ làm mất các trường dữ liệu phụ đính kèm (VD: danh sách `outOfTolerance` khi vượt dung sai) — nay giữ nguyên đầy đủ, chỉ thay phần `message`
+- Cập nhật module Trợ giúp: thêm mục "Kiểm kê" riêng, sửa lại mục "Quét QR" (bỏ câu đã lỗi thời "hiện chỉ tạo qua Swagger")
+- Thêm liên kết vào menu chính (topbar) và Dashboard
+- Thêm 39 key dịch mới + 1 unit test mới (kiểm tra dịch đúng khi có 2 tham số cùng lúc) — tổng 371 key, khớp tuyệt đối 3 ngôn ngữ, tổng 9 unit test i18n đều pass
+
+**Giờ đây, module Kiểm kê là module cuối cùng có đầy đủ giao diện web** — không còn module nào phải thao tác qua Swagger nữa (trừ các màn hình quản lý danh mục nền tảng như Item/Supplier, vốn ít thay đổi và không nằm trong phạm vi demo nghiệp vụ chính).
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

@@ -29,13 +29,20 @@ export class I18nExceptionFilter implements ExceptionFilter {
 
     const lang = normalizeLang(request.headers['accept-language']);
 
-    // Truong hop duoc gan tag { key, params } — dich lai message
+    // Truong hop duoc gan tag { key, params } — dich lai message. Giu
+    // nguyen moi truong PHU khac (VD: outOfTolerance) — chi thay the
+    // rieng phan message, khong lam mat du lieu di kem.
     if (body && typeof body === 'object' && 'key' in (body as any)) {
-      const { key, params } = body as { key: string; params?: Record<string, string | number> };
+      const { key, params, ...rest } = body as {
+        key: string;
+        params?: Record<string, string | number>;
+        [extra: string]: unknown;
+      };
       const translated = translateMessage(key, lang, params || {});
       return response.status(status).json({
         statusCode: status,
         message: translated,
+        ...rest,
       });
     }
 
