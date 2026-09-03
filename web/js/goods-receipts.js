@@ -52,7 +52,10 @@ async function loadList() {
     container.innerHTML = `<div class="error-box show">${extractErrorMessage(res.data)}</div>`;
     return;
   }
-  const receipts = res.data.data;
+  // Chi hien phieu thuoc kho THAT (da loai bo kho he thong SYSTEM_TEST/
+  // IN_TRANSIT khoi warehousesCache tu truoc) — tranh nguoi dung that
+  // nham lan voi du lieu do may tu dong kiem tra suc khoe he thong tao ra.
+  const receipts = res.data.data.filter((r) => warehousesCache.some((w) => w.id === r.warehouseId));
   if (receipts.length === 0) {
     container.innerHTML = `<div class="empty-state">${t("goodsReceipt.emptyState")}</div>`;
     return;

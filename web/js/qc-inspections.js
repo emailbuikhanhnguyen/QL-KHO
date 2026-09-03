@@ -50,7 +50,14 @@ async function loadList() {
     container.innerHTML = `<div class="error-box show">${extractErrorMessage(res.data)}</div>`;
     return;
   }
-  const inspections = res.data.data;
+  // Chi hien phieu QC cua vat tu THAT — loai bo vat tu rieng phuc vu may
+  // tu dong kiem tra suc khoe he thong (ma "HEALTHCHECK-...").
+  const inspections = res.data.data.filter((q) => {
+    const lot = lotsCache.find((l) => l.id === q.lotId);
+    if (!lot) return true; // khong xac dinh duoc thi cu hien, an toan hon
+    const item = itemsCache.find((i) => i.id === lot.itemId);
+    return !item || !item.code.startsWith("HEALTHCHECK");
+  });
   if (inspections.length === 0) {
     container.innerHTML = `<div class="empty-state">${t("qc.emptyState")}</div>`;
     return;

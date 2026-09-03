@@ -541,6 +541,18 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 
 **Không đổi file HTML nào** — chỉ sửa `style.css` (thêm phần responsive) và `api.js` (thêm cơ chế tự động bọc bảng), nên không cần `npm test`/`npm run build`, chỉ cần deploy lại phần giao diện web.
 
+## 1.23. Cập nhật 02/09/2026 — Ẩn dữ liệu Health Check tự động khỏi màn hình người dùng thật
+
+**Vấn đề**: tài khoản bot tự động kiểm tra hệ thống hàng đêm (2h sáng) tạo ra phiếu Nhập kho/QC/Xuất kho thật trên kho cô lập `SYSTEM_TEST` — nhưng các phiếu này **vẫn hiện ra** trên màn hình Nhập kho/Xuất kho/QC/Báo cáo mà người dùng thật xem, gây nhầm lẫn khi UAT/test.
+
+**Đã sửa 2 lớp:**
+
+1. **Frontend** (`goods-receipts.js`, `issue-requests.js`, `qc-inspections.js`) — lọc bỏ khỏi danh sách hiển thị các phiếu thuộc kho không nằm trong `warehousesCache` đã lọc sẵn (dùng lại đúng cơ chế lọc dropdown có từ trước, không cần logic mới).
+
+2. **Backend** (`StockLedgerService`) — quan trọng hơn, vì phát hiện **Excel xuất ra không đi qua bước lọc JS ở bước 1**, vẫn có nguy cơ lộ dữ liệu test. Sửa tại nguồn: thêm điều kiện loại trừ `item.code` bắt đầu bằng `HEALTHCHECK` và `warehouse.code` thuộc `SYSTEM_TEST`/`IN_TRANSIT` ngay trong Prisma `where` — vì `exportBalanceByItemToExcel()` gọi lại chính `getBalanceByItem()`, sửa 1 chỗ áp dụng luôn cho cả màn hình web lẫn file Excel.
+
+**Đã cập nhật + chạy thật unit test tương ứng** (`stock-ledger.service.spec.ts`) — 1 test cũ bị vỡ do so khớp chính xác object `where` (đã sửa dùng `objectContaining`), thêm 1 test mới xác nhận rõ điều kiện loại trừ hệ thống luôn có mặt. Xác nhận **8/8 pass, chạy thật** (dùng `isolatedModules` để né giới hạn sandbox không tạo đủ Prisma Client, không liên quan tới logic vừa sửa).
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

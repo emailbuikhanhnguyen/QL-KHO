@@ -28,10 +28,21 @@ export class StockLedgerService {
   // TON KHO HIEN TAI — gop theo Item + Warehouse (khong phan biet lo)
   // Day la cach xem pho bien nhat: "Vai Kaki con bao nhieu met trong kho RM"
   // -------------------------------------------------------------------
+  // Loai tru du lieu cua "kho/vat tu he thong" (SYSTEM_TEST, IN_TRANSIT,
+  // HEALTHCHECK-*) — day la du lieu do may tu dong kiem tra suc khoe he
+  // thong tao ra moi dem, khong phai nghiep vu that. Dung chung o ca 3
+  // ham (xem tren man hinh + xuat Excel deu goi lai chinh cac ham nay,
+  // nen sua 1 lan la du cho ca 2 duong).
+  private readonly EXCLUDE_SYSTEM_DATA: Prisma.StockLedgerEntryWhereInput = {
+    item: { code: { not: { startsWith: 'HEALTHCHECK' } } },
+    warehouse: { code: { notIn: ['SYSTEM_TEST', 'IN_TRANSIT'] } },
+  };
+
   async getBalanceByItem(filter: BalanceFilter) {
     const where: Prisma.StockLedgerEntryWhereInput = {
       ...(filter.itemId ? { itemId: filter.itemId } : {}),
       ...(filter.warehouseId ? { warehouseId: filter.warehouseId } : {}),
+      ...this.EXCLUDE_SYSTEM_DATA,
     };
 
     const grouped = await this.prisma.stockLedgerEntry.groupBy({
@@ -60,6 +71,7 @@ export class StockLedgerService {
       ...(filter.itemId ? { itemId: filter.itemId } : {}),
       ...(filter.warehouseId ? { warehouseId: filter.warehouseId } : {}),
       ...(filter.lotId ? { lotId: filter.lotId } : {}),
+      ...this.EXCLUDE_SYSTEM_DATA,
     };
 
     const grouped = await this.prisma.stockLedgerEntry.groupBy({
@@ -100,6 +112,7 @@ export class StockLedgerService {
             },
           }
         : {}),
+      ...this.EXCLUDE_SYSTEM_DATA,
     };
 
     const [data, total] = await this.prisma.$transaction([

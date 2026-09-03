@@ -17,7 +17,11 @@ async function loadDropdownData() {
     apiFetch("/warehouses?limit=100"),
   ]);
   itemsCache = items.ok ? items.data.data : [];
-  warehousesCache = wh.ok ? wh.data.data : [];
+  // Loai bo vat tu/kho rieng phuc vu may tu dong kiem tra suc khoe he
+  // thong — tranh nguoi dung that chon nham trong dropdown loc bao cao.
+  itemsCache = itemsCache.filter((i) => !i.code.startsWith("HEALTHCHECK"));
+  const SYSTEM_WAREHOUSE_CODES = ["IN_TRANSIT", "SYSTEM_TEST"];
+  warehousesCache = (wh.ok ? wh.data.data : []).filter((w) => !SYSTEM_WAREHOUSE_CODES.includes(w.code));
 
   const itemOptions = itemsCache.map((i) => `<option value="${i.id}">${i.name} (${i.code})</option>`).join("");
   const whOptions = warehousesCache.map((w) => `<option value="${w.id}">${w.name}</option>`).join("");
@@ -75,7 +79,10 @@ async function loadBalance() {
     return;
   }
 
-  const rows = res.data;
+  // Loc bo dong cua vat tu he thong (HEALTHCHECK) — de phong truong hop
+  // nguoi dung xem "Tat ca vat tu" (khong loc rieng) van co the thay du
+  // lieu test lan vao.
+  const rows = res.data.filter((r) => !r.item || !r.item.code.startsWith("HEALTHCHECK"));
   if (rows.length === 0) {
     container.innerHTML = `<div class="empty-state">${t("reports.emptyBalance")}</div>`;
     return;
@@ -136,7 +143,8 @@ async function loadHistory() {
     return;
   }
 
-  const rows = res.data.data;
+  // Loc bo dong cua vat tu he thong (HEALTHCHECK) — tuong tu loadBalance().
+  const rows = res.data.data.filter((e) => !e.item || !e.item.code.startsWith("HEALTHCHECK"));
   if (rows.length === 0) {
     container.innerHTML = `<div class="empty-state">${t("reports.emptyHistory")}</div>`;
     return;

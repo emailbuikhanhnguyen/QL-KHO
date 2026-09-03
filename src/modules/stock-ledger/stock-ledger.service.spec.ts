@@ -83,7 +83,21 @@ describe('StockLedgerService', () => {
       await service.getBalanceByItem({ itemId: 5, warehouseId: 10 });
 
       expect(prisma.stockLedgerEntry.groupBy).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { itemId: 5, warehouseId: 10 } }),
+        expect.objectContaining({ where: expect.objectContaining({ itemId: 5, warehouseId: 10 }) }),
+      );
+    });
+
+    it('luon loai tru du lieu he thong (HEALTHCHECK/SYSTEM_TEST/IN_TRANSIT) khoi where', async () => {
+      prisma.stockLedgerEntry.groupBy.mockResolvedValue([]);
+      await service.getBalanceByItem({});
+
+      expect(prisma.stockLedgerEntry.groupBy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            item: { code: { not: { startsWith: 'HEALTHCHECK' } } },
+            warehouse: { code: { notIn: ['SYSTEM_TEST', 'IN_TRANSIT'] } },
+          }),
+        }),
       );
     });
   });

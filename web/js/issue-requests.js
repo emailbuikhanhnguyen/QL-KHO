@@ -42,7 +42,9 @@ async function loadList() {
     container.innerHTML = `<div class="error-box show">${extractErrorMessage(res.data)}</div>`;
     return;
   }
-  const requests = res.data.data;
+  // Chi hien phieu thuoc kho THAT — tranh lan voi du lieu tu may tu dong
+  // kiem tra suc khoe he thong (xem giai thich chi tiet trong goods-receipts.js).
+  const requests = res.data.data.filter((r) => warehousesCache.some((w) => w.id === r.warehouseId));
   if (requests.length === 0) {
     container.innerHTML = `<div class="empty-state">${t("issueRequest.emptyState")}</div>`;
     return;
