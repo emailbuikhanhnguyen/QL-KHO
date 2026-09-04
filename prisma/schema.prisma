@@ -23,6 +23,7 @@ enum QcStatus {
   FAILED
   PARTIALLY_PASSED
   PENDING_DISPOSITION
+  DISPOSED // Cap nhat 04/09/2026: da huy xong qua Module xu ly hang loi (DisposalRequest)
 
   @@map("qc_status")
 }
@@ -223,6 +224,7 @@ model Warehouse {
   transfersAsDest   WarehouseTransfer[] @relation("TransferDestWarehouse")
   stocktakes        Stocktake[]
   stocktakeLocks    StocktakeLock[]
+  disposalRequests  DisposalRequest[]
 
   @@index([deletedAt])
   @@index([departmentId])
@@ -339,6 +341,7 @@ model Lot {
   qcInspections     QcInspection[]
   transferLines     WarehouseTransferLine[]
   stocktakeLines    StocktakeLine[]
+  disposalRequests  DisposalRequest[]
 
   @@unique([itemId, lotCode])
   @@index([itemId])
@@ -561,6 +564,75 @@ model QcInspectionImage {
 
   @@index([qcInspectionId])
   @@map("qc_inspection_images")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE: Xu ly hang loi — Phieu huy vat tu (DisposalRequest)
+// Them 04/09/2026 theo xac nhan cua Sep Thanh (cau 20-21 phan hoi v2):
+// co khu vuc cach ly vat ly rieng (Zone.zoneType = QUARANTINE, da co san tu
+// 29/08/2026), phieu huy can duyet qua 2 cap: QA (QC_MANAGER) roi BOD.
+//
+// Luong trang thai:
+//   DRAFT -> PENDING_QA_APPROVAL -> PENDING_BOD_APPROVAL -> APPROVED
+//                                \\-> REJECTED (o bat ky cap nao)
+//
+// Chi duoc tao phieu huy cho Lot dang o qcStatus = FAILED. Luc tao phieu,
+// Lot chuyen sang PENDING_DISPOSITION (danh dau "dang trong quy trinh xu
+// ly", tranh bi dung nham noi khac). Khi BOD duyet (APPROVED): tao
+// StockLedgerEntry am (tru ton kho tuong ung) + Lot chuyen sang DISPOSED
+// (huy han). Neu bi tu choi o bat ky cap nao: Lot tro lai FAILED (co the
+// tao phieu huy khac hoac xu ly huong khac).
+// ---------------------------------------------------------------------------
+enum DisposalRequestStatus {
+  DRAFT
+  PENDING_QA_APPROVAL
+  PENDING_BOD_APPROVAL
+  APPROVED
+  REJECTED
+
+  @@map("disposal_request_status")
+}
+
+model DisposalRequest {
+  id              Int                   @id @default(autoincrement())
+  code            String                @unique @map("code") // VD: DSP-2026-000001
+
+  lotId           Int                   @map("lot_id")
+  lot             Lot                   @relation(fields: [lotId], references: [id])
+
+  // 1 Lot co the co so luong nam rai rac o nhieu kho khac nhau (do dieu
+  // chuyen) — bat buoc phai biet dang huy dung o KHO NAO de tru ton kho
+  // dung cho, khong the chi dua vao lotId.
+  warehouseId     Int                   @map("warehouse_id")
+  warehouse       Warehouse             @relation(fields: [warehouseId], references: [id])
+
+  quantity        Decimal               @map("quantity") @db.Decimal(18, 3)
+  reason          String                @map("reason")
+
+  status          DisposalRequestStatus @default(DRAFT) @map("status")
+
+  requestedBy     Int                   @map("requested_by")
+  requestedAt     DateTime?             @map("requested_at") // luc submit (khong phai luc tao DRAFT)
+
+  qaApprovedBy    Int?                  @map("qa_approved_by")
+  qaApprovedAt    DateTime?             @map("qa_approved_at")
+
+  bodApprovedBy   Int?                  @map("bod_approved_by")
+  bodApprovedAt   DateTime?             @map("bod_approved_at")
+
+  rejectedBy      Int?                  @map("rejected_by")
+  rejectedAt      DateTime?             @map("rejected_at")
+  rejectionReason String?               @map("rejection_reason")
+
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+  createdBy       Int?                  @map("created_by")
+  updatedBy       Int?                  @map("updated_by")
+
+  @@index([lotId])
+  @@index([warehouseId])
+  @@index([status])
+  @@map("disposal_requests")
 }
 
 // ---------------------------------------------------------------------------

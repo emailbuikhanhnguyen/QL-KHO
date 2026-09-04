@@ -31,6 +31,7 @@ export const ACTION_TRANSLATIONS: Record<string, Record<SupportedLang, string>> 
   'nhap so dem': { vi: 'nhập số đếm', en: 'enter count', zh: '录入盘点数量' },
   'hoan tat': { vi: 'hoàn tất', en: 'complete', zh: '完成' },
   'huy': { vi: 'hủy', en: 'cancel', zh: '取消' },
+  'duyet QA': { vi: 'duyệt (cấp QA)', en: 'approve (QA level)', zh: '批准（质检级）' },
 };
 
 export function translateAction(action: string, lang: SupportedLang): string {
@@ -174,5 +175,15 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     vi: "Kho này đang có phiên kiểm kê '{{code}}' chưa hoàn tất. Phải hoàn tất/hủy trước khi bắt đầu phiên mới",
     en: "This warehouse already has an unfinished stocktake session '{{code}}'. It must be completed/cancelled before starting a new one",
     zh: '该仓库已有未完成的盘点会话「{{code}}」。必须先完成/取消该会话才能开始新的盘点',
+  },
+  LOT_NOT_FAILED: {
+    vi: "Chỉ được tạo phiếu hủy cho lô hàng có kết quả QC là 'Không đạt' (FAILED)",
+    en: "A disposal request can only be created for a lot with QC result 'Failed'",
+    zh: '只能为质检结果为「不合格」的批次创建报废申请',
+  },
+  INSUFFICIENT_STOCK_FOR_DISPOSAL: {
+    vi: 'Số lượng hủy ({{requested}}) vượt quá tồn khả dụng ({{available}}) của lô hàng tại kho này',
+    en: 'Disposal quantity ({{requested}}) exceeds available stock ({{available}}) for this lot at this warehouse',
+    zh: '报废数量（{{requested}}）超过该批次在此仓库的可用库存（{{available}}）',
   },
 };

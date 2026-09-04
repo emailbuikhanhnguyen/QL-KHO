@@ -589,6 +589,27 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 
 **Lưu ý khi merge**: cần thêm đủ 4 GitHub Secret cho workflow mới hoạt động (`APP_URL`, `SYSTEM_HEALTHCHECK_PASSWORD`, `REPORT_TO_EMAIL`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`) — thực ra đây là **các secret đã có sẵn** từ Health Check trước đó, không cần tạo mới, chỉ cần workflow mới tham chiếu đúng tên.
 
+## 1.27. Cập nhật 04/09/2026 — Module mới: Xử lý hàng lỗi (Khu cách ly + Phiếu hủy vật tư)
+
+**Bối cảnh**: theo xác nhận của Sếp Thành (câu 20-21, phản hồi v2) — có khu vực cách ly vật lý riêng cho hàng lỗi, phiếu hủy cần duyệt qua 2 cấp: QA (QC Manager) rồi Ban Giám Đốc.
+
+**Phát hiện thú vị lúc làm**: nền móng cho module này (`Zone.zoneType = QUARANTINE`, `QcStatus.PENDING_DISPOSITION`) **đã được kiến trúc sẵn từ 29/08/2026** — ngay từ Module 1, kèm ghi chú rõ "Module xử lý hàng lỗi sẽ gắn sau cho tiếp". Lần này chính là hoàn thiện đúng ý định ban đầu đó.
+
+**Đã làm — module hoàn chỉnh mới:**
+- **Schema mới**: thêm `QcStatus.DISPOSED`, model `DisposalRequest` (có `warehouseId` riêng — vì 1 lô hàng có thể có số lượng rải rác ở nhiều kho khác nhau, cần biết rõ đang hủy ở kho nào để trừ tồn đúng chỗ)
+- **Luồng trạng thái**: `DRAFT → PENDING_QA_APPROVAL → PENDING_BOD_APPROVAL → APPROVED` (hoặc `REJECTED` ở bất kỳ cấp nào)
+- **Backend đầy đủ**: Service (create/findAll/findOne/update/remove/submit/approveQa/approveBod/reject) + Controller (8 endpoint, RBAC đúng cấp) + Module, đăng ký vào `app.module.ts`
+- **Ràng buộc nghiệp vụ quan trọng**: chỉ tạo được phiếu hủy cho lô có `qcStatus = FAILED`; lúc tạo phiếu, lô tự chuyển `PENDING_DISPOSITION` (khóa tạm, tránh dùng nhầm); khi BOD duyệt xong — tự động trừ tồn kho (`StockLedgerEntry` âm) + lô chuyển `DISPOSED`; khi bị từ chối ở bất kỳ cấp nào — lô tự quay lại `FAILED`
+- **13 unit test mới**, chạy thật pass 100% — bao phủ đủ: tạo phiếu (đúng điều kiện FAILED, đủ tồn kho, sinh mã tự động), quyền sở hữu (chỉ người tạo/Admin sửa được lúc DRAFT), luồng duyệt 2 cấp, hành vi trừ tồn kho khi duyệt xong, khôi phục trạng thái khi từ chối/xóa
+- **Trang web mới** `disposal-requests.html` + `disposal-requests.js` — danh sách, tạo phiếu (dropdown chỉ hiện lô FAILED, tra cứu tồn khả dụng theo kho), xem chi tiết, các nút hành động theo đúng vai trò đang đăng nhập
+- Thêm vào menu ngang, Dashboard, và mục Trợ giúp riêng
+- Thêm 30 key dịch mới, tổng 442 key khớp tuyệt đối 3 ngôn ngữ
+
+**Lưu ý migration quan trọng**: sandbox không tải được Prisma engine binary (mạng bị chặn) nên **chưa tạo được file migration**. Cần chạy trên máy có mạng đầy đủ:
+```
+npx prisma migrate dev --name add_disposal_request
+```
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

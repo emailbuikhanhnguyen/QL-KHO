@@ -17,7 +17,8 @@
     "logout": "Đăng xuất",
     "yes": "Có",
     "no": "Không",
-    "all": "Tất cả"
+    "all": "Tất cả",
+    "reject": "Từ chối"
   },
   "nav": {
     "dashboard": "Trang chủ",
@@ -27,7 +28,8 @@
     "transfer": "Điều chuyển",
     "reports": "Báo cáo",
     "stocktake": "Kiểm kê",
-    "qrScan": "Quét QR"
+    "qrScan": "Quét QR",
+    "disposal": "Xử lý hàng lỗi"
   },
   "login": {
     "title": "Hệ thống Quản lý Kho NPL",
@@ -140,7 +142,8 @@
     "RECEIPT": "Nhập kho",
     "ISSUE": "Xuất kho",
     "ADJUSTMENT": "Điều chỉnh",
-    "RETURN": "Trả hàng"
+    "RETURN": "Trả hàng",
+    "PENDING_QA_APPROVAL": "Chờ duyệt QA"
   },
   "qc": {
     "title": "QC — Kiểm tra chất lượng",
@@ -456,6 +459,18 @@
           "Nếu có dòng chênh lệch vượt dung sai cho phép, hệ thống sẽ chặn lại — chỉ Admin mới được ghi đè và hoàn tất, kèm lý do bắt buộc."
         ]
       },
+      "disposalHelp": {
+        "title": "Xử lý hàng lỗi",
+        "intro": "Dùng khi có lô hàng bị đánh giá \"Không đạt\" (FAILED) ở bước QC, cần hủy bỏ theo đúng quy trình.",
+        "steps": [
+          "Vào Xử lý hàng lỗi → Tạo phiếu hủy mới → chọn lô hàng (chỉ hiện lô có kết quả QC là \"Không đạt\"), chọn kho, nhập số lượng và lý do.",
+          "Bấm Tạo phiếu — lô hàng tự động chuyển sang trạng thái \"Chờ xử lý\", tạm khóa không dùng được ở nơi khác.",
+          "Mở phiếu vừa tạo, bấm Gửi duyệt.",
+          "QA (QC Manager) duyệt cấp 1.",
+          "Ban Giám Đốc duyệt cấp cuối — khi duyệt xong, hệ thống tự động trừ tồn kho và đánh dấu lô hàng \"Đã hủy\".",
+          "Nếu bị từ chối ở bất kỳ cấp nào, lô hàng tự động quay lại trạng thái \"Không đạt\" — có thể tạo phiếu hủy khác hoặc xử lý theo hướng khác (VD: trả lại nhà cung cấp)."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -624,5 +639,31 @@
     "tableCurrent": "Tồn hiện tại",
     "tableMin": "Hạn mức tối thiểu",
     "tableShortage": "Đang thiếu"
+  },
+  "disposal": {
+    "title": "Xử lý hàng lỗi",
+    "subtitle": "Tạo phiếu hủy cho lô hàng không đạt QC, duyệt qua QA rồi Ban Giám Đốc",
+    "listTitle": "Danh sách phiếu hủy",
+    "createBtn": "+ Tạo phiếu hủy mới",
+    "createTitle": "Tạo phiếu hủy mới",
+    "createIntro": "Chỉ hiện các lô hàng có kết quả QC là \"Không đạt\" (FAILED).",
+    "lotLabel": "Lô hàng",
+    "itemLabel": "Vật tư",
+    "warehouseLabel": "Kho",
+    "quantityLabel": "Số lượng hủy",
+    "availableLabel": "Tồn khả dụng",
+    "reasonLabel": "Lý do hủy",
+    "rejectionReasonLabel": "Lý do từ chối",
+    "submitCreateBtn": "Tạo phiếu",
+    "tableCode": "Mã phiếu",
+    "emptyState": "Chưa có phiếu hủy nào. Bấm \"Tạo phiếu hủy mới\" để tạo — chỉ áp dụng cho lô hàng đã có kết quả QC \"Không đạt\".",
+    "detailTitle": "Chi tiết phiếu hủy",
+    "fillAllFields": "Vui lòng điền đầy đủ tất cả các trường bắt buộc.",
+    "submitBtn": "Gửi duyệt",
+    "approveQaBtn": "✔ Duyệt (QA)",
+    "approveBodBtn": "✔ Duyệt (BOD) — Xác nhận hủy",
+    "approvedSuccess": "Đã duyệt xong — tồn kho đã được trừ, lô hàng chuyển trạng thái Đã hủy.",
+    "rejectReasonPrompt": "Nhập lý do từ chối:",
+    "deleteConfirm": "Xóa phiếu hủy này? Lô hàng sẽ quay lại trạng thái Không đạt (FAILED)."
   }
 }

@@ -234,6 +234,7 @@ function renderTopbar(activePage) {
     { href: "/reports.html", key: "reports", labelKey: "nav.reports", fallback: "Báo cáo" },
     { href: "/stocktake.html", key: "stocktake", labelKey: "nav.stocktake", fallback: "Kiểm kê" },
     { href: "/stocktake-scan.html", key: "stocktake-scan", labelKey: "nav.qrScan", fallback: "Quét QR" },
+    { href: "/disposal-requests.html", key: "disposal", labelKey: "nav.disposal", fallback: "Xử lý hàng lỗi" },
   ];
   const navHtml = links
     .map(
@@ -319,6 +320,7 @@ function getHelpAnchorFor(activePage) {
     transfer: "#transfer",
     reports: "#reports",
     stocktake: "#stocktakeManagement",
+    disposal: "#disposalHelp",
   };
   return map[activePage] ? map[activePage] : "";
 }

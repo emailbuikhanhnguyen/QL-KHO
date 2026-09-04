@@ -10,6 +10,7 @@ const SECTION_ORDER = [
   "transfer",
   "reports",
   "stocktakeManagement",
+  "disposalHelp",
   "scan",
   "permissions",
   "faq",

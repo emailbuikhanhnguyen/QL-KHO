@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xử lý hàng lỗi — Kho NPL</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="disposal.title">Xử lý hàng lỗi</h1>
+    <p class="subtitle" data-i18n="disposal.subtitle">Tạo phiếu hủy cho lô hàng không đạt QC, duyệt qua QA rồi Ban Giám Đốc</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="disposal.listTitle">Danh sách phiếu hủy</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="disposal.createBtn">+ Tạo phiếu hủy mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="disposal.createTitle">Tạo phiếu hủy mới</h2>
+      <p class="subtitle" data-i18n="disposal.createIntro">Chỉ hiện các lô hàng có kết quả QC là "Không đạt" (FAILED).</p>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label data-i18n="disposal.lotLabel">Lô hàng *</label>
+        <select id="f_lotId" onchange="onLotChange()"></select>
+      </div>
+      <div class="form-grid cols-3">
+        <div class="form-row">
+          <label data-i18n="disposal.warehouseLabel">Kho *</label>
+          <select id="f_warehouseId"></select>
+        </div>
+        <div class="form-row">
+          <label data-i18n="disposal.quantityLabel">Số lượng hủy *</label>
+          <input type="number" step="0.001" id="f_quantity" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="disposal.availableLabel">Tồn khả dụng</label>
+          <input type="text" id="f_available" disabled />
+        </div>
+      </div>
+      <div class="form-row">
+        <label data-i18n="disposal.reasonLabel">Lý do hủy *</label>
+        <textarea id="f_reason"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="disposal.submitCreateBtn">Tạo phiếu</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="disposal.detailTitle">Chi tiết phiếu hủy</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/disposal-requests.js"></script>
+</body>
+</html>

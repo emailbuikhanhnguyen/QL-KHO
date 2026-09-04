@@ -17,7 +17,8 @@
     "logout": "Log out",
     "yes": "Yes",
     "no": "No",
-    "all": "All"
+    "all": "All",
+    "reject": "Reject"
   },
   "nav": {
     "dashboard": "Home",
@@ -27,7 +28,8 @@
     "transfer": "Transfer",
     "reports": "Reports",
     "stocktake": "Stocktake",
-    "qrScan": "Scan QR"
+    "qrScan": "Scan QR",
+    "disposal": "Defect Disposal"
   },
   "login": {
     "title": "NPL Warehouse Management System",
@@ -140,7 +142,8 @@
     "RECEIPT": "Receipt",
     "ISSUE": "Issue",
     "ADJUSTMENT": "Adjustment",
-    "RETURN": "Return"
+    "RETURN": "Return",
+    "PENDING_QA_APPROVAL": "Pending QA Approval"
   },
   "qc": {
     "title": "QC — Quality Inspection",
@@ -456,6 +459,18 @@
           "If any line's variance exceeds the allowed tolerance, the system blocks completion — only Admin can override and complete, with a mandatory reason."
         ]
       },
+      "disposalHelp": {
+        "title": "Defect Disposal",
+        "intro": "Use this when a lot has been marked \"Failed\" at QC and needs to be disposed of through the proper process.",
+        "steps": [
+          "Go to Defect Disposal → Create New Disposal Request → select the lot (only Failed lots are shown), select the warehouse, enter quantity and reason.",
+          "Click Create — the lot automatically moves to \"Pending Disposition\" status, temporarily locked from use elsewhere.",
+          "Open the new request and click Submit.",
+          "QA (QC Manager) gives level-1 approval.",
+          "The Board of Directors gives the final approval — once approved, the system automatically deducts stock and marks the lot as \"Disposed\".",
+          "If rejected at either level, the lot automatically reverts to \"Failed\" status — a new disposal request can be created, or another course of action taken (e.g. return to supplier)."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -624,5 +639,31 @@
     "tableCurrent": "Current Stock",
     "tableMin": "Minimum Threshold",
     "tableShortage": "Shortage"
+  },
+  "disposal": {
+    "title": "Defect Disposition",
+    "subtitle": "Create disposal requests for lots that failed QC, approved through QA then the Board of Directors",
+    "listTitle": "Disposal Requests",
+    "createBtn": "+ New Disposal Request",
+    "createTitle": "New Disposal Request",
+    "createIntro": "Only lots with a QC result of \"Failed\" are shown.",
+    "lotLabel": "Lot",
+    "itemLabel": "Item",
+    "warehouseLabel": "Warehouse",
+    "quantityLabel": "Quantity to Dispose",
+    "availableLabel": "Available Stock",
+    "reasonLabel": "Reason",
+    "rejectionReasonLabel": "Rejection Reason",
+    "submitCreateBtn": "Create",
+    "tableCode": "Code",
+    "emptyState": "No disposal requests yet. Click \"New Disposal Request\" to create one — only for lots with a QC result of Failed.",
+    "detailTitle": "Disposal Request Detail",
+    "fillAllFields": "Please fill in all required fields.",
+    "submitBtn": "Submit for Approval",
+    "approveQaBtn": "✔ Approve (QA)",
+    "approveBodBtn": "✔ Approve (BOD) — Confirm Disposal",
+    "approvedSuccess": "Approved — stock has been deducted and the lot marked as Disposed.",
+    "rejectReasonPrompt": "Enter rejection reason:",
+    "deleteConfirm": "Delete this disposal request? The lot will revert to Failed status."
   }
 }

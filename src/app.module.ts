@@ -15,6 +15,7 @@ import { StorageLocationModule } from './modules/storage-location/storage-locati
 import { LotModule } from './modules/lot/lot.module';
 import { GoodsReceiptModule } from './modules/goods-receipt/goods-receipt.module';
 import { QcInspectionModule } from './modules/qc-inspection/qc-inspection.module';
+import { DisposalRequestModule } from './modules/disposal-request/disposal-request.module';
 import { IssueRequestModule } from './modules/issue-request/issue-request.module';
 import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-transfer.module';
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
@@ -60,6 +61,7 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
     LotModule,
     GoodsReceiptModule,
     QcInspectionModule,
+    DisposalRequestModule,
     IssueRequestModule,
     WarehouseTransferModule,
     StockLedgerModule,

@@ -13,6 +13,8 @@
     <h1 data-i18n="dashboard.welcome">Chào mừng trở lại 👋</h1>
     <p class="subtitle" id="welcomeText"></p>
 
+    <div id="lowStockBanner"></div>
+
     <div class="dash-grid">
       <a href="/goods-receipts.html" class="dash-card" style="text-decoration:none;">
         <div class="icon">📦</div>
@@ -62,6 +64,12 @@
         <p data-i18n="help.pageSubtitle">Hướng dẫn sử dụng nhanh cho từng phần của hệ thống</p>
         <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
       </a>
+      <a href="/disposal-requests.html" class="dash-card" style="text-decoration:none;">
+        <div class="icon">🗑️</div>
+        <h3 data-i18n="disposal.title">Xử lý hàng lỗi</h3>
+        <p data-i18n="disposal.subtitle">Tạo phiếu hủy cho lô hàng không đạt QC, duyệt qua QA rồi Ban Giám Đốc</p>
+        <span class="btn btn-secondary btn-sm" data-i18n="dashboard.open">Mở</span>
+      </a>
     </div>
 
     <div class="card" style="margin-top: 30px;">
@@ -84,7 +92,71 @@
       const user = getCurrentUser();
       document.getElementById("welcomeText").textContent =
         `${user.fullName} — ${user.department ? user.department.name : ""}`;
+
+      await loadLowStockBanner();
     })();
+
+    // Canh bao ton kho thap — goi 1 lan khi vao Trang chu, hien banner neu
+    // co vat tu nao dang duoi han muc toi thieu.
+    async function loadLowStockBanner() {
+      const res = await apiFetch("/stock-ledger/low-stock-alerts");
+      const el = document.getElementById("lowStockBanner");
+      if (!res.ok || !res.data || res.data.count === 0) {
+        el.innerHTML = "";
+        return;
+      }
+
+      const summaryText = res.data.count === 1 ? t("lowStock.summaryOne") : t("lowStock.summary").replace("{{count}}", res.data.count);
+
+      el.innerHTML = `
+        <div class="low-stock-banner">
+          <div class="low-stock-banner-header">
+            <div class="low-stock-banner-title">⚠️ ${t("lowStock.title")} — ${summaryText}</div>
+            <div class="low-stock-banner-actions">
+              <button onclick="toggleLowStockDetail()" id="lowStockToggleBtn">${t("lowStock.viewDetail")}</button>
+            </div>
+          </div>
+          <div class="low-stock-detail" id="lowStockDetail" style="display:none;"></div>
+        </div>
+      `;
+
+      window._lowStockAlerts = res.data.alerts;
+    }
+
+    function toggleLowStockDetail() {
+      const detailEl = document.getElementById("lowStockDetail");
+      const btn = document.getElementById("lowStockToggleBtn");
+      const isHidden = detailEl.style.display === "none";
+
+      if (isHidden) {
+        const rows = window._lowStockAlerts
+          .map(
+            (a) => `
+            <tr>
+              <td>${a.itemName} (${a.itemCode})</td>
+              <td>${formatNumber(a.totalBalance)} ${a.unit}</td>
+              <td>${formatNumber(a.minStock)} ${a.unit}</td>
+              <td style="color:#c00; font-weight:600;">${formatNumber(a.shortage)} ${a.unit}</td>
+            </tr>`
+          )
+          .join("");
+        detailEl.innerHTML = `
+          <table>
+            <thead><tr>
+              <th>${t("lowStock.tableItem")}</th>
+              <th>${t("lowStock.tableCurrent")}</th>
+              <th>${t("lowStock.tableMin")}</th>
+              <th>${t("lowStock.tableShortage")}</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+        detailEl.style.display = "block";
+        btn.textContent = t("lowStock.hide");
+      } else {
+        detailEl.style.display = "none";
+        btn.textContent = t("lowStock.viewDetail");
+      }
+    }
   </script>
 </body>
 </html>

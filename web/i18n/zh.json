@@ -17,7 +17,8 @@
     "logout": "退出登录",
     "yes": "是",
     "no": "否",
-    "all": "全部"
+    "all": "全部",
+    "reject": "拒绝"
   },
   "nav": {
     "dashboard": "首页",
@@ -27,7 +28,8 @@
     "transfer": "调拨",
     "reports": "报表",
     "stocktake": "盘点",
-    "qrScan": "扫码"
+    "qrScan": "扫码",
+    "disposal": "不良品处置"
   },
   "login": {
     "title": "辅料仓库管理系统",
@@ -140,7 +142,8 @@
     "RECEIPT": "入库",
     "ISSUE": "出库",
     "ADJUSTMENT": "调整",
-    "RETURN": "退货"
+    "RETURN": "退货",
+    "PENDING_QA_APPROVAL": "待质检审批"
   },
   "qc": {
     "title": "质检",
@@ -456,6 +459,18 @@
           "如果某行差异超出允许的误差范围，系统会阻止完成——只有管理员可以强制覆盖并完成，且必须填写原因。"
         ]
       },
+      "disposalHelp": {
+        "title": "不良品处置",
+        "intro": "用于处理质检结果为「不合格」的批次，按规定流程进行报废。",
+        "steps": [
+          "进入不良品处置 → 新建报废申请 → 选择批次（仅显示不合格批次）、选择仓库、输入数量和原因。",
+          "点击创建——批次自动变为“待处置”状态，暂时锁定不可在别处使用。",
+          "打开刚创建的申请，点击提交审批。",
+          "质检（QC经理）进行第一级审批。",
+          "董事会进行最终审批——批准后，系统自动扣减库存并将批次标记为“已报废”。",
+          "如在任一级别被拒绝，批次会自动恢复为「不合格」状态——可以创建新的报废申请，或采取其他处理方式（如退回供应商）。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
         "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
@@ -624,5 +639,31 @@
     "tableCurrent": "当前库存",
     "tableMin": "最低阈值",
     "tableShortage": "缺少数量"
+  },
+  "disposal": {
+    "title": "不良品处置",
+    "subtitle": "为质检不合格的批次创建报废申请，经质检再经董事会审批",
+    "listTitle": "报废申请列表",
+    "createBtn": "+ 新建报废申请",
+    "createTitle": "新建报废申请",
+    "createIntro": "仅显示质检结果为「不合格」的批次。",
+    "lotLabel": "批次",
+    "itemLabel": "物料",
+    "warehouseLabel": "仓库",
+    "quantityLabel": "报废数量",
+    "availableLabel": "可用库存",
+    "reasonLabel": "报废原因",
+    "rejectionReasonLabel": "拒绝原因",
+    "submitCreateBtn": "创建",
+    "tableCode": "编号",
+    "emptyState": "暂无报废申请。点击“新建报废申请”创建——仅适用于质检结果为不合格的批次。",
+    "detailTitle": "报废申请详情",
+    "fillAllFields": "请填写所有必填项。",
+    "submitBtn": "提交审批",
+    "approveQaBtn": "✔ 批准（质检）",
+    "approveBodBtn": "✔ 批准（董事会）— 确认报废",
+    "approvedSuccess": "已批准——库存已扣减，批次已标记为已报废。",
+    "rejectReasonPrompt": "请输入拒绝原因：",
+    "deleteConfirm": "确定删除此报废申请吗？批次将恢复为不合格状态。"
   }
 }
