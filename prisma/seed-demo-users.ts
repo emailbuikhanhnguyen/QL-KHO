@@ -25,6 +25,12 @@ const DEMO_USERS = [
     deptCode: 'FG_WAREHOUSE',
   },
   {
+    email: 'kho.vt@sec.com',
+    fullName: 'Do Van Vat Tu',
+    role: Role.WAREHOUSE_STAFF,
+    deptCode: 'TOOLS_WAREHOUSE',
+  },
+  {
     email: 'qc@sec.com',
     fullName: 'Le Van QC',
     role: Role.QC_MANAGER,

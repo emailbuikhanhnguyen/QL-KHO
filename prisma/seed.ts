@@ -4,11 +4,14 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 // Danh sach phong ban mac dinh, dua tren phan hoi cua Sep (cau hoi 1, 17, 22):
-// 3 kho/bo phan co du lieu rieng + cac phong ban chi tao phieu yeu cau xuat kho.
+// 4 kho/bo phan co du lieu rieng (RM/Color Kitchen/FG/Vat tu — Vat tu bo
+// sung 02/09/2026 theo phan hoi v2 cua Sep, cau 17+29) + cac phong ban
+// chi tao phieu yeu cau xuat kho.
 const DEPARTMENTS = [
   { code: 'RM_WAREHOUSE', name: 'Kho nguyen phu lieu (RM)' },
   { code: 'COLOR_KITCHEN', name: 'Phong pha mau (Color Kitchen)' },
   { code: 'FG_WAREHOUSE', name: 'Kho thanh pham (Finished Goods)' },
+  { code: 'TOOLS_WAREHOUSE', name: 'Kho vat tu (cong cu dung cu)' },
   { code: 'PMC', name: 'Phong PMC' },
   { code: 'CS', name: 'Phong CS' },
   { code: 'FD', name: 'Phong FD' },
@@ -35,6 +38,7 @@ async function main() {
     { code: 'RM_WAREHOUSE', name: 'Kho nguyen phu lieu (RM)', deptCode: 'RM_WAREHOUSE' },
     { code: 'COLOR_KITCHEN', name: 'Phong pha mau (Color Kitchen)', deptCode: 'COLOR_KITCHEN' },
     { code: 'FG_WAREHOUSE', name: 'Kho thanh pham (Finished Goods)', deptCode: 'FG_WAREHOUSE' },
+    { code: 'TOOLS_WAREHOUSE', name: 'Kho vat tu (cong cu dung cu)', deptCode: 'TOOLS_WAREHOUSE' },
   ];
   for (const wh of WAREHOUSES) {
     const dept = await prisma.department.findUniqueOrThrow({ where: { code: wh.deptCode } });
