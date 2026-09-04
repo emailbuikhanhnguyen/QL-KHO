@@ -4,7 +4,7 @@ import {
   ConflictException,
   ForbiddenException,
 } from '@nestjs/common';
-import { GoodsReceiptStatus, Role, StockMovementType } from '@prisma/client';
+import { GoodsReceiptStatus, QcStatus, Role, StockMovementType } from '@prisma/client';
 import { GoodsReceiptService } from './goods-receipt.service';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -41,7 +41,7 @@ describe('GoodsReceiptService', () => {
         count: jest.fn(),
       },
       goodsReceiptLine: { deleteMany: jest.fn(), update: jest.fn() },
-      warehouse: { findFirst: jest.fn() },
+      warehouse: { findFirst: jest.fn(), findUnique: jest.fn() },
       supplier: { findFirst: jest.fn() },
       item: { findFirst: jest.fn() },
       storageLocation: { findFirst: jest.fn() },
@@ -186,6 +186,44 @@ describe('GoodsReceiptService', () => {
         }),
       );
       expect(result.status).toBe(GoodsReceiptStatus.CONFIRMED);
+    });
+
+    it('Kho Vat tu (TOOLS_WAREHOUSE): Lot tao ra tu dong qcStatus=PASSED, khong can cho QC', async () => {
+      const warehouseTools = { id: 40, departmentId: rmDeptId, deletedAt: null, code: 'TOOLS_WAREHOUSE' };
+      const toolsReceipt = { ...pendingReceipt, warehouseId: 40 };
+
+      prisma.goodsReceipt.findFirst.mockResolvedValue(toolsReceipt);
+      prisma.warehouse.findFirst.mockResolvedValue(warehouseTools); // dung cho assertUserBelongsToWarehouseDept
+      prisma.warehouse.findUnique.mockResolvedValue(warehouseTools); // dung de kiem tra skipQc
+      prisma.lot.findFirst.mockResolvedValue(null);
+      prisma.lot.create.mockResolvedValue({ id: 501 });
+      prisma.goodsReceiptLine.update.mockResolvedValue({});
+      prisma.stockLedgerEntry.create.mockResolvedValue({});
+      prisma.goodsReceipt.update.mockResolvedValue({ ...toolsReceipt, status: GoodsReceiptStatus.CONFIRMED });
+
+      await service.approve(1, deptHeadRM);
+
+      expect(prisma.lot.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ qcStatus: QcStatus.PASSED }),
+        }),
+      );
+    });
+
+    it('Kho thuong (RM): Lot tao ra KHONG chi dinh qcStatus (dung default PENDING cua schema)', async () => {
+      prisma.goodsReceipt.findFirst.mockResolvedValue(pendingReceipt);
+      prisma.warehouse.findFirst.mockResolvedValue(warehouseRM);
+      prisma.warehouse.findUnique.mockResolvedValue({ ...warehouseRM, code: 'RM_WAREHOUSE' });
+      prisma.lot.findFirst.mockResolvedValue(null);
+      prisma.lot.create.mockResolvedValue({ id: 500 });
+      prisma.goodsReceiptLine.update.mockResolvedValue({});
+      prisma.stockLedgerEntry.create.mockResolvedValue({});
+      prisma.goodsReceipt.update.mockResolvedValue({ ...pendingReceipt, status: GoodsReceiptStatus.CONFIRMED });
+
+      await service.approve(1, deptHeadRM);
+
+      const callArg = prisma.lot.create.mock.calls[0][0];
+      expect(callArg.data.qcStatus).toBeUndefined();
     });
 
     it('dung Lot da co san neu trung itemId+lotCode, khong tao trung', async () => {

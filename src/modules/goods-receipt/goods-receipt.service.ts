@@ -5,7 +5,7 @@ import {
   ForbiddenException,
   ConflictException,
 } from '@nestjs/common';
-import { GoodsReceiptStatus, StockMovementType, Role, Prisma } from '@prisma/client';
+import { GoodsReceiptStatus, StockMovementType, QcStatus, Role, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { assertNoActiveStocktakeLock } from '../../common/stocktake-lock.util';
 import { CreateGoodsReceiptDto } from './dto/create-goods-receipt.dto';
@@ -198,6 +198,16 @@ export class GoodsReceiptService {
     return this.prisma.$transaction(async (tx) => {
       await assertNoActiveStocktakeLock(tx, current.warehouseId);
 
+      // Kho Vat tu (TOOLS_WAREHOUSE) khong yeu cau QC — theo xac nhan cua
+      // Sep Thanh ngay 04/09/2026 ("Kho vat tu k can qc nha"). Cac kho
+      // khac (RM/Color Kitchen/FG) van giu nguyen hanh vi cu — Lot tao ra
+      // mac dinh qcStatus PENDING, phai qua QC Manager duyet moi xuat duoc.
+      const warehouse = await tx.warehouse.findUnique({
+        where: { id: current.warehouseId },
+        select: { code: true },
+      });
+      const skipQc = warehouse?.code === 'TOOLS_WAREHOUSE';
+
       for (const line of current.lines) {
         // Tim hoac tao Lot (unique theo itemId + lotCode)
         let lot = await tx.lot.findFirst({
@@ -218,6 +228,7 @@ export class GoodsReceiptService {
               packingListNumber: current.packingListNumber,
               invoiceNumber: current.invoiceNumber,
               createdBy: currentUser.id,
+              qcStatus: skipQc ? QcStatus.PASSED : undefined, // undefined = dung default PENDING nhu cu
             },
           });
         }

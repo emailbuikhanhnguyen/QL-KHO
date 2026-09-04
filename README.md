@@ -100,7 +100,7 @@ DRAFT (thủ kho tạo, kiểm đếm, sửa thoải mái)
 | POST | `/api/goods-receipts/:id/reopen` | ADMIN, WAREHOUSE_STAFF | REJECTED → DRAFT |
 | DELETE | `/api/goods-receipts/:id` | ADMIN, WAREHOUSE_STAFF | Chỉ xóa được khi DRAFT |
 
-**Seed đã cập nhật**: tự tạo sẵn 3 kho (RM_WAREHOUSE, COLOR_KITCHEN, FG_WAREHOUSE) gắn đúng phòng ban tương ứng — chạy lại `npm run prisma:seed` sau khi migrate để có sẵn data test.
+**Seed đã cập nhật**: tự tạo sẵn 4 kho (RM_WAREHOUSE, COLOR_KITCHEN, FG_WAREHOUSE, TOOLS_WAREHOUSE) gắn đúng phòng ban tương ứng — chạy lại `npm run prisma:seed` sau khi migrate để có sẵn data test.
 
 ## 1.7. Cập nhật 31/08/2026 — Module 3: QC (Kiểm tra chất lượng)
 
@@ -380,7 +380,7 @@ Dùng **Render free** (ngủ sau 15 phút không ai dùng) + **Supabase free** (
 
 ### Cô lập hoàn toàn khỏi dữ liệu demo thật
 
-Toàn bộ luồng test chạy trên **1 kho riêng biệt `SYSTEM_TEST`** (tạo qua `prisma/seed-system-test.ts`, giống cách làm kho ảo `IN_TRANSIT`) + 1 tài khoản bot riêng `system.healthcheck@sec.com` — **không bao giờ đụng tới 3 kho thật** (RM/Color Kitchen/FG). Thành xem báo cáo/Excel bình thường sẽ **không bao giờ thấy** dữ liệu test này lẫn vào.
+Toàn bộ luồng test chạy trên **1 kho riêng biệt `SYSTEM_TEST`** (tạo qua `prisma/seed-system-test.ts`, giống cách làm kho ảo `IN_TRANSIT`) + 1 tài khoản bot riêng `system.healthcheck@sec.com` — **không bao giờ đụng tới các kho thật** (RM/Color Kitchen/FG/Vật tư). Thành xem báo cáo/Excel bình thường sẽ **không bao giờ thấy** dữ liệu test này lẫn vào.
 
 Đã vá luôn 1 lỗ hổng giao diện có sẵn từ trước (chưa ai để ý): dropdown chọn kho ở trang Nhập kho/Xuất kho **chưa lọc kho ảo** (`IN_TRANSIT`) ra khỏi danh sách — nay lọc luôn cả `IN_TRANSIT` và `SYSTEM_TEST`.
 
@@ -552,6 +552,31 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 2. **Backend** (`StockLedgerService`) — quan trọng hơn, vì phát hiện **Excel xuất ra không đi qua bước lọc JS ở bước 1**, vẫn có nguy cơ lộ dữ liệu test. Sửa tại nguồn: thêm điều kiện loại trừ `item.code` bắt đầu bằng `HEALTHCHECK` và `warehouse.code` thuộc `SYSTEM_TEST`/`IN_TRANSIT` ngay trong Prisma `where` — vì `exportBalanceByItemToExcel()` gọi lại chính `getBalanceByItem()`, sửa 1 chỗ áp dụng luôn cho cả màn hình web lẫn file Excel.
 
 **Đã cập nhật + chạy thật unit test tương ứng** (`stock-ledger.service.spec.ts`) — 1 test cũ bị vỡ do so khớp chính xác object `where` (đã sửa dùng `objectContaining`), thêm 1 test mới xác nhận rõ điều kiện loại trừ hệ thống luôn có mặt. Xác nhận **8/8 pass, chạy thật** (dùng `isolatedModules` để né giới hạn sandbox không tạo đủ Prisma Client, không liên quan tới logic vừa sửa).
+
+## 1.24. Cập nhật 04/09/2026 — Thêm Kho Vật tư (kho thứ 4)
+
+**Bối cảnh**: Phản hồi v2 của Sếp Thành (câu 17, 29) xác nhận công ty có **4 kho vật lý**, không phải 3 như thiết kế ban đầu — thiếu hẳn "Kho Vật tư" (chứa công cụ dụng cụ, không hóa chất).
+
+**Đã làm:**
+- Thêm `Department` mới: code `TOOLS_WAREHOUSE`, tên "Kho vật tư (công cụ dụng cụ)"
+- Thêm `Warehouse` mới cùng code, gắn đúng phòng ban tương ứng — theo đúng khuôn mẫu 3 kho có sẵn, không cần sửa DTO/validation nào (trường `code` vốn không giới hạn theo danh sách cố định)
+- Thêm tài khoản demo `kho.vt@sec.com` (mật khẩu chung `Demo@123456`, vai trò `WAREHOUSE_STAFF`, phòng ban `TOOLS_WAREHOUSE`)
+
+**Chưa làm — đang chờ Thành trả lời rõ thêm (câu 29)**: chưa biết Kho Vật tư có cần quy trình QC như Kho NPL hay không. Lưu ý về hành vi hiện tại: hệ thống **không chặn QC ở bước nhập kho** (mọi lô hàng nhập vào đều tạo `Lot` bình thường, `qcStatus` mặc định `PENDING`) — ràng buộc QC thực ra nằm ở **bước xuất kho** (`IssueRequestService` chỉ cho phép chọn lô có `qcStatus` là `PASSED`/`PARTIALLY_PASSED` khi xuất theo FEFO). Vì vậy nếu Thành xác nhận Kho Vật tư **không cần QC**, cách xử lý gọn nhất là: khi tạo Lot cho kho này, tự động gán `qcStatus = PASSED` ngay (bỏ qua bước chờ QC Manager duyệt) — không cần đổi logic xuất kho, chỉ cần đổi đúng 1 điểm ở bước duyệt nhập kho theo warehouse.
+
+**Sau khi seed lại**: chạy `npm run prisma:seed` và `npm run seed:demo-users` trên môi trường đang dùng (local + Render) để có đủ dữ liệu kho mới.
+
+## 1.25. Cập nhật 04/09/2026 — Kho Vật tư chính thức bỏ qua bước QC
+
+**Xác nhận từ Thành (chat 15:15)**: *"Kho vật tư k cần qc nh â"* — trả lời dứt điểm câu hỏi Q29 còn treo.
+
+**Đã triển khai**: sửa `GoodsReceiptService.approve()` — khi duyệt phiếu nhập cho đúng kho `TOOLS_WAREHOUSE`, Lot tạo ra tự động có `qcStatus: PASSED` ngay lập tức (bỏ qua bước chờ QC Manager duyệt), có thể xuất kho ngay. Các kho khác (RM/Color Kitchen/FG) **giữ nguyên hành vi cũ** — vẫn mặc định `PENDING`, vẫn phải qua QC như trước.
+
+**Cách làm — không đổi logic xuất kho**: đúng như dự tính ghi ở mục 1.24, chỉ cần chỉnh 1 điểm duy nhất ở bước duyệt nhập kho (thêm điều kiện kiểm tra `warehouse.code`), không cần đổi bất kỳ gì ở `IssueRequestService` hay `QcInspectionService`.
+
+**Đã viết 2 unit test mới** xác nhận cả 2 nhánh (Kho Vật tư → PASSED, Kho thường → giữ nguyên không set field, dùng default schema) — do giới hạn sandbox không tạo đủ Prisma Client (`Role`/`QcStatus` enum rỗng), đã mô phỏng riêng đúng đoạn logic cốt lõi để xác nhận trước khi giao; test đầy đủ cần chạy `npm test` thật trên máy có Prisma Client đầy đủ để xác nhận lại lần cuối.
+
+**Việc còn treo**: Q19 (dung sai kiểm kê Color Kitchen) — Thành trả lời "chỉ cần kiểm đầu vào, không cần đầu ra, có thể nghiên cứu sau" — **chưa phải con số % cụ thể**, và bản thân ý này (phân biệt kiểm kê 1 chiều/2 chiều) là 1 khái niệm mới chưa có trong thiết kế hiện tại. Theo đúng ý Thành ("nghiên cứu sau"), **tạm không đổi gì** ở module Kiểm kê.
 
 ## 2. Cách chạy migration
 
