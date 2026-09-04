@@ -251,6 +251,47 @@ export class StockLedgerService {
     }));
   }
 
+  // Canh bao ton kho chu dong (theo phan hoi Sep Thanh, cau 2/6/15): so
+  // sanh TONG ton kho tren MOI kho that (khong tinh IN_TRANSIT/SYSTEM_TEST)
+  // cua tung Vat tu voi minStock cua chinh no — minStock la 1 gia tri
+  // chung cho ca vat tu (khong tach rieng theo tung kho, dung schema Item).
+  async getLowStockAlerts() {
+    // Lay TAT CA vat tu dang active truoc — khong chi lay tu groupBy, vi
+    // vat tu MOI TAO chua tung co giao dich nao se KHONG xuat hien trong
+    // groupBy (du ton thuc te = 0, ro rang duoi han muc neu minStock > 0).
+    const items = await this.prisma.item.findMany({
+      where: { deletedAt: null, isActive: true, code: { not: { startsWith: 'HEALTHCHECK' } } },
+      select: { id: true, code: true, name: true, unit: true, minStock: true, maxStock: true },
+    });
+
+    const grouped = await this.prisma.stockLedgerEntry.groupBy({
+      by: ['itemId'],
+      where: this.EXCLUDE_SYSTEM_DATA,
+      _sum: { quantity: true },
+    });
+    const balanceMap = new Map(grouped.map((g) => [g.itemId, this.toSafeNumber(g._sum.quantity)]));
+
+    const alerts = items
+      .map((item) => {
+        const totalBalance = balanceMap.get(item.id) || 0; // mac dinh 0 neu chua tung co giao dich
+        const minStock = this.toSafeNumber(item.minStock);
+        return {
+          itemId: item.id,
+          itemCode: item.code,
+          itemName: item.name,
+          unit: item.unit,
+          totalBalance,
+          minStock,
+          maxStock: this.toSafeNumber(item.maxStock),
+          shortage: minStock - totalBalance, // duong = dang thieu bao nhieu so voi han muc
+        };
+      })
+      .filter((a) => a.minStock > 0 && a.totalBalance < a.minStock) // minStock=0 nghia la khong dat han muc, khong canh bao
+      .sort((a, b) => b.shortage - a.shortage); // thieu nhieu nhat len dau
+
+    return { count: alerts.length, alerts };
+  }
+
   private toSafeNumber(value: unknown): number {
     if (value === null || value === undefined) return 0;
     if (typeof value === 'number') return value;

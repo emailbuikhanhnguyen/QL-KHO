@@ -16,6 +16,7 @@
     <div class="tabs">
       <button class="active" id="tabBalance" onclick="switchTab('balance')" data-i18n="reports.tabBalance">Tồn kho hiện tại</button>
       <button id="tabHistory" onclick="switchTab('history')" data-i18n="reports.tabHistory">Lịch sử biến động</button>
+      <button id="tabAlerts" onclick="switchTab('alerts')" data-i18n="reports.tabAlerts">⚠️ Cảnh báo tồn kho</button>
     </div>
 
     <!-- ============ TON KHO HIEN TAI ============ -->
@@ -69,6 +70,12 @@
         <button class="btn btn-success btn-sm" onclick="exportHistory()" data-i18n="reports.exportExcelBtn">📥 Xuất Excel</button>
       </div>
       <div id="historyContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ CANH BAO TON KHO ============ -->
+    <div class="card" id="alertsCard" style="display:none;">
+      <p class="subtitle" data-i18n="reports.alertsIntro">Danh sách vật tư đang có tổng tồn kho (mọi kho cộng lại) dưới hạn mức tối thiểu đã đặt.</p>
+      <div id="alertsContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
   </div>
 

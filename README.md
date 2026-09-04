@@ -578,6 +578,17 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 
 **Việc còn treo**: Q19 (dung sai kiểm kê Color Kitchen) — Thành trả lời "chỉ cần kiểm đầu vào, không cần đầu ra, có thể nghiên cứu sau" — **chưa phải con số % cụ thể**, và bản thân ý này (phân biệt kiểm kê 1 chiều/2 chiều) là 1 khái niệm mới chưa có trong thiết kế hiện tại. Theo đúng ý Thành ("nghiên cứu sau"), **tạm không đổi gì** ở module Kiểm kê.
 
+## 1.26. Cập nhật 04/09/2026 — Hoàn thiện Cảnh báo tồn kho (backend đã có sẵn từ trước, bổ sung phần còn thiếu)
+
+**Phát hiện lúc làm**: phần lõi (service tính toán + API endpoint + script gửi email) **đã được code từ 1 phiên làm việc trước** nhưng chưa hoàn thiện — thiếu file lịch chạy tự động, thiếu unit test, và chưa có giao diện xem trên web. Hoàn thiện nốt các phần còn thiếu:
+
+- **Workflow GitHub Actions mới** (`.github/workflows/daily-stock-alert.yml`) — chạy tách biệt với Health Check, đúng 7h sáng mỗi ngày (đầu giờ làm việc), gọi `scripts/daily-stock-alert.js` đã có sẵn
+- **6 unit test mới** cho `getLowStockAlerts()` — xác nhận đúng các trường hợp: vật tư dưới hạn mức, vật tư có `minStock=0` (chưa đặt hạn mức, không cảnh báo), vật tư mới tạo chưa từng giao dịch (tồn=0 vẫn tính đúng), sắp xếp theo mức thiếu hụt giảm dần. Chạy thật **13/13 pass**
+- **Tab mới "⚠️ Cảnh báo tồn kho"** trong trang Báo cáo — xem trực tiếp trên web, không cần chờ email 7h sáng hôm sau
+- Thêm 6 key dịch mới, tổng 412 key khớp tuyệt đối 3 ngôn ngữ
+
+**Lưu ý khi merge**: cần thêm đủ 4 GitHub Secret cho workflow mới hoạt động (`APP_URL`, `SYSTEM_HEALTHCHECK_PASSWORD`, `REPORT_TO_EMAIL`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`) — thực ra đây là **các secret đã có sẵn** từ Health Check trước đó, không cần tạo mới, chỉ cần workflow mới tham chiếu đúng tên.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

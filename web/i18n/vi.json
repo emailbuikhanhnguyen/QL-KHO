@@ -302,7 +302,13 @@
     "tableLot": "Lô",
     "tableQuantity": "Số lượng",
     "historyLimitNote": "Hiển thị tối đa 100 giao dịch gần nhất. Dùng nút \"Xuất Excel\" để lấy đầy đủ.",
-    "exportFailedAlert": "Xuất Excel thất bại: "
+    "exportFailedAlert": "Xuất Excel thất bại: ",
+    "tabAlerts": "⚠️ Cảnh báo tồn kho",
+    "alertsIntro": "Danh sách vật tư đang có tổng tồn kho (mọi kho cộng lại) dưới hạn mức tối thiểu đã đặt.",
+    "alertsEmpty": "Không có vật tư nào dưới hạn mức tồn kho tối thiểu. 👍",
+    "alertsCurrentCol": "Tồn hiện tại",
+    "alertsMinCol": "Hạn mức tối thiểu",
+    "alertsShortageCol": "Đang thiếu"
   },
   "scan": {
     "title": "📷 Quét QR Kiểm kê",
@@ -607,5 +613,16 @@
       "BOD": "Duyệt cấp cuối cùng cho mọi yêu cầu xuất kho, sau khi đã qua duyệt cấp Trưởng bộ phận — không giới hạn theo phòng ban.",
       "REQUESTER": "Tạo yêu cầu xuất kho cho nhu cầu của mình — không có quyền duyệt hay thao tác trực tiếp lên tồn kho."
     }
+  },
+  "lowStock": {
+    "title": "Cảnh báo tồn kho",
+    "summary": "Có {{count}} vật tư đang dưới hạn mức tồn kho tối thiểu",
+    "summaryOne": "Có 1 vật tư đang dưới hạn mức tồn kho tối thiểu",
+    "viewDetail": "Xem chi tiết",
+    "hide": "Ẩn",
+    "tableItem": "Vật tư",
+    "tableCurrent": "Tồn hiện tại",
+    "tableMin": "Hạn mức tối thiểu",
+    "tableShortage": "Đang thiếu"
   }
 }

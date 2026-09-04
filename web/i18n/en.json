@@ -302,7 +302,13 @@
     "tableLot": "Lot",
     "tableQuantity": "Quantity",
     "historyLimitNote": "Showing the latest 100 transactions. Use \"Export Excel\" for the full list.",
-    "exportFailedAlert": "Excel export failed: "
+    "exportFailedAlert": "Excel export failed: ",
+    "tabAlerts": "⚠️ Stock Alerts",
+    "alertsIntro": "Items whose total stock (across all warehouses) is below the minimum threshold.",
+    "alertsEmpty": "No items are below their minimum stock threshold. 👍",
+    "alertsCurrentCol": "Current Stock",
+    "alertsMinCol": "Minimum Threshold",
+    "alertsShortageCol": "Shortage"
   },
   "scan": {
     "title": "📷 QR Stocktake Scan",
@@ -607,5 +613,16 @@
       "BOD": "Gives the final approval for any issue request, after Department Head approval — not limited by department.",
       "REQUESTER": "Creates issue requests for your own needs — no approval rights or direct stock actions."
     }
+  },
+  "lowStock": {
+    "title": "Low Stock Alert",
+    "summary": "{{count}} items are below the minimum stock threshold",
+    "summaryOne": "1 item is below the minimum stock threshold",
+    "viewDetail": "View details",
+    "hide": "Hide",
+    "tableItem": "Item",
+    "tableCurrent": "Current Stock",
+    "tableMin": "Minimum Threshold",
+    "tableShortage": "Shortage"
   }
 }

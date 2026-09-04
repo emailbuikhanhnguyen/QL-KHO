@@ -65,6 +65,11 @@ export class StockLedgerController {
     });
   }
 
+  @Get('low-stock-alerts')
+  getLowStockAlerts() {
+    return this.service.getLowStockAlerts();
+  }
+
   @Get('balance/export')
   async exportBalance(
     @Res() res: Response,

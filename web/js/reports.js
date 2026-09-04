@@ -37,9 +37,48 @@ async function loadDropdownData() {
 function switchTab(tab) {
   document.getElementById("balanceCard").style.display = tab === "balance" ? "block" : "none";
   document.getElementById("historyCard").style.display = tab === "history" ? "block" : "none";
+  document.getElementById("alertsCard").style.display = tab === "alerts" ? "block" : "none";
   document.getElementById("tabBalance").classList.toggle("active", tab === "balance");
   document.getElementById("tabHistory").classList.toggle("active", tab === "history");
+  document.getElementById("tabAlerts").classList.toggle("active", tab === "alerts");
   if (tab === "history") loadHistory();
+  if (tab === "alerts") loadAlerts();
+}
+
+async function loadAlerts() {
+  const container = document.getElementById("alertsContainer");
+  container.innerHTML = t("common.loading");
+  const res = await apiFetch("/stock-ledger/low-stock-alerts");
+  if (!res.ok) {
+    container.innerHTML = `<div class="error-box show">${extractErrorMessage(res.data)}</div>`;
+    return;
+  }
+  const { alerts } = res.data;
+  if (alerts.length === 0) {
+    container.innerHTML = `<div class="empty-state">${t("reports.alertsEmpty")}</div>`;
+    return;
+  }
+  const rows = alerts
+    .map(
+      (a) => `
+      <tr>
+        <td>${a.itemName} (${a.itemCode})</td>
+        <td>${formatNumber(a.totalBalance)} ${a.unit}</td>
+        <td>${formatNumber(a.minStock)} ${a.unit}</td>
+        <td><strong style="color:#c00;">${formatNumber(a.shortage)} ${a.unit}</strong></td>
+      </tr>`,
+    )
+    .join("");
+  container.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>${t("reports.itemLabel")}</th>
+        <th>${t("reports.alertsCurrentCol")}</th>
+        <th>${t("reports.alertsMinCol")}</th>
+        <th>${t("reports.alertsShortageCol")}</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 function itemName(id) {

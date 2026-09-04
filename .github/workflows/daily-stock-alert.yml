@@ -1,0 +1,32 @@
+name: Daily Stock Alert
+
+on:
+  schedule:
+    # 00:00 UTC = 07:00 gio Viet Nam (UTC+7) — dau gio lam viec, de kip
+    # xu ly trong ngay neu co vat tu duoi han muc ton kho toi thieu.
+    - cron: '0 0 * * *'
+  workflow_dispatch: {} # cho phep bam chay tay tu tab "Actions" tren GitHub de test truoc
+
+jobs:
+  stock-alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cai dat nodemailer (chi can 1 goi nay de gui email)
+        run: npm install nodemailer --no-save
+
+      - name: Kiem tra ton kho + gui email neu co vat tu duoi han muc
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          SYSTEM_HEALTHCHECK_PASSWORD: ${{ secrets.SYSTEM_HEALTHCHECK_PASSWORD }}
+          REPORT_TO_EMAIL: ${{ secrets.REPORT_TO_EMAIL }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: node scripts/daily-stock-alert.js

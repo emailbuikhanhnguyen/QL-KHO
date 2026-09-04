@@ -302,7 +302,13 @@
     "tableLot": "批次",
     "tableQuantity": "数量",
     "historyLimitNote": "仅显示最近100条交易记录。使用“导出Excel”获取完整列表。",
-    "exportFailedAlert": "导出Excel失败："
+    "exportFailedAlert": "导出Excel失败：",
+    "tabAlerts": "⚠️ 库存预警",
+    "alertsIntro": "总库存（所有仓库合计）低于设定最低库存量的物料清单。",
+    "alertsEmpty": "没有物料低于最低库存量。👍",
+    "alertsCurrentCol": "当前库存",
+    "alertsMinCol": "最低库存量",
+    "alertsShortageCol": "缺口"
   },
   "scan": {
     "title": "📷 扫码盘点",
@@ -607,5 +613,16 @@
       "BOD": "在部门主管审批之后，对任何出库申请进行最终审批——不受部门限制。",
       "REQUESTER": "为自己的需求创建出库申请——没有审批权限，也不能直接操作库存。"
     }
+  },
+  "lowStock": {
+    "title": "库存不足预警",
+    "summary": "有 {{count}} 项物料低于最低库存阈值",
+    "summaryOne": "有 1 项物料低于最低库存阈值",
+    "viewDetail": "查看详情",
+    "hide": "隐藏",
+    "tableItem": "物料",
+    "tableCurrent": "当前库存",
+    "tableMin": "最低阈值",
+    "tableShortage": "缺少数量"
   }
 }

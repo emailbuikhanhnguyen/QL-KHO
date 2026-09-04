@@ -116,6 +116,72 @@ describe('StockLedgerService', () => {
     });
   });
 
+  describe('getLowStockAlerts', () => {
+    it('canh bao dung vat tu co tong ton (moi kho cong lai) duoi minStock', async () => {
+      prisma.item.findMany.mockResolvedValue([
+        { id: 1, code: 'VAI-001', name: 'Vai kaki', unit: 'met', minStock: 100, maxStock: 1000 },
+      ]);
+      prisma.stockLedgerEntry.groupBy.mockResolvedValue([{ itemId: 1, _sum: { quantity: 50 } }]);
+
+      const result = await service.getLowStockAlerts();
+
+      expect(result.count).toBe(1);
+      expect(result.alerts[0]).toMatchObject({ itemId: 1, totalBalance: 50, minStock: 100, shortage: 50 });
+    });
+
+    it('KHONG canh bao vat tu co tong ton >= minStock', async () => {
+      prisma.item.findMany.mockResolvedValue([
+        { id: 2, code: 'VAI-002', name: 'Vai kate', unit: 'met', minStock: 100, maxStock: 1000 },
+      ]);
+      prisma.stockLedgerEntry.groupBy.mockResolvedValue([{ itemId: 2, _sum: { quantity: 150 } }]);
+
+      const result = await service.getLowStockAlerts();
+
+      expect(result.count).toBe(0);
+    });
+
+    it('KHONG canh bao vat tu co minStock = 0 (nghia la khong dat han muc)', async () => {
+      prisma.item.findMany.mockResolvedValue([
+        { id: 3, code: 'VAI-003', name: 'Vai chua dat han muc', unit: 'met', minStock: 0, maxStock: 0 },
+      ]);
+      prisma.stockLedgerEntry.groupBy.mockResolvedValue([]); // chua tung co giao dich, ton = 0
+
+      const result = await service.getLowStockAlerts();
+
+      expect(result.count).toBe(0);
+    });
+
+    it('VAN canh bao vat tu MOI TAO chua tung co giao dich nao (ton thuc te = 0)', async () => {
+      // Day la truong hop quan trong nhat — vat tu khong xuat hien trong
+      // groupBy (vi chua co StockLedgerEntry nao), nhung ton thuc te = 0
+      // van phai duoc tinh dung va canh bao neu minStock > 0.
+      prisma.item.findMany.mockResolvedValue([
+        { id: 4, code: 'VAI-MOI', name: 'Vai vua tao, chua nhap lan nao', unit: 'met', minStock: 50, maxStock: 500 },
+      ]);
+      prisma.stockLedgerEntry.groupBy.mockResolvedValue([]); // khong co dong nao cho item nay
+
+      const result = await service.getLowStockAlerts();
+
+      expect(result.count).toBe(1);
+      expect(result.alerts[0]).toMatchObject({ itemId: 4, totalBalance: 0, minStock: 50, shortage: 50 });
+    });
+
+    it('sap xep dung theo muc thieu hut giam dan (thieu nhieu nhat len dau)', async () => {
+      prisma.item.findMany.mockResolvedValue([
+        { id: 5, code: 'A', name: 'A', unit: 'cai', minStock: 100, maxStock: 1000 },
+        { id: 6, code: 'B', name: 'B', unit: 'cai', minStock: 100, maxStock: 1000 },
+      ]);
+      prisma.stockLedgerEntry.groupBy.mockResolvedValue([
+        { itemId: 5, _sum: { quantity: 90 } }, // thieu 10
+        { itemId: 6, _sum: { quantity: 20 } }, // thieu 80
+      ]);
+
+      const result = await service.getLowStockAlerts();
+
+      expect(result.alerts.map((a) => a.itemId)).toEqual([6, 5]); // B (thieu nhieu hon) len truoc
+    });
+  });
+
   describe('getTransactions', () => {
     it('phan trang dung theo page/limit, gioi han limit toi da 200', async () => {
       prisma.$transaction.mockResolvedValue([[], 0]);
