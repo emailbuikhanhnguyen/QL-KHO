@@ -235,6 +235,8 @@ function renderTopbar(activePage) {
     { href: "/stocktake.html", key: "stocktake", labelKey: "nav.stocktake", fallback: "Kiểm kê" },
     { href: "/stocktake-scan.html", key: "stocktake-scan", labelKey: "nav.qrScan", fallback: "Quét QR" },
     { href: "/disposal-requests.html", key: "disposal", labelKey: "nav.disposal", fallback: "Xử lý hàng lỗi" },
+    { href: "/leave-requests.html", key: "leave", labelKey: "nav.leave", fallback: "Nghỉ phép" },
+    { href: "/overtime-requests.html", key: "overtime", labelKey: "nav.overtime", fallback: "Tăng ca" },
   ];
   const navHtml = links
     .map(
@@ -244,7 +246,7 @@ function renderTopbar(activePage) {
     .join("");
 
   el.innerHTML = `
-    <div class="brand">Kho NPL</div>
+    <div class="brand">SEC ERP</div>
     <nav>${navHtml}</nav>
     <div class="user-info">
       <a href="/help.html${getHelpAnchorFor(activePage)}" title="Trợ giúp" style="color:#cfd8f5; font-size:18px; text-decoration:none;">❓</a>
@@ -321,6 +323,8 @@ function getHelpAnchorFor(activePage) {
     reports: "#reports",
     stocktake: "#stocktakeManagement",
     disposal: "#disposalHelp",
+    leave: "#leaveHelp",
+    overtime: "#overtimeHelp",
   };
   return map[activePage] ? map[activePage] : "";
 }

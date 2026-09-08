@@ -11,6 +11,8 @@ const SECTION_ORDER = [
   "reports",
   "stocktakeManagement",
   "disposalHelp",
+  "leaveHelp",
+  "overtimeHelp",
   "scan",
   "permissions",
   "faq",

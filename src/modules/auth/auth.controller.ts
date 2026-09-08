@@ -1,5 +1,5 @@
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -34,5 +34,13 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   me(@CurrentUser() user: any) {
     return user;
+  }
+
+  // Them 04/09/2026 (SEC ERP) — danh sach nhan vien de chon nhieu nguoi
+  // tham gia Tang ca. Truyen ?departmentId= de loc rieng 1 phong ban.
+  @Get('users')
+  @UseGuards(JwtAuthGuard)
+  findUsers(@Query('departmentId') departmentId?: string) {
+    return this.authService.findUsers(departmentId ? Number(departmentId) : undefined);
   }
 }

@@ -610,6 +610,32 @@ Thêm 20 key dịch mới, tổng 377 key khớp tuyệt đối 3 ngôn ngữ.
 npx prisma migrate dev --name add_disposal_request
 ```
 
+## 1.28. Cập nhật 04/09/2026 — Mở rộng thành SEC ERP: Module Nghỉ phép + Tăng ca
+
+**Bối cảnh**: theo yêu cầu của Sếp Thành, mở rộng "Kho NPL" thành 1 ERP dùng chung cho toàn công ty (bao gồm cả phòng ban không có kho — Kế toán, Lab... sau này). Quyết định: **gộp chung 1 app** (không tách riêng), vì dùng chung được đăng nhập/RBAC đã xây.
+
+**Đổi tên hiển thị**: "Kho NPL" → **"SEC ERP"** — toàn bộ tiêu đề trang, brand ở topbar, trang đăng nhập. Đã rà soát sạch, không còn sót "Kho NPL" ở đâu trong code.
+
+**Hạ tầng mới dùng chung cho cả 8 module ERP tương lai**: bảng `Attachment` (thiết kế polymorphic, không phải tạo riêng bảng ảnh cho từng module như đã làm với `QcInspectionImage`).
+
+**Vai trò mới**: `HR` — duyệt cấp cuối cho Nghỉ phép/Tăng ca. Phòng ban mới: `HR` (không gắn kho, giống PMC/CS/FD/QA/BOD). Tài khoản demo: `hr@sec.com` / `Demo@123456`.
+
+### Module 1: Nghỉ phép
+Luồng: `DRAFT → PENDING_MANAGER_APPROVAL → PENDING_HR_APPROVAL → APPROVED` (hoặc `REJECTED`/`CANCELLED`). Giả định nghiệp vụ **chưa được Sếp xác nhận riêng** (ghi chú rõ trong code): mọi đơn đều qua đủ 2 cấp duyệt, chưa phân biệt theo số ngày nghỉ như yêu cầu gốc "HR nếu cần" — dễ điều chỉnh sau nếu Sếp muốn giảm bớt cho đơn ngắn ngày.
+
+### Module 2: Tăng ca
+Khác Nghỉ phép: 1 kế hoạch tăng ca có thể gồm **nhiều nhân viên** cùng lúc (mẫu Header + Line, giống `IssueRequest`/`IssueRequestLine`). Thêm API mới `GET /api/auth/users` để lấy danh sách nhân viên. **Tự phát hiện và vá 1 lỗ hổng** lúc code: ban đầu chưa kiểm tra các nhân viên được chọn có cùng phòng ban với người tạo hay không — đã bổ sung kiểm tra bắt buộc (trừ Admin).
+
+**Đã tự kiểm tra kỹ**: 23 unit test mới (13 Nghỉ phép + 10 Tăng ca), chạy thật pass 100%. Rà soát sạch 4 lớp (cú pháp JS, HTML hợp lệ, khớp 501 key 3 ngôn ngữ, biên dịch TypeScript).
+
+**Lưu ý migration quan trọng**: cần chạy trên máy có mạng đầy đủ:
+```
+npx prisma migrate dev --name add_sec_erp_leave_overtime
+npm run prisma:seed
+npm run seed:demo-users
+```
+(2 lệnh seed để tạo phòng ban `HR` mới và tài khoản demo `hr@sec.com`)
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

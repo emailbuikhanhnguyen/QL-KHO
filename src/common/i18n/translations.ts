@@ -32,6 +32,8 @@ export const ACTION_TRANSLATIONS: Record<string, Record<SupportedLang, string>> 
   'hoan tat': { vi: 'hoàn tất', en: 'complete', zh: '完成' },
   'huy': { vi: 'hủy', en: 'cancel', zh: '取消' },
   'duyet QA': { vi: 'duyệt (cấp QA)', en: 'approve (QA level)', zh: '批准（质检级）' },
+  'duyet quan ly': { vi: 'duyệt (quản lý trực tiếp)', en: 'approve (manager level)', zh: '批准（主管级）' },
+  'duyet HR': { vi: 'duyệt (HR)', en: 'approve (HR)', zh: '批准（人事）' },
 };
 
 export function translateAction(action: string, lang: SupportedLang): string {
@@ -185,5 +187,15 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     vi: 'Số lượng hủy ({{requested}}) vượt quá tồn khả dụng ({{available}}) của lô hàng tại kho này',
     en: 'Disposal quantity ({{requested}}) exceeds available stock ({{available}}) for this lot at this warehouse',
     zh: '报废数量（{{requested}}）超过该批次在此仓库的可用库存（{{available}}）',
+  },
+  INVALID_DATE_RANGE: {
+    vi: 'Ngày bắt đầu phải trước hoặc bằng ngày kết thúc',
+    en: 'Start date must be before or equal to the end date',
+    zh: '开始日期必须早于或等于结束日期',
+  },
+  INVALID_TIME_RANGE: {
+    vi: 'Giờ bắt đầu phải trước giờ kết thúc',
+    en: 'Start time must be before the end time',
+    zh: '开始时间必须早于结束时间',
   },
 };

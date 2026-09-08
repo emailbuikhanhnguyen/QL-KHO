@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tăng ca — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .user-checkbox-list {
+      max-height: 220px; overflow-y: auto; border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px;
+    }
+    .user-checkbox-list label {
+      display: flex; align-items: center; gap: 8px; padding: 6px 4px;
+      font-weight: 400; cursor: pointer;
+    }
+    .user-checkbox-list label:hover { background: #f7f8fc; }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="overtime.title">Tăng ca</h1>
+    <p class="subtitle" data-i18n="overtime.subtitle">Đăng ký kế hoạch tăng ca cho nhóm nhân viên, gửi duyệt qua Quản lý trực tiếp rồi HR</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="overtime.listTitle">Danh sách kế hoạch tăng ca</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="overtime.createBtn">+ Tạo kế hoạch mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="overtime.createTitle">Tạo kế hoạch tăng ca mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-grid cols-3">
+        <div class="form-row">
+          <label data-i18n="overtime.dateLabel">Ngày tăng ca *</label>
+          <input type="date" id="f_otDate" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="overtime.startTimeLabel">Giờ bắt đầu *</label>
+          <input type="time" id="f_startTime" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="overtime.endTimeLabel">Giờ kết thúc *</label>
+          <input type="time" id="f_endTime" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label data-i18n="overtime.reasonLabel">Lý do / công việc *</label>
+        <textarea id="f_reason"></textarea>
+      </div>
+      <div class="form-row">
+        <label data-i18n="overtime.usersLabel">Nhân viên tham gia * (cùng phòng ban)</label>
+        <div class="user-checkbox-list" id="userCheckboxList"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="overtime.submitCreateBtn">Tạo kế hoạch</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="overtime.detailTitle">Chi tiết kế hoạch tăng ca</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/overtime-requests.js"></script>
+</body>
+</html>

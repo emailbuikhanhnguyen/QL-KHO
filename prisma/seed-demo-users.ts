@@ -54,6 +54,13 @@ const DEMO_USERS = [
     role: Role.BOD,
     deptCode: 'BOD',
   },
+  {
+    // Them 04/09/2026 (SEC ERP) — duyet cap cuoi cho Nghi phep/Tang ca
+    email: 'hr@sec.com',
+    fullName: 'Nguyen Thi Nhan Su',
+    role: Role.HR,
+    deptCode: 'HR',
+  },
 ];
 
 async function main() {

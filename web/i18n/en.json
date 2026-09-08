@@ -18,7 +18,8 @@
     "yes": "Yes",
     "no": "No",
     "all": "All",
-    "reject": "Reject"
+    "reject": "Reject",
+    "department": "Department"
   },
   "nav": {
     "dashboard": "Home",
@@ -29,10 +30,12 @@
     "reports": "Reports",
     "stocktake": "Stocktake",
     "qrScan": "Scan QR",
-    "disposal": "Defect Disposal"
+    "disposal": "Defect Disposal",
+    "leave": "Leave",
+    "overtime": "Overtime"
   },
   "login": {
-    "title": "NPL Warehouse Management System",
+    "title": "SEC ERP",
     "subtitle": "Sign in to continue",
     "email": "Email",
     "password": "Password",
@@ -143,7 +146,9 @@
     "ISSUE": "Issue",
     "ADJUSTMENT": "Adjustment",
     "RETURN": "Return",
-    "PENDING_QA_APPROVAL": "Pending QA Approval"
+    "PENDING_QA_APPROVAL": "Pending QA Approval",
+    "PENDING_MANAGER_APPROVAL": "Pending Manager Approval",
+    "PENDING_HR_APPROVAL": "Pending HR Approval"
   },
   "qc": {
     "title": "QC — Quality Inspection",
@@ -324,7 +329,7 @@
     "confirmBtn": "✔ Confirm & Scan Next",
     "rescanHint": "After confirming, the camera restarts automatically to scan the next lot.",
     "cameraError": "Could not open camera. Check that camera permission is granted, or use manual entry below.",
-    "invalidQrFormat": "This QR code is not in the Kho NPL system format.",
+    "invalidQrFormat": "This QR code is not in the expected system format.",
     "cannotReadLotId": "Could not read a lot ID from this QR code.",
     "searching": "Searching for lot...",
     "savedNext": "Saved. Scanning next lot...",
@@ -390,6 +395,11 @@
             "bod@sec.com",
             "Demo@123456",
             "Board of Directors"
+          ],
+          [
+            "hr@sec.com",
+            "Demo@123456",
+            "HR — final approval for Leave/Overtime"
           ]
         ]
       },
@@ -469,6 +479,28 @@
           "QA (QC Manager) gives level-1 approval.",
           "The Board of Directors gives the final approval — once approved, the system automatically deducts stock and marks the lot as \"Disposed\".",
           "If rejected at either level, the lot automatically reverts to \"Failed\" status — a new disposal request can be created, or another course of action taken (e.g. return to supplier)."
+        ]
+      },
+      "leaveHelp": {
+        "title": "Leave Request",
+        "intro": "Use this to request time off (annual, unpaid, sick...).",
+        "steps": [
+          "Go to Leave Request → Create New Request → select leave type, date range, enter reason.",
+          "Click Create — the request is saved as Draft, not yet sent to anyone.",
+          "Open the new request and click Submit.",
+          "Your direct manager (Department Head) gives level-1 approval.",
+          "HR gives the final approval — once approved, the status changes to Approved.",
+          "You can Cancel the request any time before it's fully approved."
+        ]
+      },
+      "overtimeHelp": {
+        "title": "Overtime",
+        "intro": "Use this to register an overtime plan for a group of employees in the same department.",
+        "steps": [
+          "Go to Overtime → Create New Plan → select date, time range, reason, and check the employees participating (only same-department employees are shown).",
+          "Click Create — saved as Draft.",
+          "Open the new plan and click Submit.",
+          "Direct manager approves at level 1, HR gives final approval — same flow as Leave Request."
         ]
       },
       "scan": {
@@ -665,5 +697,57 @@
     "approvedSuccess": "Approved — stock has been deducted and the lot marked as Disposed.",
     "rejectReasonPrompt": "Enter rejection reason:",
     "deleteConfirm": "Delete this disposal request? The lot will revert to Failed status."
+  },
+  "leave": {
+    "title": "Leave Request",
+    "subtitle": "Create a leave request, approved through your direct manager then HR",
+    "listTitle": "Leave Requests",
+    "createBtn": "+ New Request",
+    "createTitle": "New Leave Request",
+    "typeLabel": "Leave Type",
+    "typeAnnual": "Annual Leave",
+    "typeUnpaid": "Unpaid Leave",
+    "typeSick": "Sick Leave",
+    "typeOther": "Other",
+    "startDateLabel": "From",
+    "endDateLabel": "To",
+    "dateRangeLabel": "Leave Period",
+    "reasonLabel": "Reason",
+    "submitCreateBtn": "Create",
+    "tableCode": "Code",
+    "emptyState": "No leave requests yet. Click \"New Request\" to create one.",
+    "detailTitle": "Leave Request Detail",
+    "fillAllFields": "Please fill in all required fields.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Request",
+    "cancelConfirm": "Cancel this leave request?",
+    "deleteConfirm": "Delete this leave request?",
+    "approveManagerBtn": "✔ Approve (Manager)",
+    "approveHrBtn": "✔ Approve (HR)",
+    "approvedSuccess": "Approved — the leave request has been accepted."
+  },
+  "overtime": {
+    "title": "Overtime",
+    "subtitle": "Register an overtime plan for a group of employees, approved through the direct manager then HR",
+    "listTitle": "Overtime Plans",
+    "createBtn": "+ New Plan",
+    "createTitle": "New Overtime Plan",
+    "dateLabel": "OT Date",
+    "startTimeLabel": "Start Time",
+    "endTimeLabel": "End Time",
+    "timeRangeLabel": "Time Range",
+    "reasonLabel": "Reason / Work",
+    "usersLabel": "Participating Employees",
+    "peopleCountLabel": "People",
+    "submitCreateBtn": "Create",
+    "tableCode": "Code",
+    "emptyState": "No overtime plans yet. Click \"New Plan\" to create one.",
+    "detailTitle": "Overtime Plan Detail",
+    "fillAllFields": "Please fill in all required fields and select at least 1 employee.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Plan",
+    "cancelConfirm": "Cancel this overtime plan?",
+    "deleteConfirm": "Delete this overtime plan?",
+    "approvedSuccess": "Approved — the overtime plan has been accepted."
   }
 }

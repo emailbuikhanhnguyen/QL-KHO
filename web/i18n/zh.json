@@ -18,7 +18,8 @@
     "yes": "是",
     "no": "否",
     "all": "全部",
-    "reject": "拒绝"
+    "reject": "拒绝",
+    "department": "部门"
   },
   "nav": {
     "dashboard": "首页",
@@ -29,10 +30,12 @@
     "reports": "报表",
     "stocktake": "盘点",
     "qrScan": "扫码",
-    "disposal": "不良品处置"
+    "disposal": "不良品处置",
+    "leave": "请假",
+    "overtime": "加班"
   },
   "login": {
-    "title": "辅料仓库管理系统",
+    "title": "SEC ERP",
     "subtitle": "请登录以继续",
     "email": "电子邮箱",
     "password": "密码",
@@ -143,7 +146,9 @@
     "ISSUE": "出库",
     "ADJUSTMENT": "调整",
     "RETURN": "退货",
-    "PENDING_QA_APPROVAL": "待质检审批"
+    "PENDING_QA_APPROVAL": "待质检审批",
+    "PENDING_MANAGER_APPROVAL": "待主管审批",
+    "PENDING_HR_APPROVAL": "待人事审批"
   },
   "qc": {
     "title": "质检",
@@ -390,6 +395,11 @@
             "bod@sec.com",
             "Demo@123456",
             "董事会"
+          ],
+          [
+            "hr@sec.com",
+            "Demo@123456",
+            "人事（HR）— 请假/加班的最终审批"
           ]
         ]
       },
@@ -469,6 +479,28 @@
           "质检（QC经理）进行第一级审批。",
           "董事会进行最终审批——批准后，系统自动扣减库存并将批次标记为“已报废”。",
           "如在任一级别被拒绝，批次会自动恢复为「不合格」状态——可以创建新的报废申请，或采取其他处理方式（如退回供应商）。"
+        ]
+      },
+      "leaveHelp": {
+        "title": "请假申请",
+        "intro": "用于申请休假（年假、无薪假、病假等）。",
+        "steps": [
+          "进入请假申请 → 新建申请 → 选择假期类型、请假日期范围、输入原因。",
+          "点击创建——申请保存为草稿状态，尚未发送给任何人。",
+          "打开刚创建的申请，点击提交审批。",
+          "直属主管（部门主管）进行第一级审批。",
+          "人事进行最终审批——批准后，状态变为已批准。",
+          "在完全获批之前，随时可以取消申请。"
+        ]
+      },
+      "overtimeHelp": {
+        "title": "加班",
+        "intro": "用于为同一部门的一组员工登记加班计划。",
+        "steps": [
+          "进入加班 → 新建计划 → 选择日期、时间段、原因，并勾选参与的员工（仅显示同部门员工）。",
+          "点击创建——保存为草稿状态。",
+          "打开刚创建的计划，点击提交审批。",
+          "直属主管进行第一级审批，人事进行最终审批——流程与请假申请相同。"
         ]
       },
       "scan": {
@@ -665,5 +697,57 @@
     "approvedSuccess": "已批准——库存已扣减，批次已标记为已报废。",
     "rejectReasonPrompt": "请输入拒绝原因：",
     "deleteConfirm": "确定删除此报废申请吗？批次将恢复为不合格状态。"
+  },
+  "leave": {
+    "title": "请假申请",
+    "subtitle": "创建请假申请，经直属主管审批后再经人事审批",
+    "listTitle": "请假申请列表",
+    "createBtn": "+ 新建申请",
+    "createTitle": "新建请假申请",
+    "typeLabel": "假期类型",
+    "typeAnnual": "年假",
+    "typeUnpaid": "无薪假",
+    "typeSick": "病假",
+    "typeOther": "其他",
+    "startDateLabel": "开始日期",
+    "endDateLabel": "结束日期",
+    "dateRangeLabel": "请假时间",
+    "reasonLabel": "原因",
+    "submitCreateBtn": "创建",
+    "tableCode": "编号",
+    "emptyState": "暂无请假申请。点击“新建申请”创建。",
+    "detailTitle": "请假申请详情",
+    "fillAllFields": "请填写所有必填项。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消申请",
+    "cancelConfirm": "确定取消此请假申请吗？",
+    "deleteConfirm": "确定删除此请假申请吗？",
+    "approveManagerBtn": "✔ 批准（主管）",
+    "approveHrBtn": "✔ 批准（人事）",
+    "approvedSuccess": "已批准——请假申请已通过。"
+  },
+  "overtime": {
+    "title": "加班",
+    "subtitle": "为一组员工登记加班计划，经直属主管审批后再经人事审批",
+    "listTitle": "加班计划列表",
+    "createBtn": "+ 新建计划",
+    "createTitle": "新建加班计划",
+    "dateLabel": "加班日期",
+    "startTimeLabel": "开始时间",
+    "endTimeLabel": "结束时间",
+    "timeRangeLabel": "时间段",
+    "reasonLabel": "原因/工作内容",
+    "usersLabel": "参与员工",
+    "peopleCountLabel": "人数",
+    "submitCreateBtn": "创建",
+    "tableCode": "编号",
+    "emptyState": "暂无加班计划。点击“新建计划”创建。",
+    "detailTitle": "加班计划详情",
+    "fillAllFields": "请填写所有必填项并至少选择1名员工。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消计划",
+    "cancelConfirm": "确定取消此加班计划吗？",
+    "deleteConfirm": "确定删除此加班计划吗？",
+    "approvedSuccess": "已批准——加班计划已通过。"
   }
 }

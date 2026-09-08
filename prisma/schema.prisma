@@ -44,10 +44,15 @@ enum ZoneType {
 enum Role {
   ADMIN            // Quan tri he thong
   WAREHOUSE_STAFF  // Nhan vien thao tac du lieu kho, gan voi 1 Department cu the
-  DEPT_HEAD        // Truong bo phan, duyet cap 1 cho phieu xuat kho
+  DEPT_HEAD        // Truong bo phan — duyet cap 1 cho phieu xuat kho VA cac
+                    // don tu ERP (nghi phep/tang ca) cua nhan vien phong minh
   BOD              // Duyet cap cuoi
   QC_MANAGER       // Duyet ket qua QC
-  REQUESTER        // Nhan vien phong ban khac, chi tao phieu yeu cau xuat kho
+  REQUESTER        // Nhan vien pho thong — tao phieu yeu cau xuat kho, hoac
+                    // (tu 04/09/2026, mo rong sang SEC ERP) tao don nghi
+                    // phep/tang ca... khong duyet duoc gi
+  HR               // Them 04/09/2026 (SEC ERP) — duyet cap cuoi cho don
+                    // nghi phep/tang ca, sau Truong bo phan
 
   @@map("role")
 }
@@ -68,6 +73,8 @@ model Department {
   users     User[]
   warehouses Warehouse[]
   issueRequests IssueRequest[]
+  leaveRequests LeaveRequest[]
+  overtimeRequests OvertimeRequest[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -899,4 +906,187 @@ model StocktakeLock {
 
   @@index([warehouseId, releasedAt])
   @@map("stocktake_locks")
+}
+
+// =============================================================================
+// =============================================================================
+// SEC ERP — Module Hanh chinh & Nhan su (HR & Admin)
+// Bat dau 04/09/2026, theo yeu cau cua Sep Thanh mo rong Kho NPL thanh 1
+// ERP dung chung cho toan cong ty (bao gom ca cac phong ban khong co kho,
+// VD: Ke toan, Lab...). Dung chung ha tang Auth/Department/User da co san
+// voi Kho NPL — Department model tu truoc da khong bat buoc phai co kho
+// (xem cac ma PMC/CS/FD/QA/BOD), nen khong can sua gi o do.
+//
+// Thu tu uu tien 8 module (theo de xuat da thong nhat voi Nguyen):
+//   1. Nghi phep + Tang ca — lam truoc, tai dung gan nhu toan bo kien truc
+//      duyet 2 cap da co (Nhan vien -> Quan ly truc tiep -> HR)
+//   2. Bao com, Ra/vao cong, Xe cong vu — lam sau, can bang du lieu rieng
+//   3. Mua hang (PR), Khach/NCC vao cong, Ho so dien tu — lam cuoi, phuc
+//      tap nhat / co the lien ket nguoc lai Kho NPL (PR -> PO -> Nhap kho)
+// =============================================================================
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Attachment — bang dung CHUNG cho MOI module ERP can dinh kem file (khong
+// chi rieng Nghi phep/Tang ca — se con dung lai cho Bao cao, Xe cong vu, Mua
+// hang... ve sau). Thiet ke kieu "polymorphic": relatedType + relatedId thay
+// vi tao rieng 1 bang Image/File cho tung module (da lam vay voi
+// QcInspectionImage truoc day, nhung lan nay co qua nhieu module can dinh
+// kem nen gop chung lai cho do lap code).
+// -----------------------------------------------------------------------------
+model Attachment {
+  id          Int      @id @default(autoincrement())
+
+  relatedType String   @map("related_type") // VD: 'LEAVE_REQUEST', 'OVERTIME_REQUEST'
+  relatedId   Int      @map("related_id")
+
+  fileName    String   @map("file_name")
+  filePath    String   @map("file_path") // duong dan luu tren server (giong QcInspectionImage)
+  fileSize    Int      @map("file_size") // byte
+  mimeType    String   @map("mime_type")
+
+  uploadedBy  Int      @map("uploaded_by")
+  uploadedAt  DateTime @default(now()) @map("uploaded_at")
+
+  @@index([relatedType, relatedId])
+  @@map("attachments")
+}
+
+// -----------------------------------------------------------------------------
+// LeaveRequest — Dang ky & duyet phep (module dau tien cua SEC ERP)
+// Luong trang thai: DRAFT -> PENDING_MANAGER_APPROVAL -> PENDING_HR_APPROVAL
+//                    -> APPROVED  (hoac REJECTED o bat ky cap nao, hoac
+//                    CANCELLED boi chinh nguoi tao khi con DRAFT/dang cho)
+//
+// Gia dinh nghiep vu (CHUA duoc Sep xac nhan rieng, ghi chu de de sua sau):
+// MOI don deu qua du 2 cap (Quan ly truc tiep + HR) — chua phan biet theo
+// so ngay nghi ("HR neu can" trong yeu cau goc). An toan hon la luon qua
+// du 2 cap, de dieu chinh giam bot sau neu Sep muon.
+// -----------------------------------------------------------------------------
+enum LeaveType {
+  ANNUAL   // Phep nam
+  UNPAID   // Khong luong
+  SICK     // Nghi om
+  OTHER    // Khac
+
+  @@map("leave_type")
+}
+
+enum LeaveRequestStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_HR_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("leave_request_status")
+}
+
+model LeaveRequest {
+  id                Int                @id @default(autoincrement())
+  code              String             @unique @map("code") // VD: LR-2026-000001
+
+  requestedBy       Int                @map("requested_by")
+  departmentId      Int                @map("department_id")
+  department        Department         @relation(fields: [departmentId], references: [id])
+
+  leaveType         LeaveType          @map("leave_type")
+  startDate         DateTime           @map("start_date") @db.Date
+  endDate           DateTime           @map("end_date") @db.Date
+  reason            String             @map("reason")
+
+  status            LeaveRequestStatus @default(DRAFT) @map("status")
+
+  submittedAt       DateTime?          @map("submitted_at") // luc gui duyet, de trong o DRAFT
+  managerApprovedBy Int?               @map("manager_approved_by")
+  managerApprovedAt DateTime?          @map("manager_approved_at")
+  hrApprovedBy      Int?               @map("hr_approved_by")
+  hrApprovedAt      DateTime?          @map("hr_approved_at")
+
+  rejectedBy        Int?               @map("rejected_by")
+  rejectedAt        DateTime?          @map("rejected_at")
+  rejectionReason   String?            @map("rejection_reason")
+
+  cancelledAt       DateTime?          @map("cancelled_at")
+
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  createdBy         Int?               @map("created_by")
+  updatedBy         Int?               @map("updated_by")
+
+  @@index([requestedBy])
+  @@index([departmentId])
+  @@index([status])
+  @@map("leave_requests")
+}
+
+// -----------------------------------------------------------------------------
+// OvertimeRequest — Dang ky & duyet tang ca (module thu 2 cua SEC ERP)
+// Khac LeaveRequest: 1 "ke hoach tang ca" co the gom NHIEU nhan vien cung
+// luc (dung mau thiet ke Header + Line giong IssueRequest/IssueRequestLine
+// da co). Luong duyet giong het LeaveRequest: Bo phan de nghi -> Quan ly
+// -> HR.
+// -----------------------------------------------------------------------------
+enum OvertimeRequestStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_HR_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("overtime_request_status")
+}
+
+model OvertimeRequest {
+  id                Int                    @id @default(autoincrement())
+  code              String                 @unique @map("code") // VD: OT-2026-000001
+
+  departmentId      Int                    @map("department_id")
+  department        Department             @relation(fields: [departmentId], references: [id])
+
+  otDate            DateTime               @map("ot_date") @db.Date
+  startTime         String                 @map("start_time") // "18:00" — luu dang chuoi gio:phut, don gian hoa
+  endTime           String                 @map("end_time")
+  reason            String                 @map("reason")
+
+  status            OvertimeRequestStatus  @default(DRAFT) @map("status")
+
+  requestedBy       Int                    @map("requested_by")
+  submittedAt       DateTime?              @map("submitted_at")
+  managerApprovedBy Int?                   @map("manager_approved_by")
+  managerApprovedAt DateTime?              @map("manager_approved_at")
+  hrApprovedBy      Int?                   @map("hr_approved_by")
+  hrApprovedAt      DateTime?              @map("hr_approved_at")
+
+  rejectedBy        Int?                   @map("rejected_by")
+  rejectedAt        DateTime?              @map("rejected_at")
+  rejectionReason   String?                @map("rejection_reason")
+
+  cancelledAt       DateTime?              @map("cancelled_at")
+
+  lines             OvertimeRequestLine[]
+
+  createdAt         DateTime               @default(now()) @map("created_at")
+  updatedAt         DateTime               @updatedAt @map("updated_at")
+  createdBy         Int?                   @map("created_by")
+  updatedBy         Int?                   @map("updated_by")
+
+  @@index([departmentId])
+  @@index([status])
+  @@map("overtime_requests")
+}
+
+model OvertimeRequestLine {
+  id                 Int             @id @default(autoincrement())
+
+  overtimeRequestId  Int             @map("overtime_request_id")
+  overtimeRequest    OvertimeRequest @relation(fields: [overtimeRequestId], references: [id], onDelete: Cascade)
+
+  userId             Int             @map("user_id") // nhan vien tham gia tang ca
+
+  @@index([overtimeRequestId])
+  @@index([userId])
+  @@map("overtime_request_lines")
 }

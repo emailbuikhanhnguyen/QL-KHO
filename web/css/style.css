@@ -120,7 +120,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 /* ---------- Table ---------- */
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 th { text-align: left; padding: 10px 12px; background: #f7f8fc; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
-td { padding: 10px 12px; border-bottom: 1px solid var(--border); word-break: break-word; overflow-wrap: break-word; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
 tr.clickable { cursor: pointer; }
 tr.clickable:hover { background: #f9fafc; }
 
@@ -219,6 +219,12 @@ tr.clickable:hover { background: #f9fafc; }
    nhieu cot khong vua man hinh, CHI RIENG BANG do cuon ngang, khong keo
    tran ca trang. */
 .table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* Trong khung cuon nay, KHONG ep chu xuong dong — de bang tu nhien rong
+   ra bao nhieu tuy noi dung, roi cuon ngang RIENG trong khung bang (vuot
+   khong lam tran ca trang). De doc hon nhieu so voi ep chu vo vun trong
+   1 o qua chat hep. */
+.table-scroll-wrapper table { width: auto; min-width: 100%; }
+.table-scroll-wrapper td, .table-scroll-wrapper th { white-space: nowrap; }
 
 @media (max-width: 640px) {
   .page { padding: 16px 12px 40px; }
@@ -241,3 +247,19 @@ tr.clickable:hover { background: #f9fafc; }
   .dash-grid { grid-template-columns: 1fr; }
   .detail-grid { grid-template-columns: 1fr; }
 }
+
+/* ==== Banner canh bao ton kho thap (Dashboard) ==== */
+.low-stock-banner {
+  background: #fdf3e0; border: 1px solid #f0c674; border-radius: 10px;
+  padding: 14px 18px; margin-bottom: 20px;
+}
+.low-stock-banner-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.low-stock-banner-title { font-weight: 700; color: #8a5a00; display: flex; align-items: center; gap: 8px; }
+.low-stock-banner-actions { display: flex; gap: 8px; }
+.low-stock-banner-actions button {
+  background: none; border: 1px solid #d9a441; color: #8a5a00; border-radius: 6px;
+  padding: 5px 12px; font-size: 13px; cursor: pointer;
+}
+.low-stock-banner-actions button:hover { background: #f0c674; }
+.low-stock-detail { margin-top: 12px; }
+.low-stock-detail table { background: #fff; border-radius: 8px; overflow: hidden; }

@@ -29,11 +29,16 @@ async function main() {
     process.exit(1);
   }
 
+  console.log(`Tim thay user: role=${user.role}, isActive=${user.isActive}`);
+  if (!user.isActive) {
+    console.log(`Luu y: tai khoan dang bi vo hieu hoa (isActive=false) — se tu dong bat lai.`);
+  }
+
   const passwordHash = await bcrypt.hash(newPassword, 10);
 
   await prisma.user.update({
     where: { email },
-    data: { passwordHash },
+    data: { passwordHash, isActive: true },
   });
 
   console.log(`Da doi mat khau thanh cong cho '${email}'.`);

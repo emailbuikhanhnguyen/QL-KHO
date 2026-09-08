@@ -17,6 +17,7 @@ const DEPARTMENTS = [
   { code: 'FD', name: 'Phong FD' },
   { code: 'QA', name: 'Phong QA' },
   { code: 'BOD', name: 'Ban Giam Doc (BOD)' },
+  { code: 'HR', name: 'Phong Nhan su (HR)' }, // Them 04/09/2026 (SEC ERP)
 ];
 
 async function main() {

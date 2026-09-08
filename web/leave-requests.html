@@ -3,56 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Xử lý hàng lỗi — SEC ERP</title>
+  <title>Nghỉ phép — SEC ERP</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
   <div class="topbar" id="topbar"></div>
 
   <div class="page">
-    <h1 data-i18n="disposal.title">Xử lý hàng lỗi</h1>
-    <p class="subtitle" data-i18n="disposal.subtitle">Tạo phiếu hủy cho lô hàng không đạt QC, duyệt qua QA rồi Ban Giám Đốc</p>
+    <h1 data-i18n="leave.title">Nghỉ phép</h1>
+    <p class="subtitle" data-i18n="leave.subtitle">Tạo đơn nghỉ phép, gửi duyệt qua Quản lý trực tiếp rồi HR</p>
 
     <!-- ============ DANH SACH ============ -->
     <div class="card" id="listCard">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;" data-i18n="disposal.listTitle">Danh sách phiếu hủy</h2>
-        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="disposal.createBtn">+ Tạo phiếu hủy mới</button>
+        <h2 style="margin:0;" data-i18n="leave.listTitle">Danh sách đơn nghỉ phép</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="leave.createBtn">+ Tạo đơn mới</button>
       </div>
       <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
     </div>
 
     <!-- ============ FORM TAO MOI ============ -->
     <div class="card" id="createCard" style="display:none;">
-      <h2 data-i18n="disposal.createTitle">Tạo phiếu hủy mới</h2>
-      <p class="subtitle" data-i18n="disposal.createIntro">Chỉ hiện các lô hàng có kết quả QC là "Không đạt" (FAILED).</p>
+      <h2 data-i18n="leave.createTitle">Tạo đơn nghỉ phép mới</h2>
       <div class="error-box" id="createError"></div>
 
       <div class="form-row">
-        <label data-i18n="disposal.lotLabel">Lô hàng *</label>
-        <select id="f_lotId" onchange="onLotChange()"></select>
+        <label data-i18n="leave.typeLabel">Loại phép *</label>
+        <select id="f_leaveType">
+          <option value="ANNUAL" data-i18n="leave.typeAnnual">Phép năm</option>
+          <option value="UNPAID" data-i18n="leave.typeUnpaid">Không lương</option>
+          <option value="SICK" data-i18n="leave.typeSick">Nghỉ ốm</option>
+          <option value="OTHER" data-i18n="leave.typeOther">Khác</option>
+        </select>
       </div>
-      <div class="form-grid cols-3">
+      <div class="form-grid">
         <div class="form-row">
-          <label data-i18n="disposal.warehouseLabel">Kho *</label>
-          <select id="f_warehouseId"></select>
+          <label data-i18n="leave.startDateLabel">Từ ngày *</label>
+          <input type="date" id="f_startDate" />
         </div>
         <div class="form-row">
-          <label data-i18n="disposal.quantityLabel">Số lượng hủy *</label>
-          <input type="number" step="0.001" id="f_quantity" />
-        </div>
-        <div class="form-row">
-          <label data-i18n="disposal.availableLabel">Tồn khả dụng</label>
-          <input type="text" id="f_available" disabled />
+          <label data-i18n="leave.endDateLabel">Đến ngày *</label>
+          <input type="date" id="f_endDate" />
         </div>
       </div>
       <div class="form-row">
-        <label data-i18n="disposal.reasonLabel">Lý do hủy *</label>
+        <label data-i18n="leave.reasonLabel">Lý do *</label>
         <textarea id="f_reason"></textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="disposal.submitCreateBtn">Tạo phiếu</button>
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="leave.submitCreateBtn">Tạo đơn</button>
         <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
       </div>
     </div>
@@ -60,7 +60,7 @@
     <!-- ============ CHI TIET ============ -->
     <div class="card" id="detailCard" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;"><span data-i18n="disposal.detailTitle">Chi tiết phiếu hủy</span> <span id="detailCode"></span></h2>
+        <h2 style="margin:0;"><span data-i18n="leave.detailTitle">Chi tiết đơn nghỉ phép</span> <span id="detailCode"></span></h2>
         <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
       </div>
       <div class="success-box" id="detailSuccess"></div>
@@ -71,6 +71,6 @@
 
   <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
-  <script src="/js/disposal-requests.js"></script>
+  <script src="/js/leave-requests.js"></script>
 </body>
 </html>

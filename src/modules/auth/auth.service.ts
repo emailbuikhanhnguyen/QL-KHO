@@ -95,4 +95,18 @@ export class AuthService {
     const { passwordHash, ...safe } = user;
     return safe;
   }
+
+  // Them 04/09/2026 (SEC ERP) — can danh sach nhan vien de chon nhieu
+  // nguoi tham gia trong Module Tang ca. Khong tra ve passwordHash.
+  async findUsers(departmentId?: number) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        deletedAt: null,
+        isActive: true,
+        ...(departmentId ? { departmentId } : {}),
+      },
+      orderBy: { fullName: 'asc' },
+    });
+    return users.map((u) => this.sanitizeUser(u));
+  }
 }

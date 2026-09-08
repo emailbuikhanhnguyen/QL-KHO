@@ -18,7 +18,8 @@
     "yes": "Có",
     "no": "Không",
     "all": "Tất cả",
-    "reject": "Từ chối"
+    "reject": "Từ chối",
+    "department": "Phòng ban"
   },
   "nav": {
     "dashboard": "Trang chủ",
@@ -29,10 +30,12 @@
     "reports": "Báo cáo",
     "stocktake": "Kiểm kê",
     "qrScan": "Quét QR",
-    "disposal": "Xử lý hàng lỗi"
+    "disposal": "Xử lý hàng lỗi",
+    "leave": "Nghỉ phép",
+    "overtime": "Tăng ca"
   },
   "login": {
-    "title": "Hệ thống Quản lý Kho NPL",
+    "title": "SEC ERP",
     "subtitle": "Đăng nhập để tiếp tục",
     "email": "Email",
     "password": "Mật khẩu",
@@ -143,7 +146,9 @@
     "ISSUE": "Xuất kho",
     "ADJUSTMENT": "Điều chỉnh",
     "RETURN": "Trả hàng",
-    "PENDING_QA_APPROVAL": "Chờ duyệt QA"
+    "PENDING_QA_APPROVAL": "Chờ duyệt QA",
+    "PENDING_MANAGER_APPROVAL": "Chờ duyệt Quản lý",
+    "PENDING_HR_APPROVAL": "Chờ duyệt HR"
   },
   "qc": {
     "title": "QC — Kiểm tra chất lượng",
@@ -324,7 +329,7 @@
     "confirmBtn": "✔ Xác nhận & Quét tiếp",
     "rescanHint": "Sau khi xác nhận, camera tự bật lại để quét lô tiếp theo.",
     "cameraError": "Không mở được camera. Kiểm tra đã cho phép quyền camera cho trình duyệt chưa, hoặc dùng ô nhập thủ công bên dưới.",
-    "invalidQrFormat": "Mã QR không đúng định dạng của hệ thống Kho NPL.",
+    "invalidQrFormat": "Mã QR không đúng định dạng của hệ thống.",
     "cannotReadLotId": "Không đọc được mã lô từ QR này.",
     "searching": "Đang tìm lô hàng...",
     "savedNext": "Đã lưu. Quét lô tiếp theo...",
@@ -390,6 +395,11 @@
             "bod@sec.com",
             "Demo@123456",
             "Ban Giám Đốc"
+          ],
+          [
+            "hr@sec.com",
+            "Demo@123456",
+            "Nhân sự (HR) — duyệt cấp cuối Nghỉ phép/Tăng ca"
           ]
         ]
       },
@@ -469,6 +479,28 @@
           "QA (QC Manager) duyệt cấp 1.",
           "Ban Giám Đốc duyệt cấp cuối — khi duyệt xong, hệ thống tự động trừ tồn kho và đánh dấu lô hàng \"Đã hủy\".",
           "Nếu bị từ chối ở bất kỳ cấp nào, lô hàng tự động quay lại trạng thái \"Không đạt\" — có thể tạo phiếu hủy khác hoặc xử lý theo hướng khác (VD: trả lại nhà cung cấp)."
+        ]
+      },
+      "leaveHelp": {
+        "title": "Nghỉ phép",
+        "intro": "Dùng khi cần xin nghỉ (phép năm, không lương, ốm...).",
+        "steps": [
+          "Vào Nghỉ phép → Tạo đơn mới → chọn loại phép, khoảng thời gian nghỉ, nhập lý do.",
+          "Bấm Tạo đơn — đơn ở trạng thái Nháp, chưa gửi ai cả.",
+          "Mở đơn vừa tạo, bấm Gửi duyệt.",
+          "Quản lý trực tiếp (Trưởng bộ phận) duyệt cấp 1.",
+          "HR duyệt cấp cuối — khi duyệt xong, đơn chuyển trạng thái Đã duyệt.",
+          "Có thể bấm Hủy đơn bất kỳ lúc nào trước khi được duyệt xong hoàn toàn."
+        ]
+      },
+      "overtimeHelp": {
+        "title": "Tăng ca",
+        "intro": "Dùng để đăng ký kế hoạch tăng ca cho 1 nhóm nhân viên cùng phòng ban.",
+        "steps": [
+          "Vào Tăng ca → Tạo kế hoạch mới → chọn ngày, khung giờ, lý do, tick chọn các nhân viên tham gia (chỉ hiện người cùng phòng ban).",
+          "Bấm Tạo kế hoạch — ở trạng thái Nháp.",
+          "Mở kế hoạch vừa tạo, bấm Gửi duyệt.",
+          "Quản lý trực tiếp duyệt cấp 1, HR duyệt cấp cuối — luồng giống hệt Nghỉ phép."
         ]
       },
       "scan": {
@@ -665,5 +697,57 @@
     "approvedSuccess": "Đã duyệt xong — tồn kho đã được trừ, lô hàng chuyển trạng thái Đã hủy.",
     "rejectReasonPrompt": "Nhập lý do từ chối:",
     "deleteConfirm": "Xóa phiếu hủy này? Lô hàng sẽ quay lại trạng thái Không đạt (FAILED)."
+  },
+  "leave": {
+    "title": "Nghỉ phép",
+    "subtitle": "Tạo đơn nghỉ phép, gửi duyệt qua Quản lý trực tiếp rồi HR",
+    "listTitle": "Danh sách đơn nghỉ phép",
+    "createBtn": "+ Tạo đơn mới",
+    "createTitle": "Tạo đơn nghỉ phép mới",
+    "typeLabel": "Loại phép",
+    "typeAnnual": "Phép năm",
+    "typeUnpaid": "Không lương",
+    "typeSick": "Nghỉ ốm",
+    "typeOther": "Khác",
+    "startDateLabel": "Từ ngày",
+    "endDateLabel": "Đến ngày",
+    "dateRangeLabel": "Thời gian nghỉ",
+    "reasonLabel": "Lý do",
+    "submitCreateBtn": "Tạo đơn",
+    "tableCode": "Mã đơn",
+    "emptyState": "Chưa có đơn nghỉ phép nào. Bấm \"Tạo đơn mới\" để tạo.",
+    "detailTitle": "Chi tiết đơn nghỉ phép",
+    "fillAllFields": "Vui lòng điền đầy đủ tất cả các trường bắt buộc.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy đơn",
+    "cancelConfirm": "Hủy đơn nghỉ phép này?",
+    "deleteConfirm": "Xóa đơn nghỉ phép này?",
+    "approveManagerBtn": "✔ Duyệt (Quản lý)",
+    "approveHrBtn": "✔ Duyệt (HR)",
+    "approvedSuccess": "Đã duyệt xong — đơn nghỉ phép đã được chấp thuận."
+  },
+  "overtime": {
+    "title": "Tăng ca",
+    "subtitle": "Đăng ký kế hoạch tăng ca cho nhóm nhân viên, gửi duyệt qua Quản lý trực tiếp rồi HR",
+    "listTitle": "Danh sách kế hoạch tăng ca",
+    "createBtn": "+ Tạo kế hoạch mới",
+    "createTitle": "Tạo kế hoạch tăng ca mới",
+    "dateLabel": "Ngày tăng ca",
+    "startTimeLabel": "Giờ bắt đầu",
+    "endTimeLabel": "Giờ kết thúc",
+    "timeRangeLabel": "Khung giờ",
+    "reasonLabel": "Lý do / công việc",
+    "usersLabel": "Nhân viên tham gia",
+    "peopleCountLabel": "Số người",
+    "submitCreateBtn": "Tạo kế hoạch",
+    "tableCode": "Mã kế hoạch",
+    "emptyState": "Chưa có kế hoạch tăng ca nào. Bấm \"Tạo kế hoạch mới\" để tạo.",
+    "detailTitle": "Chi tiết kế hoạch tăng ca",
+    "fillAllFields": "Vui lòng điền đầy đủ các trường bắt buộc và chọn ít nhất 1 nhân viên.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy kế hoạch",
+    "cancelConfirm": "Hủy kế hoạch tăng ca này?",
+    "deleteConfirm": "Xóa kế hoạch tăng ca này?",
+    "approvedSuccess": "Đã duyệt xong — kế hoạch tăng ca đã được chấp thuận."
   }
 }
