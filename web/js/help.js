@@ -13,6 +13,7 @@ const SECTION_ORDER = [
   "disposalHelp",
   "leaveHelp",
   "overtimeHelp",
+  "mealHelp",
   "scan",
   "permissions",
   "faq",

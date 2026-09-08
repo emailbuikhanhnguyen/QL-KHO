@@ -32,7 +32,8 @@
     "qrScan": "扫码",
     "disposal": "不良品处置",
     "leave": "请假",
-    "overtime": "加班"
+    "overtime": "加班",
+    "meal": "报餐"
   },
   "login": {
     "title": "SEC ERP",
@@ -503,6 +504,17 @@
           "直属主管进行第一级审批，人事进行最终审批——流程与请假申请相同。"
         ]
       },
+      "mealHelp": {
+        "title": "报餐",
+        "intro": "按天登记用餐——无需任何人审批，立即生效。",
+        "steps": [
+          "进入报餐 → 选择需要登记的日期，勾选午餐和/或加班餐。",
+          "点击登记/更新——立即生效，无需审批。",
+          "要更改选择：再次选择同一天，调整勾选项，点击登记/更新——系统会自动覆盖之前的选择。",
+          "要完全取消：选择该日期，点击取消当天用餐。",
+          "只能为今天及以后的日期登记/修改/取消——不适用于过去的日期。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
         "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
@@ -749,5 +761,28 @@
     "cancelConfirm": "确定取消此加班计划吗？",
     "deleteConfirm": "确定删除此加班计划吗？",
     "approvedSuccess": "已批准——加班计划已通过。"
+  },
+  "meal": {
+    "title": "报餐",
+    "subtitle": "按天登记用餐——自动生效，无需审批，可在当天之前修改/取消",
+    "registerTitle": "登记用餐",
+    "dateLabel": "日期",
+    "lunchLabel": "午餐",
+    "otMealLabel": "加班餐",
+    "registerBtn": "登记/更新",
+    "cancelBtn": "取消当天用餐",
+    "selectDateFirst": "请先选择日期。",
+    "registerSuccess": "登记/更新成功。",
+    "cancelConfirm": "确定取消当天的用餐登记吗？",
+    "cancelSuccess": "已取消当天的用餐登记。",
+    "myHistoryTitle": "我的登记历史",
+    "emptyHistory": "暂无登记历史。",
+    "cancelledLabel": "已取消",
+    "activeLabel": "已登记",
+    "summaryTitle": "汇总报告（人事/管理员）",
+    "summaryDateLabel": "查看日期",
+    "totalLunchLabel": "午餐总数",
+    "totalOtMealLabel": "加班餐总数",
+    "emptySummary": "当天暂无人登记。"
   }
 }

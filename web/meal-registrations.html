@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo cơm — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="meal.title">Báo cơm</h1>
+    <p class="subtitle" data-i18n="meal.subtitle">Đăng ký suất ăn theo ngày — tự động, không cần duyệt, có thể sửa/hủy trước ngày đó</p>
+
+    <!-- ============ FORM DANG KY ============ -->
+    <div class="card">
+      <h2 data-i18n="meal.registerTitle">Đăng ký suất ăn</h2>
+      <div class="error-box" id="registerError"></div>
+      <div class="success-box" id="registerSuccess"></div>
+
+      <div class="form-row">
+        <label data-i18n="meal.dateLabel">Ngày *</label>
+        <input type="date" id="f_mealDate" />
+      </div>
+      <div class="form-row">
+        <label style="display:flex; align-items:center; gap: 8px; font-weight:400;">
+          <input type="checkbox" id="f_hasLunch" checked style="width:auto;" />
+          <span data-i18n="meal.lunchLabel">Cơm trưa</span>
+        </label>
+      </div>
+      <div class="form-row">
+        <label style="display:flex; align-items:center; gap: 8px; font-weight:400;">
+          <input type="checkbox" id="f_hasOvertimeMeal" style="width:auto;" />
+          <span data-i18n="meal.otMealLabel">Cơm tăng ca</span>
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitRegister()" data-i18n="meal.registerBtn">Đăng ký / Cập nhật</button>
+        <button class="btn btn-danger" onclick="doCancel()" data-i18n="meal.cancelBtn">Hủy suất ăn ngày này</button>
+      </div>
+    </div>
+
+    <!-- ============ LICH SU CUA TOI ============ -->
+    <div class="card">
+      <h2 data-i18n="meal.myHistoryTitle">Lịch sử đăng ký của tôi</h2>
+      <div id="myHistoryContainer" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ BAO CAO TONG HOP (chi HR/Admin thay) ============ -->
+    <div class="card" id="summaryCard" style="display:none;">
+      <h2 data-i18n="meal.summaryTitle">Báo cáo tổng hợp (HR/Admin)</h2>
+      <div class="form-row">
+        <label data-i18n="meal.summaryDateLabel">Xem ngày</label>
+        <input type="date" id="f_summaryDate" onchange="loadSummary()" />
+      </div>
+      <div id="summaryContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/meal-registrations.js"></script>
+</body>
+</html>

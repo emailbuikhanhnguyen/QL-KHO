@@ -237,6 +237,7 @@ function renderTopbar(activePage) {
     { href: "/disposal-requests.html", key: "disposal", labelKey: "nav.disposal", fallback: "Xử lý hàng lỗi" },
     { href: "/leave-requests.html", key: "leave", labelKey: "nav.leave", fallback: "Nghỉ phép" },
     { href: "/overtime-requests.html", key: "overtime", labelKey: "nav.overtime", fallback: "Tăng ca" },
+    { href: "/meal-registrations.html", key: "meal", labelKey: "nav.meal", fallback: "Báo cơm" },
   ];
   const navHtml = links
     .map(
@@ -325,6 +326,7 @@ function getHelpAnchorFor(activePage) {
     disposal: "#disposalHelp",
     leave: "#leaveHelp",
     overtime: "#overtimeHelp",
+    meal: "#mealHelp",
   };
   return map[activePage] ? map[activePage] : "";
 }

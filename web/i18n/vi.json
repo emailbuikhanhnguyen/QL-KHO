@@ -32,7 +32,8 @@
     "qrScan": "Quét QR",
     "disposal": "Xử lý hàng lỗi",
     "leave": "Nghỉ phép",
-    "overtime": "Tăng ca"
+    "overtime": "Tăng ca",
+    "meal": "Báo cơm"
   },
   "login": {
     "title": "SEC ERP",
@@ -503,6 +504,17 @@
           "Quản lý trực tiếp duyệt cấp 1, HR duyệt cấp cuối — luồng giống hệt Nghỉ phép."
         ]
       },
+      "mealHelp": {
+        "title": "Báo cơm",
+        "intro": "Đăng ký suất ăn theo ngày — không cần ai duyệt, tự động có hiệu lực ngay.",
+        "steps": [
+          "Vào Báo cơm → chọn ngày cần đăng ký, tick chọn Cơm trưa và/hoặc Cơm tăng ca.",
+          "Bấm Đăng ký / Cập nhật — có hiệu lực ngay lập tức, không cần chờ ai duyệt.",
+          "Muốn đổi lựa chọn: chọn lại đúng ngày đó, tick lại, bấm Đăng ký / Cập nhật — hệ thống tự ghi đè lựa chọn cũ.",
+          "Muốn hủy hẳn: chọn đúng ngày, bấm Hủy suất ăn ngày này.",
+          "Chỉ đăng ký/sửa/hủy được cho ngày hôm nay trở về sau — không áp dụng cho ngày đã qua."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -749,5 +761,28 @@
     "cancelConfirm": "Hủy kế hoạch tăng ca này?",
     "deleteConfirm": "Xóa kế hoạch tăng ca này?",
     "approvedSuccess": "Đã duyệt xong — kế hoạch tăng ca đã được chấp thuận."
+  },
+  "meal": {
+    "title": "Báo cơm",
+    "subtitle": "Đăng ký suất ăn theo ngày — tự động, không cần duyệt, có thể sửa/hủy trước ngày đó",
+    "registerTitle": "Đăng ký suất ăn",
+    "dateLabel": "Ngày",
+    "lunchLabel": "Cơm trưa",
+    "otMealLabel": "Cơm tăng ca",
+    "registerBtn": "Đăng ký / Cập nhật",
+    "cancelBtn": "Hủy suất ăn ngày này",
+    "selectDateFirst": "Vui lòng chọn ngày trước.",
+    "registerSuccess": "Đã đăng ký/cập nhật thành công.",
+    "cancelConfirm": "Hủy suất ăn đã đăng ký cho ngày này?",
+    "cancelSuccess": "Đã hủy suất ăn ngày này.",
+    "myHistoryTitle": "Lịch sử đăng ký của tôi",
+    "emptyHistory": "Chưa có lịch sử đăng ký nào.",
+    "cancelledLabel": "Đã hủy",
+    "activeLabel": "Đang đăng ký",
+    "summaryTitle": "Báo cáo tổng hợp (HR/Admin)",
+    "summaryDateLabel": "Xem ngày",
+    "totalLunchLabel": "Tổng suất cơm trưa",
+    "totalOtMealLabel": "Tổng suất cơm tăng ca",
+    "emptySummary": "Chưa có ai đăng ký cho ngày này."
   }
 }

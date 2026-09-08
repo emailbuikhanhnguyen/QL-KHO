@@ -32,7 +32,8 @@
     "qrScan": "Scan QR",
     "disposal": "Defect Disposal",
     "leave": "Leave",
-    "overtime": "Overtime"
+    "overtime": "Overtime",
+    "meal": "Meals"
   },
   "login": {
     "title": "SEC ERP",
@@ -503,6 +504,17 @@
           "Direct manager approves at level 1, HR gives final approval — same flow as Leave Request."
         ]
       },
+      "mealHelp": {
+        "title": "Meal Registration",
+        "intro": "Register your meal per day — no approval needed, takes effect immediately.",
+        "steps": [
+          "Go to Meal Registration → select the date, check Lunch and/or Overtime Meal.",
+          "Click Register/Update — takes effect immediately, no approval needed.",
+          "To change your selection: pick the same date again, adjust the checkboxes, click Register/Update — the system overwrites your previous choice.",
+          "To cancel entirely: select the date and click Cancel Meal for This Day.",
+          "You can only register/edit/cancel for today or a future date — not for a past date."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -749,5 +761,28 @@
     "cancelConfirm": "Cancel this overtime plan?",
     "deleteConfirm": "Delete this overtime plan?",
     "approvedSuccess": "Approved — the overtime plan has been accepted."
+  },
+  "meal": {
+    "title": "Meal Registration",
+    "subtitle": "Register your meal per day — automatic, no approval needed, editable/cancellable before that day",
+    "registerTitle": "Register Meal",
+    "dateLabel": "Date",
+    "lunchLabel": "Lunch",
+    "otMealLabel": "Overtime Meal",
+    "registerBtn": "Register / Update",
+    "cancelBtn": "Cancel Meal for This Day",
+    "selectDateFirst": "Please select a date first.",
+    "registerSuccess": "Registered/updated successfully.",
+    "cancelConfirm": "Cancel your meal registration for this day?",
+    "cancelSuccess": "Meal registration for this day has been cancelled.",
+    "myHistoryTitle": "My Registration History",
+    "emptyHistory": "No registration history yet.",
+    "cancelledLabel": "Cancelled",
+    "activeLabel": "Registered",
+    "summaryTitle": "Summary Report (HR/Admin)",
+    "summaryDateLabel": "View Date",
+    "totalLunchLabel": "Total Lunches",
+    "totalOtMealLabel": "Total Overtime Meals",
+    "emptySummary": "No one has registered for this day yet."
   }
 }

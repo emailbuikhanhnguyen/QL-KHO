@@ -75,6 +75,7 @@ model Department {
   issueRequests IssueRequest[]
   leaveRequests LeaveRequest[]
   overtimeRequests OvertimeRequest[]
+  mealRegistrations MealRegistration[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -98,6 +99,8 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
+
+  mealRegistrations MealRegistration[]
 
   approvedGoodsReceipts GoodsReceipt[] @relation("GoodsReceiptApprover")
   approvedQcInspections QcInspection[] @relation("QcInspectionApprover")
@@ -1089,4 +1092,39 @@ model OvertimeRequestLine {
   @@index([overtimeRequestId])
   @@index([userId])
   @@map("overtime_request_lines")
+}
+
+// -----------------------------------------------------------------------------
+// MealRegistration — Dang ky bao com hang ngay (module thu 3 cua SEC ERP)
+// Khac 2 module truoc: KHONG can duyet qua nhieu cap — tu dang ky, tu dieu
+// chinh/huy truoc "thoi han chot" (yeu cau goc). HR/Admin xem bao cao tong
+// hop so luong de bao NCC suat an.
+//
+// Gia dinh nghiep vu (CHUA duoc Sep xac nhan cu the "thoi han chot" la may
+// gio — ghi chu de sua sau): tam thoi cho phep sua/huy bat ky luc nao TRUOC
+// khi qua ngay dang ky (mealDate >= hom nay). Neu Sep muon chot som hon
+// (VD: 9h sang cung ngay), can bo sung logic gio cu the sau.
+// -----------------------------------------------------------------------------
+model MealRegistration {
+  id               Int       @id @default(autoincrement())
+
+  userId           Int       @map("user_id")
+  user             User      @relation(fields: [userId], references: [id])
+
+  departmentId     Int       @map("department_id")
+  department       Department @relation(fields: [departmentId], references: [id])
+
+  mealDate         DateTime  @map("meal_date") @db.Date
+  hasLunch         Boolean   @default(true) @map("has_lunch")
+  hasOvertimeMeal  Boolean   @default(false) @map("has_overtime_meal")
+
+  cancelledAt      DateTime? @map("cancelled_at") // NULL = dang dang ky, co gia tri = da huy
+
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@unique([userId, mealDate]) // moi nguoi chi 1 dang ky / ngay — sua thi upsert de
+  @@index([mealDate])
+  @@index([departmentId])
+  @@map("meal_registrations")
 }

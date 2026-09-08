@@ -18,6 +18,7 @@ import { QcInspectionModule } from './modules/qc-inspection/qc-inspection.module
 import { DisposalRequestModule } from './modules/disposal-request/disposal-request.module';
 import { LeaveRequestModule } from './modules/leave-request/leave-request.module';
 import { OvertimeRequestModule } from './modules/overtime-request/overtime-request.module';
+import { MealRegistrationModule } from './modules/meal-registration/meal-registration.module';
 import { IssueRequestModule } from './modules/issue-request/issue-request.module';
 import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-transfer.module';
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
@@ -66,6 +67,7 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
     DisposalRequestModule,
     LeaveRequestModule,
     OvertimeRequestModule,
+    MealRegistrationModule,
     IssueRequestModule,
     WarehouseTransferModule,
     StockLedgerModule,

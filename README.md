@@ -636,6 +636,25 @@ npm run seed:demo-users
 ```
 (2 lệnh seed để tạo phòng ban `HR` mới và tài khoản demo `hr@sec.com`)
 
+## 1.29. Cập nhật 08/09/2026 — SEC ERP: Module Báo cơm hằng ngày
+
+**Module thứ 3 của SEC ERP** — khác 2 module trước (Nghỉ phép, Tăng ca), module này **không cần duyệt qua ai** — tự đăng ký, tự sửa/hủy, có hiệu lực ngay lập tức. HR/Admin xem báo cáo tổng hợp riêng (tổng số suất cơm trưa/tăng ca theo ngày, chia theo phòng ban) để báo nhà cung cấp suất ăn.
+
+**Model mới**: `MealRegistration` — ràng buộc `@@unique([userId, mealDate])` (mỗi người chỉ 1 đăng ký/ngày, sửa thì ghi đè qua `upsert`, không tạo trùng).
+
+**Giả định nghiệp vụ chưa được Sếp xác nhận cụ thể** (ghi chú rõ trong code): yêu cầu gốc có nhắc "thời hạn chốt" nhưng chưa nói rõ là mấy giờ — tạm cho phép sửa/hủy bất kỳ lúc nào miễn còn **trước ngày đăng ký** (chưa qua `mealDate`). Nếu Sếp muốn chốt sớm hơn (VD: 9h sáng cùng ngày), cần bổ sung logic giờ cụ thể sau.
+
+**API mới** `GET /api/auth/users`-style bổ sung, cùng endpoint `GET /api/meal-registrations/summary` (chỉ HR/Admin) — tổng hợp theo ngày, chia theo phòng ban.
+
+**9 unit test mới, chạy thật pass 100%** — bao phủ đăng ký, chặn ngày quá khứ, hủy, và đúng phân quyền xem báo cáo tổng hợp (chỉ HR/Admin, nhân viên thường bị chặn).
+
+Thêm 40 key dịch mới, tổng 526 key khớp tuyệt đối 3 ngôn ngữ.
+
+**Lưu ý migration**: cần chạy trên máy có mạng đầy đủ:
+```
+npx prisma migrate dev --name add_meal_registration
+```
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

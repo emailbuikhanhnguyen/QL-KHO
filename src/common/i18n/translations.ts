@@ -198,4 +198,14 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     en: 'Start time must be before the end time',
     zh: '开始时间必须早于结束时间',
   },
+  MEAL_DATE_IN_PAST: {
+    vi: 'Không thể đăng ký/sửa/hủy suất ăn cho ngày đã qua',
+    en: 'Cannot register/edit/cancel a meal for a past date',
+    zh: '无法为过去的日期登记/修改/取消用餐',
+  },
+  FORBIDDEN_ROLE: {
+    vi: 'Bạn không có quyền thực hiện thao tác này',
+    en: 'You do not have permission to perform this action',
+    zh: '您没有权限执行此操作',
+  },
 };
