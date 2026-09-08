@@ -655,6 +655,23 @@ Thêm 40 key dịch mới, tổng 526 key khớp tuyệt đối 3 ngôn ngữ.
 npx prisma migrate dev --name add_meal_registration
 ```
 
+## 1.30. Cập nhật 08/09/2026 — SEC ERP: Module Ra/vào cổng ngoài giờ
+
+**Module thứ 4 của SEC ERP** — luồng duyệt 2 cấp giống Nghỉ phép/Tăng ca (Quản lý trực tiếp → HR, tái dùng vai trò HR thay "Bảo vệ" như yêu cầu gốc, vì bảo vệ thường không có tài khoản đăng nhập hệ thống).
+
+**Phát hiện lúc làm — bài học quan trọng**: phần lớn code module này (Controller, DTO, Module, đăng ký `app.module.ts`, cả frontend HTML/JS) **đã được viết sẵn từ 1 phiên làm việc trước** bị nén context. Khi bắt đầu code lại từ đầu, đã **vô tình ghi đè mất Service cũ** (dùng tên field khác — `passDate`/`timeOut`/`timeIn` — và có cả hàm `update()` mà bản viết lại thiếu). Đã phát hiện qua lỗi biên dịch, xem lại Controller + file test cũ để khôi phục đúng 100% theo thiết kế gốc, không làm mất công đã làm trước đó.
+
+**Điểm thiết kế đáng chú ý** (từ bản gốc, tinh tế hơn suy nghĩ ban đầu của lần viết lại): `timeIn` (giờ vào lại) là **tùy chọn**, không bắt buộc — hỗ trợ đúng trường hợp thực tế "ra ngoài và không quay lại trong ngày" (VD: về sớm hẳn).
+
+**11 unit test, chạy thật pass 100%** sau khi khôi phục đúng.
+
+Thêm 27 key dịch mới (namespace `gatepass`), tổng 551 key khớp tuyệt đối 3 ngôn ngữ.
+
+**Lưu ý migration**: cần chạy trên máy có mạng đầy đủ:
+```
+npx prisma migrate dev --name add_gate_pass_request
+```
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

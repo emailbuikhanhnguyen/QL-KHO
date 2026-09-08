@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ra/vào cổng — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="gatepass.title">Ra/vào cổng</h1>
+    <p class="subtitle" data-i18n="gatepass.subtitle">Đăng ký ra/vào cổng ngoài giờ làm việc, gửi duyệt qua Quản lý trực tiếp rồi HR</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="gatepass.listTitle">Danh sách đăng ký</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="gatepass.createBtn">+ Tạo đăng ký mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="gatepass.createTitle">Tạo đăng ký ra/vào cổng mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-grid cols-3">
+        <div class="form-row">
+          <label data-i18n="gatepass.dateLabel">Ngày *</label>
+          <input type="date" id="f_passDate" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="gatepass.timeOutLabel">Giờ ra *</label>
+          <input type="time" id="f_timeOut" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="gatepass.timeInLabel">Giờ vào (nếu có)</label>
+          <input type="time" id="f_timeIn" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label data-i18n="gatepass.purposeLabel">Mục đích *</label>
+        <textarea id="f_purpose"></textarea>
+      </div>
+      <div class="form-row">
+        <label data-i18n="gatepass.relatedPeopleLabel">Người liên quan (nếu có)</label>
+        <input type="text" id="f_relatedPeople" />
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="gatepass.submitCreateBtn">Tạo đăng ký</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="gatepass.detailTitle">Chi tiết đăng ký</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/gate-pass-requests.js"></script>
+</body>
+</html>

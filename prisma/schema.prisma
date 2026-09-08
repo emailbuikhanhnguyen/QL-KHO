@@ -76,6 +76,7 @@ model Department {
   leaveRequests LeaveRequest[]
   overtimeRequests OvertimeRequest[]
   mealRegistrations MealRegistration[]
+  gatePassRequests GatePassRequest[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -1128,3 +1129,66 @@ model MealRegistration {
   @@index([departmentId])
   @@map("meal_registrations")
 }
+
+// -----------------------------------------------------------------------------
+// GatePassRequest — Dang ky ra/vao cong ngoai gio (module thu 4 cua SEC ERP)
+// Cau truc gan giong het LeaveRequest — 1 nguoi dang ky cho chinh minh,
+// duyet 2 cap: Quan ly truc tiep -> HR (yeu cau goc ghi "HR/Admin/Bao ve",
+// tam dung lai HR — neu can vai tro rieng cho Bao ve co the them sau).
+//
+// Gia dinh nghiep vu (CHUA duoc Sep xac nhan, ghi chu de sua sau):
+// timeIn co the de trong (truong hop ra ngoai khong quay lai trong ngay
+// do, VD xin ve som). relatedPeople la truong text tu do (ghi chu ai di
+// cung), KHONG lam multi-select nhu OvertimeRequest — vi day la dang ky
+// CHO CHINH MINH, nguoi lien quan chi la thong tin tham khao them.
+// -----------------------------------------------------------------------------
+enum GatePassRequestStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_HR_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("gate_pass_request_status")
+}
+
+model GatePassRequest {
+  id                Int                   @id @default(autoincrement())
+  code              String                @unique @map("code") // VD: GP-2026-000001
+
+  requestedBy       Int                   @map("requested_by")
+  departmentId      Int                   @map("department_id")
+  department        Department            @relation(fields: [departmentId], references: [id])
+
+  passDate          DateTime              @map("pass_date") @db.Date
+  timeOut           String                @map("time_out") // "HH:mm"
+  timeIn            String?               @map("time_in")  // co the de trong neu khong quay lai trong ngay
+  purpose           String                @map("purpose")
+  relatedPeople     String?               @map("related_people") // ghi chu tu do, khong bat buoc
+
+  status            GatePassRequestStatus @default(DRAFT) @map("status")
+
+  submittedAt       DateTime?             @map("submitted_at")
+  managerApprovedBy Int?                  @map("manager_approved_by")
+  managerApprovedAt DateTime?             @map("manager_approved_at")
+  hrApprovedBy      Int?                  @map("hr_approved_by")
+  hrApprovedAt      DateTime?             @map("hr_approved_at")
+
+  rejectedBy        Int?                  @map("rejected_by")
+  rejectedAt        DateTime?             @map("rejected_at")
+  rejectionReason   String?               @map("rejection_reason")
+
+  cancelledAt       DateTime?             @map("cancelled_at")
+
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  createdBy         Int?                  @map("created_by")
+  updatedBy         Int?                  @map("updated_by")
+
+  @@index([requestedBy])
+  @@index([departmentId])
+  @@index([status])
+  @@map("gate_pass_requests")
+}
+

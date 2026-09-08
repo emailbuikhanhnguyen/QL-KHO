@@ -1,0 +1,224 @@
+requireAuth();
+
+let currentDetailId = null;
+
+(async function init() {
+  await loadI18n();
+  renderTopbar("gatepass");
+  applyTranslations();
+  await loadList();
+})();
+
+// -------------------------------------------------------------------------
+// DANH SACH
+// -------------------------------------------------------------------------
+async function loadList() {
+  const res = await apiFetch("/gate-pass-requests?limit=50");
+  const container = document.getElementById("listContainer");
+  if (!res.ok) {
+    container.innerHTML = `<div class="error-box show">${extractErrorMessage(res.data)}</div>`;
+    return;
+  }
+  const requests = res.data.data;
+  if (requests.length === 0) {
+    container.innerHTML = `<div class="empty-state">${t("gatepass.emptyState")}</div>`;
+    return;
+  }
+
+  const rows = requests
+    .map(
+      (r) => `
+        <tr class="clickable" onclick="openDetail(${r.id})">
+          <td><strong>${r.code}</strong></td>
+          <td>${formatDate(r.passDate)}</td>
+          <td>${r.timeOut}${r.timeIn ? " — " + r.timeIn : ""}</td>
+          <td>${r.department ? r.department.name : "#" + r.departmentId}</td>
+          <td>${statusBadge(r.status)}</td>
+        </tr>`,
+    )
+    .join("");
+
+  container.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>${t("gatepass.tableCode")}</th>
+        <th>${t("gatepass.dateLabel")}</th>
+        <th>${t("gatepass.timeRangeLabel")}</th>
+        <th>${t("common.department")}</th>
+        <th>${t("common.status")}</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// -------------------------------------------------------------------------
+// TAO MOI
+// -------------------------------------------------------------------------
+function toggleCreateForm() {
+  const card = document.getElementById("createCard");
+  const isHidden = card.style.display === "none";
+  card.style.display = isHidden ? "block" : "none";
+  document.getElementById("detailCard").style.display = "none";
+  hideError("createError");
+}
+
+async function submitCreateForm() {
+  hideError("createError");
+  const body = {
+    passDate: document.getElementById("f_passDate").value,
+    timeOut: document.getElementById("f_timeOut").value,
+    timeIn: document.getElementById("f_timeIn").value || undefined,
+    purpose: document.getElementById("f_purpose").value.trim(),
+    relatedPeople: document.getElementById("f_relatedPeople").value.trim() || undefined,
+  };
+
+  if (!body.passDate || !body.timeOut || !body.purpose) {
+    showError("createError", t("gatepass.fillAllFields"));
+    return;
+  }
+
+  const btn = document.querySelector('#createCard button[onclick="submitCreateForm()"]');
+  btn.disabled = true;
+
+  const res = await apiFetch("/gate-pass-requests", { method: "POST", body: JSON.stringify(body) });
+
+  btn.disabled = false;
+
+  if (!res.ok) {
+    showError("createError", extractErrorMessage(res.data));
+    return;
+  }
+
+  toggleCreateForm();
+  document.getElementById("f_purpose").value = "";
+  document.getElementById("f_relatedPeople").value = "";
+  await loadList();
+  openDetail(res.data.id);
+}
+
+// -------------------------------------------------------------------------
+// CHI TIET
+// -------------------------------------------------------------------------
+async function openDetail(id) {
+  currentDetailId = id;
+  document.getElementById("createCard").style.display = "none";
+  document.getElementById("detailCard").style.display = "block";
+  hideError("detailError");
+  await renderDetail();
+  document.getElementById("detailCard").scrollIntoView({ behavior: "smooth" });
+}
+
+function closeDetail() {
+  document.getElementById("detailCard").style.display = "none";
+  currentDetailId = null;
+}
+
+async function renderDetail() {
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}`);
+  if (!res.ok) {
+    showError("detailError", extractErrorMessage(res.data));
+    return;
+  }
+  const r = res.data;
+  document.getElementById("detailCode").innerHTML = `${r.code} — ${statusBadge(r.status)}`;
+
+  const user = getCurrentUser();
+  const isOwner = user && (user.id === r.requestedBy || user.role === "ADMIN");
+  let actionsHtml = "";
+
+  if (r.status === "DRAFT" && isOwner) {
+    actionsHtml = `
+      <button class="btn btn-primary" onclick="doSubmit()">${t("gatepass.submitBtn")}</button>
+      <button class="btn btn-danger" onclick="doDelete()">${t("common.delete")}</button>`;
+  } else if (["PENDING_MANAGER_APPROVAL", "PENDING_HR_APPROVAL"].includes(r.status) && isOwner) {
+    actionsHtml = `<button class="btn btn-danger" onclick="doCancel()">${t("gatepass.cancelBtn")}</button>`;
+  }
+  if (r.status === "PENDING_MANAGER_APPROVAL" && user && (user.role === "DEPT_HEAD" || user.role === "ADMIN")) {
+    actionsHtml += `
+      <button class="btn btn-success" onclick="doApproveManager()">${t("leave.approveManagerBtn")}</button>
+      <button class="btn btn-danger" onclick="doReject()">${t("common.reject")}</button>`;
+  }
+  if (r.status === "PENDING_HR_APPROVAL" && user && (user.role === "HR" || user.role === "ADMIN")) {
+    actionsHtml += `
+      <button class="btn btn-success" onclick="doApproveHr()">${t("leave.approveHrBtn")}</button>
+      <button class="btn btn-danger" onclick="doReject()">${t("common.reject")}</button>`;
+  }
+
+  document.getElementById("detailContainer").innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-field"><div class="label">${t("gatepass.dateLabel")}</div><div class="value">${formatDate(r.passDate)}</div></div>
+      <div class="detail-field"><div class="label">${t("gatepass.timeRangeLabel")}</div><div class="value">${r.timeOut}${r.timeIn ? " — " + r.timeIn : ""}</div></div>
+      <div class="detail-field"><div class="label">${t("common.department")}</div><div class="value">${r.department ? r.department.name : "—"}</div></div>
+    </div>
+    <div class="detail-field" style="margin-bottom:12px;">
+      <div class="label">${t("gatepass.purposeLabel")}</div>
+      <div class="value" style="font-weight:400;">${r.purpose}</div>
+    </div>
+    ${
+      r.relatedPeople
+        ? `<div class="detail-field" style="margin-bottom:16px;">
+            <div class="label">${t("gatepass.relatedPeopleLabel")}</div>
+            <div class="value" style="font-weight:400;">${r.relatedPeople}</div>
+          </div>`
+        : ""
+    }
+    ${r.rejectionReason ? `<div class="error-box show">${t("disposal.rejectionReasonLabel")}: ${r.rejectionReason}</div>` : ""}
+    <div class="btn-row">${actionsHtml}</div>
+  `;
+}
+
+async function doSubmit() {
+  hideError("detailError");
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}/submit`, { method: "POST" });
+  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  await renderDetail();
+  await loadList();
+}
+
+async function doCancel() {
+  if (!confirm(t("gatepass.cancelConfirm"))) return;
+  hideError("detailError");
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}/cancel`, { method: "POST" });
+  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  await renderDetail();
+  await loadList();
+}
+
+async function doApproveManager() {
+  hideError("detailError");
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}/approve-manager`, { method: "POST" });
+  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  await renderDetail();
+  await loadList();
+}
+
+async function doApproveHr() {
+  hideError("detailError");
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}/approve-hr`, { method: "POST" });
+  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  showSuccess("detailSuccess", t("gatepass.approvedSuccess"));
+  await renderDetail();
+  await loadList();
+}
+
+async function doReject() {
+  const reason = prompt(t("disposal.rejectReasonPrompt"));
+  if (!reason) return;
+  hideError("detailError");
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}/reject`, {
+    method: "POST",
+    body: JSON.stringify({ reason }),
+  });
+  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  await renderDetail();
+  await loadList();
+}
+
+async function doDelete() {
+  if (!confirm(t("gatepass.deleteConfirm"))) return;
+  hideError("detailError");
+  const res = await apiFetch(`/gate-pass-requests/${currentDetailId}`, { method: "DELETE" });
+  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  closeDetail();
+  await loadList();
+}

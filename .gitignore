@@ -1,8 +1,14 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 
 # Build output
 dist/
+
+# TypeScript incremental build cache — TUYET DOI khong commit. File nay
+# tung gay loi build tren Render (TypeScript tuong da build roi, bo qua
+# emit file that). Da mat khoi .gitignore o 1 lan merge truoc, them lai
+# 09/09/2026 sau khi tai phat dung loi cu.
+tsconfig.tsbuildinfo
 
 # Bien moi truong — TUYET DOI khong commit, chua mat khau Supabase that + JWT_SECRET
 .env

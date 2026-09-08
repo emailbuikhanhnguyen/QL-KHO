@@ -33,7 +33,8 @@
     "disposal": "Defect Disposal",
     "leave": "Leave",
     "overtime": "Overtime",
-    "meal": "Meals"
+    "meal": "Meals",
+    "gatepass": "Gate Pass"
   },
   "login": {
     "title": "SEC ERP",
@@ -515,6 +516,16 @@
           "You can only register/edit/cancel for today or a future date — not for a past date."
         ]
       },
+      "gatepassHelp": {
+        "title": "Gate Pass",
+        "intro": "Use this when you need to go out during work hours, or enter the company outside normal working hours.",
+        "steps": [
+          "Go to Gate Pass → Create New Request → select date, time out, time in (if returning), state the purpose.",
+          "If not returning the same day (e.g. leaving early for good), Time In can be left blank.",
+          "Click Create → Submit.",
+          "Direct manager approves at level 1, HR gives final approval — same flow as Leave Request."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -784,5 +795,28 @@
     "totalLunchLabel": "Total Lunches",
     "totalOtMealLabel": "Total Overtime Meals",
     "emptySummary": "No one has registered for this day yet."
+  },
+  "gatepass": {
+    "title": "Gate Pass",
+    "subtitle": "Register gate in/out outside working hours, approved through your direct manager then HR",
+    "listTitle": "Gate Pass Requests",
+    "createBtn": "+ New Request",
+    "createTitle": "New Gate Pass Request",
+    "dateLabel": "Date",
+    "timeOutLabel": "Time Out *",
+    "timeInLabel": "Time In (if returning)",
+    "timeRangeLabel": "Time Range",
+    "purposeLabel": "Purpose *",
+    "relatedPeopleLabel": "Related People",
+    "submitCreateBtn": "Create",
+    "tableCode": "Code",
+    "emptyState": "No gate pass requests yet. Click \"New Request\" to create one.",
+    "detailTitle": "Gate Pass Detail",
+    "fillAllFields": "Please fill in Date, Time Out, and Purpose.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Request",
+    "cancelConfirm": "Cancel this gate pass request?",
+    "deleteConfirm": "Delete this request?",
+    "approvedSuccess": "Approved — the gate pass request has been accepted."
   }
 }

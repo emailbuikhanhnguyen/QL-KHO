@@ -19,6 +19,7 @@ import { DisposalRequestModule } from './modules/disposal-request/disposal-reque
 import { LeaveRequestModule } from './modules/leave-request/leave-request.module';
 import { OvertimeRequestModule } from './modules/overtime-request/overtime-request.module';
 import { MealRegistrationModule } from './modules/meal-registration/meal-registration.module';
+import { GatePassRequestModule } from './modules/gate-pass-request/gate-pass-request.module';
 import { IssueRequestModule } from './modules/issue-request/issue-request.module';
 import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-transfer.module';
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
@@ -68,6 +69,7 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
     LeaveRequestModule,
     OvertimeRequestModule,
     MealRegistrationModule,
+    GatePassRequestModule,
     IssueRequestModule,
     WarehouseTransferModule,
     StockLedgerModule,

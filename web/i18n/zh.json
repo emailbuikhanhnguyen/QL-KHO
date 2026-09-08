@@ -33,7 +33,8 @@
     "disposal": "不良品处置",
     "leave": "请假",
     "overtime": "加班",
-    "meal": "报餐"
+    "meal": "报餐",
+    "gatepass": "出入门"
   },
   "login": {
     "title": "SEC ERP",
@@ -515,6 +516,16 @@
           "只能为今天及以后的日期登记/修改/取消——不适用于过去的日期。"
         ]
       },
+      "gatepassHelp": {
+        "title": "出入门登记",
+        "intro": "用于工作时间内需要外出，或在非正常工作时间进入公司的情况。",
+        "steps": [
+          "进入出入门登记 → 新建登记 → 选择日期、外出时间、返回时间（如有），说明目的。",
+          "如当天不返回（例如提前下班），返回时间可留空。",
+          "点击创建 → 提交审批。",
+          "直属主管进行第一级审批，人事进行最终审批——流程与请假申请相同。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
         "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
@@ -784,5 +795,28 @@
     "totalLunchLabel": "午餐总数",
     "totalOtMealLabel": "加班餐总数",
     "emptySummary": "当天暂无人登记。"
+  },
+  "gatepass": {
+    "title": "出入门登记",
+    "subtitle": "登记非工作时间的出入门，经直属主管审批后再经人事审批",
+    "listTitle": "出入门登记列表",
+    "createBtn": "+ 新建登记",
+    "createTitle": "新建出入门登记",
+    "dateLabel": "日期",
+    "timeOutLabel": "外出时间 *",
+    "timeInLabel": "返回时间（如有）",
+    "timeRangeLabel": "时间段",
+    "purposeLabel": "目的 *",
+    "relatedPeopleLabel": "相关人员",
+    "submitCreateBtn": "创建",
+    "tableCode": "编号",
+    "emptyState": "暂无出入门登记。点击“新建登记”创建。",
+    "detailTitle": "登记详情",
+    "fillAllFields": "请填写日期、外出时间和目的。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消登记",
+    "cancelConfirm": "确定取消此出入门登记吗？",
+    "deleteConfirm": "确定删除此登记吗？",
+    "approvedSuccess": "已批准——出入门登记已通过。"
   }
 }

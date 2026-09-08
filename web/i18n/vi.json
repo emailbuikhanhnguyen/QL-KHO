@@ -33,7 +33,8 @@
     "disposal": "Xử lý hàng lỗi",
     "leave": "Nghỉ phép",
     "overtime": "Tăng ca",
-    "meal": "Báo cơm"
+    "meal": "Báo cơm",
+    "gatepass": "Ra/vào cổng"
   },
   "login": {
     "title": "SEC ERP",
@@ -515,6 +516,16 @@
           "Chỉ đăng ký/sửa/hủy được cho ngày hôm nay trở về sau — không áp dụng cho ngày đã qua."
         ]
       },
+      "gatepassHelp": {
+        "title": "Ra/vào cổng",
+        "intro": "Dùng khi cần ra ngoài trong giờ làm việc, hoặc vào công ty ngoài giờ làm việc thông thường.",
+        "steps": [
+          "Vào Ra/vào cổng → Tạo đăng ký mới → chọn ngày, giờ ra, giờ vào lại (nếu có), nêu mục đích.",
+          "Nếu không quay lại trong ngày (VD: về sớm hẳn), có thể để trống Giờ vào lại.",
+          "Bấm Tạo đăng ký → Gửi duyệt.",
+          "Quản lý trực tiếp duyệt cấp 1, HR duyệt cấp cuối — luồng giống Nghỉ phép."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -784,5 +795,28 @@
     "totalLunchLabel": "Tổng suất cơm trưa",
     "totalOtMealLabel": "Tổng suất cơm tăng ca",
     "emptySummary": "Chưa có ai đăng ký cho ngày này."
+  },
+  "gatepass": {
+    "title": "Ra/vào cổng",
+    "subtitle": "Đăng ký ra/vào cổng ngoài giờ làm việc, gửi duyệt qua Quản lý trực tiếp rồi HR",
+    "listTitle": "Danh sách đăng ký",
+    "createBtn": "+ Tạo đăng ký mới",
+    "createTitle": "Tạo đăng ký ra/vào cổng mới",
+    "dateLabel": "Ngày",
+    "timeOutLabel": "Giờ ra *",
+    "timeInLabel": "Giờ vào lại (nếu có)",
+    "timeRangeLabel": "Khung giờ",
+    "purposeLabel": "Mục đích *",
+    "relatedPeopleLabel": "Người liên quan",
+    "submitCreateBtn": "Tạo đăng ký",
+    "tableCode": "Mã đăng ký",
+    "emptyState": "Chưa có đăng ký ra/vào cổng nào. Bấm \"Tạo đăng ký mới\" để tạo.",
+    "detailTitle": "Chi tiết đăng ký",
+    "fillAllFields": "Vui lòng điền đầy đủ Ngày, Giờ ra và Mục đích.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy đăng ký",
+    "cancelConfirm": "Hủy đăng ký ra/vào cổng này?",
+    "deleteConfirm": "Xóa đăng ký này?",
+    "approvedSuccess": "Đã duyệt xong — đăng ký ra/vào cổng đã được chấp thuận."
   }
 }
