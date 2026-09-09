@@ -35,7 +35,9 @@
     "overtime": "加班",
     "meal": "报餐",
     "gatepass": "出入门",
-    "vehicle": "公务用车"
+    "vehicle": "公务用车",
+    "groupKho": "仓储",
+    "groupErp": "行政人事"
   },
   "login": {
     "title": "SEC ERP",

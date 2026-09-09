@@ -225,28 +225,65 @@ function renderTopbar(activePage) {
   const safeT = typeof t === "function" ? t : (key, fallback) => fallback || key;
   const safeLangSwitcher = typeof renderLanguageSwitcher === "function" ? renderLanguageSwitcher() : "";
 
-  const links = [
-    { href: "/dashboard.html", key: "dashboard", labelKey: "nav.dashboard", fallback: "Trang chủ" },
-    { href: "/goods-receipts.html", key: "goods-receipts", labelKey: "nav.goodsReceipt", fallback: "Nhập kho" },
-    { href: "/qc-inspections.html", key: "qc", labelKey: "nav.qc", fallback: "QC" },
-    { href: "/issue-requests.html", key: "issue", labelKey: "nav.issue", fallback: "Xuất kho" },
-    { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer", fallback: "Điều chuyển" },
-    { href: "/reports.html", key: "reports", labelKey: "nav.reports", fallback: "Báo cáo" },
-    { href: "/stocktake.html", key: "stocktake", labelKey: "nav.stocktake", fallback: "Kiểm kê" },
-    { href: "/stocktake-scan.html", key: "stocktake-scan", labelKey: "nav.qrScan", fallback: "Quét QR" },
-    { href: "/disposal-requests.html", key: "disposal", labelKey: "nav.disposal", fallback: "Xử lý hàng lỗi" },
-    { href: "/leave-requests.html", key: "leave", labelKey: "nav.leave", fallback: "Nghỉ phép" },
-    { href: "/overtime-requests.html", key: "overtime", labelKey: "nav.overtime", fallback: "Tăng ca" },
-    { href: "/meal-registrations.html", key: "meal", labelKey: "nav.meal", fallback: "Báo cơm" },
-    { href: "/gate-pass-requests.html", key: "gatepass", labelKey: "nav.gatepass", fallback: "Ra/vào cổng" },
-    { href: "/vehicle-booking-requests.html", key: "vehicle", labelKey: "nav.vehicle", fallback: "Xe công vụ" },
+  // Gom 13 muc thanh 2 nhom (04/09/2026) — truoc day de phang het ra 1
+  // hang ngang qua rối (13 muc), nay nhom theo dung 2 mang lon da hinh
+  // thanh tu nhien: Kho van (8 muc goc) va Hanh chinh - Nhan su (5 muc
+  // SEC ERP moi them). "Trang chu" luon dung rieng, khong nhom.
+  const dashboardLink = { href: "/dashboard.html", key: "dashboard", labelKey: "nav.dashboard", fallback: "Trang chủ" };
+  const groups = [
+    {
+      id: "kho",
+      icon: "📦",
+      labelKey: "nav.groupKho",
+      fallback: "Kho vận",
+      links: [
+        { href: "/goods-receipts.html", key: "goods-receipts", labelKey: "nav.goodsReceipt", fallback: "Nhập kho" },
+        { href: "/qc-inspections.html", key: "qc", labelKey: "nav.qc", fallback: "QC" },
+        { href: "/issue-requests.html", key: "issue", labelKey: "nav.issue", fallback: "Xuất kho" },
+        { href: "/warehouse-transfers.html", key: "transfer", labelKey: "nav.transfer", fallback: "Điều chuyển" },
+        { href: "/reports.html", key: "reports", labelKey: "nav.reports", fallback: "Báo cáo" },
+        { href: "/stocktake.html", key: "stocktake", labelKey: "nav.stocktake", fallback: "Kiểm kê" },
+        { href: "/stocktake-scan.html", key: "stocktake-scan", labelKey: "nav.qrScan", fallback: "Quét QR" },
+        { href: "/disposal-requests.html", key: "disposal", labelKey: "nav.disposal", fallback: "Xử lý hàng lỗi" },
+      ],
+    },
+    {
+      id: "erp",
+      icon: "👥",
+      labelKey: "nav.groupErp",
+      fallback: "Hành chính - Nhân sự",
+      links: [
+        { href: "/leave-requests.html", key: "leave", labelKey: "nav.leave", fallback: "Nghỉ phép" },
+        { href: "/overtime-requests.html", key: "overtime", labelKey: "nav.overtime", fallback: "Tăng ca" },
+        { href: "/meal-registrations.html", key: "meal", labelKey: "nav.meal", fallback: "Báo cơm" },
+        { href: "/gate-pass-requests.html", key: "gatepass", labelKey: "nav.gatepass", fallback: "Ra/vào cổng" },
+        { href: "/vehicle-booking-requests.html", key: "vehicle", labelKey: "nav.vehicle", fallback: "Xe công vụ" },
+      ],
+    },
   ];
-  const navHtml = links
-    .map(
-      (l) =>
-        `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${safeT(l.labelKey, l.fallback)}</a>`
-    )
+
+  const dashboardHtml = `<a href="${dashboardLink.href}" class="${dashboardLink.key === activePage ? "active" : ""}">${safeT(dashboardLink.labelKey, dashboardLink.fallback)}</a>`;
+
+  const groupsHtml = groups
+    .map((g) => {
+      const isGroupActive = g.links.some((l) => l.key === activePage);
+      const itemsHtml = g.links
+        .map(
+          (l) =>
+            `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${safeT(l.labelKey, l.fallback)}</a>`,
+        )
+        .join("");
+      return `
+        <div class="nav-dropdown">
+          <button type="button" class="nav-dropdown-toggle ${isGroupActive ? "active" : ""}" onclick="toggleNavDropdown('${g.id}', event)">
+            ${g.icon} ${safeT(g.labelKey, g.fallback)} <span class="caret">▾</span>
+          </button>
+          <div class="nav-dropdown-menu" id="navDropdown-${g.id}">${itemsHtml}</div>
+        </div>`;
+    })
     .join("");
+
+  const navHtml = dashboardHtml + groupsHtml;
 
   el.innerHTML = `
     <div class="brand">SEC ERP</div>
@@ -268,6 +305,22 @@ function renderTopbar(activePage) {
     </div>
   `;
 }
+
+// Mo/dong dropdown menu nhom nav — dung click (khong dua vao :hover CSS)
+// de hoat dong nhat quan tren ca desktop lan dien thoai (hover khong dang
+// tin cay tren thiet bi cam ung). Chi 1 dropdown mo tai 1 thoi diem, va tu
+// dong dong khi bam ra ngoai.
+function toggleNavDropdown(id, event) {
+  event.stopPropagation();
+  const menu = document.getElementById("navDropdown-" + id);
+  if (!menu) return;
+  const isOpen = menu.classList.contains("open");
+  document.querySelectorAll(".nav-dropdown-menu.open").forEach((m) => m.classList.remove("open"));
+  if (!isOpen) menu.classList.add("open");
+}
+document.addEventListener("click", () => {
+  document.querySelectorAll(".nav-dropdown-menu.open").forEach((m) => m.classList.remove("open"));
+});
 
 // Hien modal "Thong tin cua ban" — lay du lieu ngay tu user dang luu trong
 // localStorage (khong can goi API them), dich noi dung nhiem vu theo dung

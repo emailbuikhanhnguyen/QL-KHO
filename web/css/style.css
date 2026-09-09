@@ -50,6 +50,28 @@ a:hover { text-decoration: underline; }
 }
 .topbar button.logout:hover { background: #2a3572; color: #fff; }
 
+/* Dropdown nhom nav (04/09/2026) — gom 13 muc thanh 2 nhom de bot roi */
+.nav-dropdown { position: relative; }
+.nav-dropdown-toggle {
+  background: transparent; border: none; color: #cfd8f5; font-size: 14px;
+  cursor: pointer; padding: 4px 2px; display: flex; align-items: center; gap: 4px;
+  font-family: inherit;
+}
+.nav-dropdown-toggle.active { color: #fff; font-weight: 600; }
+.nav-dropdown-toggle .caret { font-size: 10px; }
+.nav-dropdown-menu {
+  display: none; position: absolute; top: calc(100% + 8px); left: 0;
+  background: #fff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  min-width: 200px; padding: 6px; z-index: 100;
+}
+.nav-dropdown-menu.open { display: block; }
+.nav-dropdown-menu a {
+  display: block; color: var(--text, #1f2937) !important; font-size: 14px;
+  padding: 9px 12px; border-radius: 6px; white-space: nowrap;
+}
+.nav-dropdown-menu a:hover { background: #f3f4f6; }
+.nav-dropdown-menu a.active { background: var(--navy); color: #fff !important; font-weight: 600; }
+
 /* Nut chuyen doi ngon ngu — dat trong topbar, canh nut Dang xuat */
 .lang-switcher { display: flex; gap: 4px; }
 .lang-switcher .lang-btn {

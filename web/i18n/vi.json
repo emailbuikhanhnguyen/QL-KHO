@@ -35,7 +35,9 @@
     "overtime": "Tăng ca",
     "meal": "Báo cơm",
     "gatepass": "Ra/vào cổng",
-    "vehicle": "Xe công vụ"
+    "vehicle": "Xe công vụ",
+    "groupKho": "Kho vận",
+    "groupErp": "Hành chính - Nhân sự"
   },
   "login": {
     "title": "SEC ERP",

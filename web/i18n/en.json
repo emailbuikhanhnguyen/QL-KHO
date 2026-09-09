@@ -35,7 +35,9 @@
     "overtime": "Overtime",
     "meal": "Meals",
     "gatepass": "Gate Pass",
-    "vehicle": "Vehicle"
+    "vehicle": "Vehicle",
+    "groupKho": "Warehouse",
+    "groupErp": "HR & Admin"
   },
   "login": {
     "title": "SEC ERP",
