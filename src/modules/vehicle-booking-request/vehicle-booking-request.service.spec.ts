@@ -120,6 +120,13 @@ describe('VehicleBookingRequestService', () => {
 
       await expect(service.approveManager(1, deptHeadOther as any)).rejects.toThrow(ForbiddenException);
     });
+
+    it('SoD: tu choi neu Truong bo phan tu tao dang ky xe CHO CHINH MINH roi tu duyet', async () => {
+      const ownVbByDeptHead = { ...draftVb, requestedBy: 200, departmentId: 1, status: VehicleBookingStatus.PENDING_MANAGER_APPROVAL };
+      prisma.vehicleBookingRequest.findUnique.mockResolvedValue(ownVbByDeptHead);
+
+      await expect(service.approveManager(1, deptHead as any)).rejects.toThrow(ForbiddenException);
+    });
   });
 
   describe('approveAdmin', () => {

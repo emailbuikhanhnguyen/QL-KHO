@@ -122,6 +122,12 @@ export class GatePassRequestService {
       throw new ForbiddenException({ key: 'NOT_IN_YOUR_DEPARTMENT' });
     }
 
+    // Them 09/09/2026 — vay lo hong Separation of Duties (SoD), xem giai
+    // thich chi tiet trong leave-request.service.ts.
+    if (currentUser.role !== Role.ADMIN && gp.requestedBy === currentUser.id) {
+      throw new ForbiddenException({ key: 'CANNOT_APPROVE_OWN_REQUEST' });
+    }
+
     return this.prisma.gatePassRequest.update({
       where: { id },
       data: {

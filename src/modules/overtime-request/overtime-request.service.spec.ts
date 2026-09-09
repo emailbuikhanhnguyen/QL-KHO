@@ -135,6 +135,13 @@ describe('OvertimeRequestService', () => {
 
       await expect(service.approveManager(1, deptHeadOther as any)).rejects.toThrow(ForbiddenException);
     });
+
+    it('SoD: tu choi neu Truong bo phan tu tao ke hoach OT CHO CHINH MINH roi tu duyet', async () => {
+      const ownOtByDeptHead = { ...draftOt, requestedBy: 200, departmentId: 1, status: OvertimeRequestStatus.PENDING_MANAGER_APPROVAL };
+      prisma.overtimeRequest.findUnique.mockResolvedValue(ownOtByDeptHead);
+
+      await expect(service.approveManager(1, deptHead as any)).rejects.toThrow(ForbiddenException);
+    });
   });
 
   describe('approveHr', () => {

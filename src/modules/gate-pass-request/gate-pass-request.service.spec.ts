@@ -116,6 +116,13 @@ describe('GatePassRequestService', () => {
 
       await expect(service.approveManager(1, deptHeadOther as any)).rejects.toThrow(ForbiddenException);
     });
+
+    it('SoD: tu choi neu Truong bo phan tu dang ky ra/vao cong CHO CHINH MINH roi tu duyet', async () => {
+      const ownGpByDeptHead = { ...draftGp, requestedBy: 200, departmentId: 1, status: GatePassRequestStatus.PENDING_MANAGER_APPROVAL };
+      prisma.gatePassRequest.findUnique.mockResolvedValue(ownGpByDeptHead);
+
+      await expect(service.approveManager(1, deptHead as any)).rejects.toThrow(ForbiddenException);
+    });
   });
 
   describe('approveHr', () => {

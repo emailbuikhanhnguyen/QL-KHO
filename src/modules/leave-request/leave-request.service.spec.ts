@@ -131,6 +131,14 @@ describe('LeaveRequestService', () => {
       await expect(service.approveManager(1, deptHeadOtherDept as any)).rejects.toThrow(ForbiddenException);
     });
 
+    it('SoD: tu choi neu Truong bo phan tu tao don CHO CHINH MINH roi tu duyet', async () => {
+      // don nay do CHINH deptHead (id: 200) tao ra cho ban than, khong phai employee (id: 100)
+      const ownLeaveByDeptHead = { ...pendingManagerLr, requestedBy: 200, departmentId: 1 };
+      prisma.leaveRequest.findUnique.mockResolvedValue(ownLeaveByDeptHead);
+
+      await expect(service.approveManager(1, deptHead as any)).rejects.toThrow(ForbiddenException);
+    });
+
     it('khong duyet duoc neu chua o dung trang thai cho duyet quan ly', async () => {
       prisma.leaveRequest.findUnique.mockResolvedValue(draftLr); // van con DRAFT
 

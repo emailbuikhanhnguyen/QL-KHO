@@ -209,4 +209,9 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     en: 'You do not have permission to perform this action',
     zh: '您没有权限执行此操作',
   },
+  CANNOT_APPROVE_OWN_REQUEST: {
+    vi: 'Không thể tự duyệt đơn/phiếu do chính mình tạo — cần người khác duyệt (nguyên tắc phân tách trách nhiệm)',
+    en: 'You cannot approve your own request — someone else must approve it (separation of duties)',
+    zh: '不能审批自己创建的申请——需要由其他人审批（职责分离原则）',
+  },
 };

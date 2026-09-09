@@ -140,6 +140,14 @@ export class LeaveRequestService {
       throw new ForbiddenException({ key: 'NOT_IN_YOUR_DEPARTMENT' });
     }
 
+    // Them 09/09/2026 — vay lo hong Separation of Duties (SoD): khong cho
+    // phep nguoi TAO don tu duyet don cua chinh minh, du dung phong ban
+    // (VD: Truong bo phan tu tao don nghi phep cho ban than). Admin van
+    // duoc bypass (dung de xu ly ngoai le/khan cap).
+    if (currentUser.role !== Role.ADMIN && lr.requestedBy === currentUser.id) {
+      throw new ForbiddenException({ key: 'CANNOT_APPROVE_OWN_REQUEST' });
+    }
+
     return this.prisma.leaveRequest.update({
       where: { id },
       data: {

@@ -687,6 +687,21 @@ Thêm 29 key dịch mới, tổng 580 key khớp tuyệt đối 3 ngôn ngữ.
 npx prisma migrate dev --name add_vehicle_booking_request
 ```
 
+## 1.32. Cập nhật 09/09/2026 — Vá lỗ hổng bảo mật: Separation of Duties (SoD)
+
+**Phát hiện**: khi được hỏi "phân quyền đã đúng chuẩn ERP chưa", rà lại code thật phát hiện lỗ hổng thật đang chạy live — hàm duyệt cấp Quản lý ở **cả 4 module** (Nghỉ phép, Tăng ca, Ra/vào cổng, Xe công vụ) chỉ kiểm tra **đúng phòng ban**, không kiểm tra **có phải chính người tạo đơn không**.
+
+**Hệ quả trước khi vá**: nếu chính Trưởng bộ phận tự tạo đơn (VD: đơn nghỉ phép cho bản thân), họ **hoàn toàn tự duyệt được cho chính mình** ở cấp 1 — vi phạm nguyên tắc Separation of Duties cơ bản của mọi ERP (người tạo không được là người duyệt cùng cấp).
+
+**Đã vá cả 4 module**: thêm điều kiện chặn `requestedBy === currentUser.id` trong hàm `approveManager()`, giữ nguyên Admin được bypass (dùng xử lý ngoại lệ/khẩn cấp). **4 unit test mới xác nhận đúng hành vi**, chạy thật pass 100%.
+
+**Đánh giá tổng thể phân quyền hiện tại** (chưa đạt chuẩn ERP đầy đủ, ghi nhận để cân nhắc nâng cấp dần):
+1. Phân quyền cố định trong code — cần sửa code + deploy để đổi ai làm gì
+2. 1 người chỉ có đúng 1 vai trò (không hỗ trợ kiêm nhiệm nhiều vai trò)
+3. Không có "công thức duyệt theo ngưỡng giá trị" chung — mỗi module cần ngưỡng riêng phải code cứng lại
+4. Không có người duyệt thay thế khi vắng mặt (đã ghi nhận từ báo cáo giới hạn trước)
+5. Audit trail sơ sài — chỉ biết người sửa cuối, không có log chi tiết theo thời gian
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:
