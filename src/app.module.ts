@@ -21,6 +21,8 @@ import { OvertimeRequestModule } from './modules/overtime-request/overtime-reque
 import { MealRegistrationModule } from './modules/meal-registration/meal-registration.module';
 import { GatePassRequestModule } from './modules/gate-pass-request/gate-pass-request.module';
 import { VehicleBookingRequestModule } from './modules/vehicle-booking-request/vehicle-booking-request.module';
+import { PurchaseRequisitionModule } from './modules/purchase-requisition/purchase-requisition.module';
+import { PurchaseRequestModule } from './modules/purchase-request/purchase-request.module';
 import { IssueRequestModule } from './modules/issue-request/issue-request.module';
 import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-transfer.module';
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
@@ -72,6 +74,8 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
     MealRegistrationModule,
     GatePassRequestModule,
     VehicleBookingRequestModule,
+    PurchaseRequisitionModule,
+    PurchaseRequestModule,
     IssueRequestModule,
     WarehouseTransferModule,
     StockLedgerModule,

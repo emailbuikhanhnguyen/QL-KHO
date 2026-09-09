@@ -37,7 +37,9 @@
     "gatepass": "Ra/vào cổng",
     "vehicle": "Xe công vụ",
     "groupKho": "Kho vận",
-    "groupErp": "Hành chính - Nhân sự"
+    "groupErp": "Hành chính - Nhân sự",
+    "purchase-requisition": "Yêu cầu mua hàng",
+    "pricedpr": "PR có giá"
   },
   "login": {
     "title": "SEC ERP",
@@ -153,7 +155,8 @@
     "RETURN": "Trả hàng",
     "PENDING_QA_APPROVAL": "Chờ duyệt QA",
     "PENDING_MANAGER_APPROVAL": "Chờ duyệt Quản lý",
-    "PENDING_HR_APPROVAL": "Chờ duyệt HR"
+    "PENDING_HR_APPROVAL": "Chờ duyệt HR",
+    "PENDING_ACCOUNTANT_APPROVAL": "Chờ duyệt Kế toán"
   },
   "qc": {
     "title": "QC — Kiểm tra chất lượng",
@@ -405,6 +408,16 @@
             "hr@sec.com",
             "Demo@123456",
             "Nhân sự (HR) — duyệt cấp cuối Nghỉ phép/Tăng ca"
+          ],
+          [
+            "purchaser@sec.com",
+            "Demo@123456",
+            "Thu mua (Purchaser) — tạo PR có giá (Giai đoạn 2)"
+          ],
+          [
+            "accountant@sec.com",
+            "Demo@123456",
+            "Kế toán (Accountant) — ký duyệt PR có giá"
           ]
         ]
       },
@@ -537,6 +550,18 @@
           "Bấm Tạo đăng ký → Gửi duyệt.",
           "Quản lý trực tiếp duyệt cấp 1.",
           "Admin (điều phối xe) duyệt cấp cuối — khác Nghỉ phép/Tăng ca/Ra-vào cổng (những module đó HR duyệt cấp cuối)."
+        ]
+      },
+      "purchaseHelp": {
+        "title": "Mua hàng (2 giai đoạn)",
+        "intro": "Quy trình mua hàng gồm 2 bước nối tiếp, tách biệt: (1) Yêu cầu mua hàng — chưa có giá, (2) PR có giá — Thu mua điền giá sau khi Giai đoạn 1 được duyệt.",
+        "steps": [
+          "Giai đoạn 1 — Yêu cầu mua hàng: vào \"Yêu cầu mua hàng\" → Tạo yêu cầu mới → nhập lý do, thêm các dòng vật tư cần mua (không cần giá) → Gửi duyệt.",
+          "Quản lý trực tiếp duyệt cấp 1, Ban Giám Đốc duyệt cấp cuối.",
+          "Sau khi được duyệt, hệ thống tự gửi email cho nhân viên Thu mua — nhân viên Thu mua vào \"PR có giá\" → Tạo PR mới → chọn đúng yêu cầu đã duyệt → điền đơn giá cho từng dòng.",
+          "Giai đoạn 2 — PR có giá: Quản lý trực tiếp duyệt cấp 1, Kế toán duyệt cấp cuối.",
+          "Nếu tổng giá trị vượt 2.000 USD: hệ thống bắt buộc Quản lý phải tick xác nhận \"đã gửi mail xin Ban Giám Đốc approve\" trước khi duyệt được trong hệ thống — đây là bước email làm ngoài hệ thống, không phải 1 cấp duyệt riêng.",
+          "Sau khi PR có giá được duyệt xong, hệ thống KHÔNG tự tạo đơn đặt hàng (PO) — nhân viên Thu mua tự liên hệ nhà cung cấp và ghi nhận thủ công (in giấy)."
         ]
       },
       "scan": {
@@ -858,5 +883,61 @@
     "deleteConfirm": "Xóa đăng ký này?",
     "approveAdminBtn": "✔ Duyệt (Admin — điều phối xe)",
     "approvedSuccess": "Đã duyệt xong — đăng ký xe công vụ đã được chấp thuận."
+  },
+  "requisition": {
+    "title": "Yêu cầu mua hàng",
+    "subtitle": "Giai đoạn 1 — chưa cần giá, chỉ đề nghị \"có được mua hay không\". Duyệt qua Trưởng bộ phận rồi Ban Giám Đốc",
+    "listTitle": "Danh sách yêu cầu",
+    "createBtn": "+ Tạo yêu cầu mới",
+    "createTitle": "Tạo yêu cầu mua hàng mới",
+    "reasonLabel": "Lý do / mục đích",
+    "linesLabel": "Danh sách vật tư cần mua",
+    "itemNamePlaceholder": "Tên vật tư",
+    "quantityPlaceholder": "Số lượng",
+    "unitPlaceholder": "Đơn vị",
+    "notePlaceholder": "Ghi chú (nếu có)",
+    "addLineBtn": "+ Thêm dòng",
+    "removeLineBtn": "Xóa dòng này",
+    "submitCreateBtn": "Tạo yêu cầu",
+    "tableCode": "Mã yêu cầu",
+    "lineCountLabel": "Số dòng",
+    "emptyState": "Chưa có yêu cầu mua hàng nào. Bấm \"Tạo yêu cầu mới\" để tạo.",
+    "detailTitle": "Chi tiết yêu cầu",
+    "fillAllFields": "Vui lòng điền lý do và ít nhất 1 dòng vật tư hợp lệ.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy yêu cầu",
+    "cancelConfirm": "Hủy yêu cầu mua hàng này?",
+    "deleteConfirm": "Xóa yêu cầu này?",
+    "approveBodBtn": "✔ Duyệt (BOD)",
+    "approvedSuccess": "Đã duyệt xong — yêu cầu mua hàng đã được chấp thuận. Có thể tạo PR có giá.",
+    "createPrBtn": "→ Tạo PR có giá từ yêu cầu này"
+  },
+  "pricedpr": {
+    "title": "PR có giá",
+    "subtitle": "Giai đoạn 2 — chỉ tạo được từ Yêu cầu mua hàng đã được BOD duyệt. Duyệt qua Trưởng bộ phận rồi Kế toán",
+    "listTitle": "Danh sách PR có giá",
+    "createBtn": "+ Tạo PR mới",
+    "createTitle": "Tạo PR có giá mới",
+    "selectRequisitionLabel": "Chọn Yêu cầu mua hàng đã duyệt",
+    "selectPlaceholder": "-- Chọn yêu cầu --",
+    "unitPricePlaceholder": "Đơn giá (USD)",
+    "lineTotalLabel": "Thành tiền",
+    "totalLabel": "Tổng cộng",
+    "overThresholdNote": "vượt 2.000 USD, cần xin BOD approve qua email trước",
+    "submitCreateBtn": "Tạo PR",
+    "tableCode": "Mã PR",
+    "requisitionCodeLabel": "Yêu cầu gốc",
+    "emptyState": "Chưa có PR nào. Bấm \"Tạo PR mới\" để tạo (cần có Yêu cầu mua hàng đã duyệt trước).",
+    "detailTitle": "Chi tiết PR",
+    "fillAllFields": "Vui lòng chọn yêu cầu và điền đầy đủ đơn giá cho mọi dòng.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy PR",
+    "cancelConfirm": "Hủy PR này?",
+    "deleteConfirm": "Xóa PR này?",
+    "approveAccountantBtn": "✔ Duyệt (Kế toán)",
+    "approvedSuccess": "Đã duyệt xong — PR có giá đã được chấp thuận.",
+    "overThresholdWarning": "⚠️ Phiếu này vượt 2.000 USD. Vui lòng gửi mail xin Ban Giám Đốc approve TRƯỚC khi duyệt tại đây.",
+    "confirmEmailCheckbox": "Tôi đã gửi mail xin BOD approve",
+    "mustConfirmEmailFirst": "Vui lòng tick xác nhận đã gửi mail xin BOD approve trước khi duyệt."
   }
 }

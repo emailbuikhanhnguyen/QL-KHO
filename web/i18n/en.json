@@ -37,7 +37,9 @@
     "gatepass": "Gate Pass",
     "vehicle": "Vehicle",
     "groupKho": "Warehouse",
-    "groupErp": "HR & Admin"
+    "groupErp": "HR & Admin",
+    "purchase-requisition": "Requisition",
+    "pricedpr": "Priced PR"
   },
   "login": {
     "title": "SEC ERP",
@@ -153,7 +155,8 @@
     "RETURN": "Return",
     "PENDING_QA_APPROVAL": "Pending QA Approval",
     "PENDING_MANAGER_APPROVAL": "Pending Manager Approval",
-    "PENDING_HR_APPROVAL": "Pending HR Approval"
+    "PENDING_HR_APPROVAL": "Pending HR Approval",
+    "PENDING_ACCOUNTANT_APPROVAL": "Pending Accountant Approval"
   },
   "qc": {
     "title": "QC — Quality Inspection",
@@ -405,6 +408,16 @@
             "hr@sec.com",
             "Demo@123456",
             "HR — final approval for Leave/Overtime"
+          ],
+          [
+            "purchaser@sec.com",
+            "Demo@123456",
+            "Purchaser — creates priced PR (Stage 2)"
+          ],
+          [
+            "accountant@sec.com",
+            "Demo@123456",
+            "Accountant — approves priced PR"
           ]
         ]
       },
@@ -537,6 +550,18 @@
           "Click Create → Submit.",
           "Direct manager approves at level 1.",
           "Admin (vehicle dispatch) gives the final approval — unlike Leave/Overtime/Gate Pass, where HR gives final approval."
+        ]
+      },
+      "purchaseHelp": {
+        "title": "Purchasing (2 stages)",
+        "intro": "The purchasing process has 2 separate, sequential stages: (1) Purchase Requisition — no pricing yet, (2) Priced PR — Purchaser fills in pricing after Stage 1 is approved.",
+        "steps": [
+          "Stage 1 — Purchase Requisition: go to \"Requisition\" → Create New → enter reason, add item lines needed (no pricing) → Submit.",
+          "Direct manager approves at level 1, the Board of Directors gives the final approval.",
+          "Once approved, the system automatically emails the Purchaser — the Purchaser goes to \"Priced PR\" → Create New → selects the approved requisition → fills in unit prices for each line.",
+          "Stage 2 — Priced PR: Direct manager approves at level 1, the Accountant gives the final approval.",
+          "If the total exceeds 2,000 USD: the system requires the manager to check a confirmation that they have \"emailed the Board of Directors for approval\" before approving in the system — this is an email step done outside the system, not a separate approval level.",
+          "Once the Priced PR is approved, the system does NOT automatically create a Purchase Order (PO) — the Purchaser contacts the supplier directly and records it manually (on paper)."
         ]
       },
       "scan": {
@@ -858,5 +883,61 @@
     "deleteConfirm": "Delete this booking?",
     "approveAdminBtn": "✔ Approve (Admin — vehicle dispatch)",
     "approvedSuccess": "Approved — the vehicle booking has been accepted."
+  },
+  "requisition": {
+    "title": "Purchase Requisition",
+    "subtitle": "Stage 1 — no pricing yet, just requesting \"can we buy this or not\". Approved through Department Head then BOD",
+    "listTitle": "Requisitions",
+    "createBtn": "+ New Requisition",
+    "createTitle": "New Purchase Requisition",
+    "reasonLabel": "Reason / Purpose",
+    "linesLabel": "Items to Purchase",
+    "itemNamePlaceholder": "Item name",
+    "quantityPlaceholder": "Quantity",
+    "unitPlaceholder": "Unit",
+    "notePlaceholder": "Note (optional)",
+    "addLineBtn": "+ Add Line",
+    "removeLineBtn": "Remove this line",
+    "submitCreateBtn": "Create",
+    "tableCode": "Code",
+    "lineCountLabel": "Lines",
+    "emptyState": "No requisitions yet. Click \"New Requisition\" to create one.",
+    "detailTitle": "Requisition Detail",
+    "fillAllFields": "Please fill in the reason and at least 1 valid item line.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Requisition",
+    "cancelConfirm": "Cancel this requisition?",
+    "deleteConfirm": "Delete this requisition?",
+    "approveBodBtn": "✔ Approve (BOD)",
+    "approvedSuccess": "Approved — the requisition has been accepted. A priced PR can now be created.",
+    "createPrBtn": "→ Create Priced PR from this requisition"
+  },
+  "pricedpr": {
+    "title": "Priced PR",
+    "subtitle": "Stage 2 — can only be created from a BOD-approved requisition. Approved through Department Head then Accountant",
+    "listTitle": "Priced Purchase Requests",
+    "createBtn": "+ New PR",
+    "createTitle": "New Priced PR",
+    "selectRequisitionLabel": "Select an approved Requisition",
+    "selectPlaceholder": "-- Select a requisition --",
+    "unitPricePlaceholder": "Unit Price (USD)",
+    "lineTotalLabel": "Line Total",
+    "totalLabel": "Total",
+    "overThresholdNote": "exceeds 2,000 USD, requires BOD email approval first",
+    "submitCreateBtn": "Create",
+    "tableCode": "PR Code",
+    "requisitionCodeLabel": "Source Requisition",
+    "emptyState": "No priced PRs yet. Click \"New PR\" to create one (requires an approved requisition first).",
+    "detailTitle": "PR Detail",
+    "fillAllFields": "Please select a requisition and fill in unit prices for all lines.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel PR",
+    "cancelConfirm": "Cancel this PR?",
+    "deleteConfirm": "Delete this PR?",
+    "approveAccountantBtn": "✔ Approve (Accountant)",
+    "approvedSuccess": "Approved — the priced PR has been accepted.",
+    "overThresholdWarning": "⚠️ This request exceeds 2,000 USD. Please email the BOD for approval BEFORE approving here.",
+    "confirmEmailCheckbox": "I have emailed the BOD for approval",
+    "mustConfirmEmailFirst": "Please check the confirmation that you've emailed the BOD before approving."
   }
 }

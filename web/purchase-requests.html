@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PR có giá — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .pr-line-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .pr-line-row input { margin: 0; }
+    .pr-line-row .readonly-cell { padding: 8px; color: var(--muted, #6b7280); font-size: 14px; }
+    .total-banner { font-size: 18px; font-weight: 700; margin: 16px 0; padding: 12px; border-radius: 8px; background: #f3f4f6; }
+    .threshold-banner { background: var(--amber-bg, #fdf3e0); border: 1px solid var(--amber, #b7791f); padding: 14px; border-radius: 8px; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="pricedpr.title">PR có giá</h1>
+    <p class="subtitle" data-i18n="pricedpr.subtitle">Giai đoạn 2 — chỉ tạo được từ Yêu cầu mua hàng đã được BOD duyệt. Duyệt qua Trưởng bộ phận rồi Kế toán</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="pricedpr.listTitle">Danh sách PR có giá</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="pricedpr.createBtn">+ Tạo PR mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="pricedpr.createTitle">Tạo PR có giá mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label data-i18n="pricedpr.selectRequisitionLabel">Chọn Yêu cầu mua hàng đã duyệt *</label>
+        <select id="f_requisitionId" onchange="onRequisitionChange()"></select>
+      </div>
+
+      <div id="linesEditContainer"></div>
+      <div class="total-banner" id="totalBanner" style="display:none;"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="pricedpr.submitCreateBtn">Tạo PR</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="pricedpr.detailTitle">Chi tiết PR</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/purchase-requests.js"></script>
+</body>
+</html>

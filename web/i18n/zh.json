@@ -37,7 +37,9 @@
     "gatepass": "出入门",
     "vehicle": "公务用车",
     "groupKho": "仓储",
-    "groupErp": "行政人事"
+    "groupErp": "行政人事",
+    "purchase-requisition": "采购申请",
+    "pricedpr": "报价单"
   },
   "login": {
     "title": "SEC ERP",
@@ -153,7 +155,8 @@
     "RETURN": "退货",
     "PENDING_QA_APPROVAL": "待质检审批",
     "PENDING_MANAGER_APPROVAL": "待主管审批",
-    "PENDING_HR_APPROVAL": "待人事审批"
+    "PENDING_HR_APPROVAL": "待人事审批",
+    "PENDING_ACCOUNTANT_APPROVAL": "待会计审批"
   },
   "qc": {
     "title": "质检",
@@ -405,6 +408,16 @@
             "hr@sec.com",
             "Demo@123456",
             "人事（HR）— 请假/加班的最终审批"
+          ],
+          [
+            "purchaser@sec.com",
+            "Demo@123456",
+            "采购员 — 创建报价单（第二阶段）"
+          ],
+          [
+            "accountant@sec.com",
+            "Demo@123456",
+            "会计 — 审批报价单"
           ]
         ]
       },
@@ -537,6 +550,18 @@
           "点击创建 → 提交审批。",
           "直属主管进行第一级审批。",
           "管理员（车辆调度）进行最终审批——与请假/加班/出入门不同（那些由人事进行最终审批）。"
+        ]
+      },
+      "purchaseHelp": {
+        "title": "采购（分两阶段）",
+        "intro": "采购流程分为两个独立且先后进行的阶段：（1）采购申请——尚无价格，（2）报价单——第一阶段获批后由采购员填写价格。",
+        "steps": [
+          "第一阶段——采购申请：进入“采购申请” → 新建申请 → 输入原因，添加所需物料行（无需价格） → 提交审批。",
+          "直属主管进行第一级审批，董事会进行最终审批。",
+          "获批后，系统自动发邮件通知采购员——采购员进入“报价单” → 新建报价单 → 选择已批准的申请 → 为每行填写单价。",
+          "第二阶段——报价单：直属主管进行第一级审批，会计进行最终审批。",
+          "如总额超过2,000美元：系统要求主管在批准前勾选确认“已发邮件请董事会批准”——这是在系统外完成的邮件步骤，不是单独的审批级别。",
+          "报价单批准后，系统不会自动创建采购订单（PO）——采购员自行联系供应商并手动记录（纸质）。"
         ]
       },
       "scan": {
@@ -858,5 +883,61 @@
     "deleteConfirm": "确定删除此登记吗？",
     "approveAdminBtn": "✔ 批准（管理员——车辆调度）",
     "approvedSuccess": "已批准——用车登记已通过。"
+  },
+  "requisition": {
+    "title": "采购申请",
+    "subtitle": "第一阶段——尚无价格，仅提出“是否可以采购”。经部门主管审批后再经董事会审批",
+    "listTitle": "申请列表",
+    "createBtn": "+ 新建申请",
+    "createTitle": "新建采购申请",
+    "reasonLabel": "原因/目的",
+    "linesLabel": "需采购物料清单",
+    "itemNamePlaceholder": "物料名称",
+    "quantityPlaceholder": "数量",
+    "unitPlaceholder": "单位",
+    "notePlaceholder": "备注（选填）",
+    "addLineBtn": "+ 添加行",
+    "removeLineBtn": "删除此行",
+    "submitCreateBtn": "创建",
+    "tableCode": "编号",
+    "lineCountLabel": "行数",
+    "emptyState": "暂无采购申请。点击“新建申请”创建。",
+    "detailTitle": "申请详情",
+    "fillAllFields": "请填写原因和至少1行有效物料。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消申请",
+    "cancelConfirm": "确定取消此申请吗？",
+    "deleteConfirm": "确定删除此申请吗？",
+    "approveBodBtn": "✔ 批准（董事会）",
+    "approvedSuccess": "已批准——采购申请已通过。现在可以创建报价单。",
+    "createPrBtn": "→ 从此申请创建报价单"
+  },
+  "pricedpr": {
+    "title": "报价单",
+    "subtitle": "第二阶段——只能基于已经董事会批准的采购申请创建。经部门主管审批后再经会计审批",
+    "listTitle": "报价单列表",
+    "createBtn": "+ 新建报价单",
+    "createTitle": "新建报价单",
+    "selectRequisitionLabel": "选择已批准的采购申请",
+    "selectPlaceholder": "-- 选择申请 --",
+    "unitPricePlaceholder": "单价（美元）",
+    "lineTotalLabel": "小计",
+    "totalLabel": "总计",
+    "overThresholdNote": "超过2,000美元，需先经董事会邮件批准",
+    "submitCreateBtn": "创建",
+    "tableCode": "报价单编号",
+    "requisitionCodeLabel": "来源申请",
+    "emptyState": "暂无报价单。点击“新建报价单”创建（需先有已批准的采购申请）。",
+    "detailTitle": "报价单详情",
+    "fillAllFields": "请选择申请并填写所有行的单价。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消报价单",
+    "cancelConfirm": "确定取消此报价单吗？",
+    "deleteConfirm": "确定删除此报价单吗？",
+    "approveAccountantBtn": "✔ 批准（会计）",
+    "approvedSuccess": "已批准——报价单已通过。",
+    "overThresholdWarning": "⚠️ 此申请超过2,000美元。请先发邮件请董事会批准，再在此处批准。",
+    "confirmEmailCheckbox": "我已发邮件请董事会批准",
+    "mustConfirmEmailFirst": "请先勾选确认已发邮件请董事会批准。"
   }
 }

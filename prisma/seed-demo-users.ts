@@ -61,6 +61,20 @@ const DEMO_USERS = [
     role: Role.HR,
     deptCode: 'HR',
   },
+  {
+    // Them 09/09/2026 (Module Mua hang) — tao PR co gia (Giai doan 2)
+    email: 'purchaser@sec.com',
+    fullName: 'Le Van Thu Mua',
+    role: Role.PURCHASER,
+    deptCode: 'PROCUREMENT',
+  },
+  {
+    // Them 09/09/2026 (Module Mua hang) — ky duyet PR co gia
+    email: 'accountant@sec.com',
+    fullName: 'Pham Thi Ke Toan',
+    role: Role.ACCOUNTANT,
+    deptCode: 'ACCOUNTING',
+  },
 ];
 
 async function main() {

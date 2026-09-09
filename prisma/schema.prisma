@@ -53,6 +53,11 @@ enum Role {
                     // phep/tang ca... khong duyet duoc gi
   HR               // Them 04/09/2026 (SEC ERP) — duyet cap cuoi cho don
                     // nghi phep/tang ca, sau Truong bo phan
+  PURCHASER        // Them 09/09/2026 (Module Mua hang) — nhan vien thu
+                    // mua, tao "PR co gia" (giai doan 2) tu Yeu cau mua
+                    // hang da duoc BOD duyet (giai doan 1)
+  ACCOUNTANT       // Them 09/09/2026 (Module Mua hang) — ky duyet PR co
+                    // gia (giai doan 2), theo dung xac nhan cua Sep Thanh
 
   @@map("role")
 }
@@ -78,6 +83,7 @@ model Department {
   mealRegistrations MealRegistration[]
   gatePassRequests GatePassRequest[]
   vehicleBookingRequests VehicleBookingRequest[]
+  purchaseRequisitions PurchaseRequisition[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -1251,4 +1257,166 @@ model VehicleBookingRequest {
   @@index([departmentId])
   @@index([status])
   @@map("vehicle_booking_requests")
+}
+
+// =============================================================================
+// Module Mua hang (Purchase) — 04-09/09/2026, theo xac nhan cua Sep Thanh
+// GOM 2 GIAI DOAN TACH BIET, noi tiep nhau (KHONG phai 1 luong duyet duy
+// nhat nhu cac module truoc):
+//
+//   Giai doan 1: PurchaseRequisition ("Yeu cau mua hang", KHONG co gia)
+//     Nguoi de nghi -> Truong bo phan -> BOD duyet (duyet "co duoc mua
+//     hay khong", chua lien quan gia).
+//
+//   Giai doan 2: PurchaseRequest ("PR co gia") — CHI tao duoc tu 1
+//     PurchaseRequisition DA duoc BOD duyet (APPROVED) o Giai doan 1.
+//     Nhan vien Thu mua (PURCHASER) tao, dien gia cu the -> Truong bo
+//     phan ky -> Ke toan (ACCOUNTANT) ky. Neu tong > 2000 USD: Truong
+//     bo phan can GUI MAIL NGOAI HE THONG xin BOD approve TRUOC khi
+//     duyet trong app (KHONG lam them 1 buoc duyet he thong rieng cho
+//     viec nay — Sep noi ro day la buoc email, giu dung nhu vay, chi
+//     hien banner nhac nho + checkbox xac nhan trong giao dien).
+//
+//   Sau khi PurchaseRequest duyet xong: KHONG tu tao PO trong he thong,
+//   Thu mua tu lien he NCC lay bao gia, "in giay" ghi nhan thu cong.
+// =============================================================================
+enum PurchaseRequisitionStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_BOD_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("purchase_requisition_status")
+}
+
+model PurchaseRequisition {
+  id                Int                       @id @default(autoincrement())
+  code              String                    @unique @map("code") // VD: PRQ-2026-000001
+
+  requestedBy       Int                       @map("requested_by")
+  departmentId      Int                       @map("department_id")
+  department        Department                @relation(fields: [departmentId], references: [id])
+
+  reason            String                    @map("reason")
+
+  status            PurchaseRequisitionStatus @default(DRAFT) @map("status")
+
+  submittedAt       DateTime?                 @map("submitted_at")
+  managerApprovedBy Int?                      @map("manager_approved_by")
+  managerApprovedAt DateTime?                 @map("manager_approved_at")
+  bodApprovedBy     Int?                      @map("bod_approved_by")
+  bodApprovedAt     DateTime?                 @map("bod_approved_at")
+
+  rejectedBy        Int?                      @map("rejected_by")
+  rejectedAt        DateTime?                 @map("rejected_at")
+  rejectionReason   String?                   @map("rejection_reason")
+
+  cancelledAt       DateTime?                 @map("cancelled_at")
+
+  lines             PurchaseRequisitionLine[]
+  purchaseRequests  PurchaseRequest[]
+
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @updatedAt @map("updated_at")
+  createdBy         Int?                      @map("created_by")
+  updatedBy         Int?                      @map("updated_by")
+
+  @@index([requestedBy])
+  @@index([departmentId])
+  @@index([status])
+  @@map("purchase_requisitions")
+}
+
+model PurchaseRequisitionLine {
+  id                     Int                  @id @default(autoincrement())
+
+  purchaseRequisitionId  Int                  @map("purchase_requisition_id")
+  purchaseRequisition    PurchaseRequisition  @relation(fields: [purchaseRequisitionId], references: [id], onDelete: Cascade)
+
+  // Tu do nhap ten vat tu (khong rang buoc Danh muc Item) — co goi y tu
+  // dong theo lich su da tung nhap truoc do, xu ly o tang frontend.
+  itemName               String               @map("item_name")
+  quantity               Decimal              @map("quantity") @db.Decimal(18, 3)
+  unit                   String               @map("unit")
+  note                   String?              @map("note")
+
+  @@index([purchaseRequisitionId])
+  @@map("purchase_requisition_lines")
+}
+
+// -----------------------------------------------------------------------------
+// PurchaseRequest — Giai doan 2 ("PR co gia")
+// -----------------------------------------------------------------------------
+enum PurchaseRequestStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_ACCOUNTANT_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("purchase_request_status")
+}
+
+model PurchaseRequest {
+  id                    Int                    @id @default(autoincrement())
+  code                  String                 @unique @map("code") // VD: PR-2026-000001
+
+  purchaseRequisitionId Int                    @map("purchase_requisition_id")
+  purchaseRequisition   PurchaseRequisition    @relation(fields: [purchaseRequisitionId], references: [id])
+
+  createdBy             Int                    @map("created_by") // luon la Purchaser
+
+  totalAmountUsd        Decimal                @default(0) @map("total_amount_usd") @db.Decimal(18, 2) // cache, tinh lai moi lan sua dong
+
+  status                PurchaseRequestStatus  @default(DRAFT) @map("status")
+
+  submittedAt           DateTime?              @map("submitted_at")
+  managerApprovedBy     Int?                   @map("manager_approved_by")
+  managerApprovedAt     DateTime?              @map("manager_approved_at")
+  // Neu totalAmountUsd > 2000 USD: Truong bo phan phai GUI MAIL NGOAI HE
+  // THONG xin BOD approve TRUOC khi duyet trong app (theo dung xac nhan
+  // cua Sep Thanh — day KHONG phai 1 buoc duyet he thong rieng). Truong
+  // nay chi de LUU LAI xac nhan "da gui mail" — bat buoc tick truoc khi
+  // duyet duoc nếu vuot nguong, KHONG thay the buoc duyet BOD nao ca.
+  managerConfirmedBodEmailAt DateTime?         @map("manager_confirmed_bod_email_at")
+  accountantApprovedBy  Int?                   @map("accountant_approved_by")
+  accountantApprovedAt  DateTime?              @map("accountant_approved_at")
+
+  rejectedBy            Int?                   @map("rejected_by")
+  rejectedAt            DateTime?              @map("rejected_at")
+  rejectionReason       String?                @map("rejection_reason")
+
+  cancelledAt           DateTime?              @map("cancelled_at")
+
+  lines                 PurchaseRequestLine[]
+
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @updatedAt @map("updated_at")
+  updatedBy             Int?                   @map("updated_by")
+
+  @@index([purchaseRequisitionId])
+  @@index([status])
+  @@map("purchase_requests")
+}
+
+model PurchaseRequestLine {
+  id                Int             @id @default(autoincrement())
+
+  purchaseRequestId Int             @map("purchase_request_id")
+  purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id], onDelete: Cascade)
+
+  // Copy doc lap tu dong Yeu cau mua hang goc (khong chi tham chieu) —
+  // vi Purchaser co the can chinh lai so luong/don vi khi lam gia thuc
+  // te (VD: gop/tach don voi NCC).
+  itemName          String          @map("item_name")
+  quantity          Decimal         @map("quantity") @db.Decimal(18, 3)
+  unit              String          @map("unit")
+  unitPriceUsd      Decimal         @map("unit_price_usd") @db.Decimal(18, 2)
+  lineTotalUsd      Decimal         @map("line_total_usd") @db.Decimal(18, 2) // = quantity * unitPriceUsd, luu cache
+
+  @@index([purchaseRequestId])
+  @@map("purchase_request_lines")
 }

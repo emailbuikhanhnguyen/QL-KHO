@@ -258,6 +258,8 @@ function renderTopbar(activePage) {
         { href: "/meal-registrations.html", key: "meal", labelKey: "nav.meal", fallback: "Báo cơm" },
         { href: "/gate-pass-requests.html", key: "gatepass", labelKey: "nav.gatepass", fallback: "Ra/vào cổng" },
         { href: "/vehicle-booking-requests.html", key: "vehicle", labelKey: "nav.vehicle", fallback: "Xe công vụ" },
+        { href: "/purchase-requisitions.html", key: "purchase-requisition", labelKey: "nav.purchase-requisition", fallback: "Yêu cầu mua hàng" },
+        { href: "/purchase-requests.html", key: "pricedpr", labelKey: "nav.pricedpr", fallback: "PR có giá" },
       ],
     },
   ];
@@ -384,6 +386,8 @@ function getHelpAnchorFor(activePage) {
     meal: "#mealHelp",
     gatepass: "#gatepassHelp",
     vehicle: "#vehicleHelp",
+    "purchase-requisition": "#purchaseHelp",
+    pricedpr: "#purchaseHelp",
   };
   return map[activePage] ? map[activePage] : "";
 }

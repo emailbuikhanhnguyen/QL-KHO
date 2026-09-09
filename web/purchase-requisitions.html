@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yêu cầu mua hàng — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .line-row { display: grid; grid-template-columns: 2fr 1fr 1fr 2fr auto; gap: 8px; margin-bottom: 8px; align-items: start; }
+    .line-row input { margin: 0; }
+    .remove-line-btn {
+      background: var(--danger-bg); color: var(--danger); border: none;
+      border-radius: 6px; width: 36px; height: 36px; cursor: pointer; font-size: 14px;
+    }
+    @media (max-width: 640px) { .line-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="requisition.title">Yêu cầu mua hàng</h1>
+    <p class="subtitle" data-i18n="requisition.subtitle">Đề nghị mua hàng (chưa cần giá), gửi duyệt qua Trưởng bộ phận rồi BOD</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="requisition.listTitle">Danh sách yêu cầu</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="requisition.createBtn">+ Tạo yêu cầu mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="requisition.createTitle">Tạo yêu cầu mua hàng mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label data-i18n="requisition.reasonLabel">Lý do mua hàng *</label>
+        <textarea id="f_reason"></textarea>
+      </div>
+
+      <label style="font-weight:600; display:block; margin-top:16px;" data-i18n="requisition.linesLabel">Danh sách vật tư cần mua *</label>
+      <div id="linesContainer" style="margin-top:8px;"></div>
+      <button type="button" class="btn btn-outline btn-sm" onclick="addLine()" data-i18n="requisition.addLineBtn" style="margin-top:4px;">+ Thêm dòng</button>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="requisition.submitCreateBtn">Tạo yêu cầu</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="requisition.detailTitle">Chi tiết yêu cầu</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <datalist id="itemNameSuggestions"></datalist>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/purchase-requisitions.js"></script>
+</body>
+</html>

@@ -702,6 +702,28 @@ npx prisma migrate dev --name add_vehicle_booking_request
 4. Không có người duyệt thay thế khi vắng mặt (đã ghi nhận từ báo cáo giới hạn trước)
 5. Audit trail sơ sài — chỉ biết người sửa cuối, không có log chi tiết theo thời gian
 
+## 1.33. Cập nhật 09/09/2026 — SEC ERP: Module Mua hàng hoàn chỉnh (2 giai đoạn)
+
+**Module lớn nhất từ đầu tới giờ** — 2 giai đoạn nối tiếp theo đúng xác nhận của Sếp Thành:
+
+**Giai đoạn 1 — "Yêu cầu mua hàng"** (`purchase-requisitions.html`, không giá): Người đề nghị → Trưởng bộ phận → BOD duyệt "có được mua hay không". Nhiều dòng vật tư/1 phiếu, tên vật tư tự do (có gợi ý tự động theo lịch sử).
+
+**Giai đoạn 2 — "PR có giá"** (`purchase-requests.html`): Chỉ tạo được từ 1 Yêu cầu đã APPROVED. Nhân viên Thu mua (`PURCHASER`) điền giá → Trưởng bộ phận → Kế toán (`ACCOUNTANT`) duyệt. Nếu tổng > 2.000 USD: **không thêm bước duyệt hệ thống mới** — chỉ hiện banner cảnh báo + bắt buộc tick xác nhận "đã gửi mail xin BOD approve" (lưu timestamp `managerConfirmedBodEmailAt`) trước khi Trưởng bộ phận duyệt được, đúng theo yêu cầu gốc (email là bước ngoài hệ thống).
+
+**Hạ tầng hoàn toàn mới**: `NotificationService` — gửi email thông báo tự động ngay lúc submit/duyệt (khác hẳn script cũ chạy theo lịch cố định). Mỗi bước duyệt tự động gửi email cho cấp tiếp theo, cuối Giai đoạn 1 gửi cho toàn bộ `PURCHASER`.
+
+**2 vai trò mới**: `PURCHASER`, `ACCOUNTANT`. **2 phòng ban mới**: `PROCUREMENT`, `ACCOUNTING`. Tài khoản demo: `purchaser@sec.com`, `accountant@sec.com`.
+
+**Sự cố lúc làm — bài học lặp lại**: phát hiện phần lớn code (frontend Giai đoạn 2 hoàn chỉnh, i18n đầy đủ 640 key, menu/Help/Dashboard) **đã được viết sẵn từ 1 phiên trước** bị nén context. Suýt ghi đè mất file `purchase-requisitions.html` gốc khi chưa kiểm tra trước — phát hiện kịp qua so sánh namespace i18n, viết lại đúng khớp với JS gốc, không mất công đã làm.
+
+**22 unit test** (12 Giai đoạn 1 + 10 Giai đoạn 2), chạy thật pass 100% — kiểm tra kỹ cả 3 nhánh logic ngưỡng 2.000 USD và SoD.
+
+**Lưu ý migration + cấu hình quan trọng**:
+```
+npx prisma migrate dev --name add_purchase_module
+```
+**Bắt buộc thêm trên Render Environment Variables** (KHÔNG PHẢI GitHub Secrets — khác ngữ cảnh với 2 script cũ): `GMAIL_USER`, `GMAIL_APP_PASSWORD` — nếu thiếu, email thông báo sẽ không gửi được (nhưng không làm crash app, chỉ log lỗi).
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

@@ -214,4 +214,19 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     en: 'You cannot approve your own request — someone else must approve it (separation of duties)',
     zh: '不能审批自己创建的申请——需要由其他人审批（职责分离原则）',
   },
+  LINES_REQUIRED: {
+    vi: 'Phải có ít nhất 1 dòng vật tư',
+    en: 'At least 1 item line is required',
+    zh: '至少需要1行物料',
+  },
+  REQUISITION_NOT_APPROVED: {
+    vi: 'Chỉ được tạo PR có giá từ Yêu cầu mua hàng đã được duyệt (APPROVED)',
+    en: 'A priced PR can only be created from an APPROVED requisition',
+    zh: '只能基于已批准的采购申请创建报价单',
+  },
+  MUST_CONFIRM_EMAIL_TO_BOD: {
+    vi: 'Phiếu này vượt 2.000 USD — cần xác nhận đã gửi mail xin BOD approve trước khi duyệt',
+    en: 'This request exceeds 2,000 USD — please confirm you have emailed the BOD for approval before proceeding',
+    zh: '此申请超过2,000美元——请确认已发邮件请董事会批准后再继续',
+  },
 };
