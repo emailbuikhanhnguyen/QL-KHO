@@ -34,6 +34,7 @@ export const ACTION_TRANSLATIONS: Record<string, Record<SupportedLang, string>> 
   'duyet QA': { vi: 'duyệt (cấp QA)', en: 'approve (QA level)', zh: '批准（质检级）' },
   'duyet quan ly': { vi: 'duyệt (quản lý trực tiếp)', en: 'approve (manager level)', zh: '批准（主管级）' },
   'duyet HR': { vi: 'duyệt (HR)', en: 'approve (HR)', zh: '批准（人事）' },
+  'duyet dieu phoi xe': { vi: 'duyệt (điều phối xe)', en: 'approve (vehicle dispatch)', zh: '批准（车辆调度）' },
 };
 
 export function translateAction(action: string, lang: SupportedLang): string {

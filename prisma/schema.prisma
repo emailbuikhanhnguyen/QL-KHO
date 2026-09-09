@@ -77,6 +77,7 @@ model Department {
   overtimeRequests OvertimeRequest[]
   mealRegistrations MealRegistration[]
   gatePassRequests GatePassRequest[]
+  vehicleBookingRequests VehicleBookingRequest[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -1192,3 +1193,62 @@ model GatePassRequest {
   @@map("gate_pass_requests")
 }
 
+
+// -----------------------------------------------------------------------------
+// VehicleBookingRequest — Dang ky su dung xe cong vu (module thu 5 cua SEC ERP)
+// KHAC 3 module truoc (Nghi phep/Tang ca/Ra-vao cong): cap duyet CUOI la
+// ADMIN (theo dung yeu cau goc "Admin/Dieu phoi xe"), KHONG PHAI HR — vi
+// dieu phoi xe la nghiep vu hanh chinh/co so vat chat, khong phai nhan su.
+// Luong: Nguoi de nghi -> Quan ly truc tiep -> Admin.
+// -----------------------------------------------------------------------------
+enum VehicleBookingStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_ADMIN_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("vehicle_booking_status")
+}
+
+model VehicleBookingRequest {
+  id                  Int                  @id @default(autoincrement())
+  code                String               @unique @map("code") // VD: VB-2026-000001
+
+  requestedBy         Int                  @map("requested_by")
+  departmentId        Int                  @map("department_id")
+  department          Department           @relation(fields: [departmentId], references: [id])
+
+  useDate             DateTime             @map("use_date") @db.Date
+  startTime           String               @map("start_time") // "HH:mm"
+  endTime             String               @map("end_time")
+  departure           String               @map("departure") // diem di
+  destination         String               @map("destination") // diem den
+  purpose             String               @map("purpose")
+  numberOfPeople      Int                  @map("number_of_people")
+
+  status              VehicleBookingStatus @default(DRAFT) @map("status")
+
+  submittedAt         DateTime?            @map("submitted_at")
+  managerApprovedBy   Int?                 @map("manager_approved_by")
+  managerApprovedAt   DateTime?            @map("manager_approved_at")
+  adminApprovedBy     Int?                 @map("admin_approved_by")
+  adminApprovedAt     DateTime?            @map("admin_approved_at")
+
+  rejectedBy          Int?                 @map("rejected_by")
+  rejectedAt          DateTime?            @map("rejected_at")
+  rejectionReason     String?              @map("rejection_reason")
+
+  cancelledAt         DateTime?            @map("cancelled_at")
+
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  createdBy           Int?                 @map("created_by")
+  updatedBy           Int?                 @map("updated_by")
+
+  @@index([requestedBy])
+  @@index([departmentId])
+  @@index([status])
+  @@map("vehicle_booking_requests")
+}

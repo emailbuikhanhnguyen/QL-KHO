@@ -34,7 +34,8 @@
     "leave": "Leave",
     "overtime": "Overtime",
     "meal": "Meals",
-    "gatepass": "Gate Pass"
+    "gatepass": "Gate Pass",
+    "vehicle": "Vehicle"
   },
   "login": {
     "title": "SEC ERP",
@@ -526,6 +527,16 @@
           "Direct manager approves at level 1, HR gives final approval — same flow as Leave Request."
         ]
       },
+      "vehicleHelp": {
+        "title": "Vehicle Booking",
+        "intro": "Use this to book a company vehicle for work purposes.",
+        "steps": [
+          "Go to Vehicle Booking → Create New Booking → select date, time, departure/destination, purpose, number of people.",
+          "Click Create → Submit.",
+          "Direct manager approves at level 1.",
+          "Admin (vehicle dispatch) gives the final approval — unlike Leave/Overtime/Gate Pass, where HR gives final approval."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -818,5 +829,32 @@
     "cancelConfirm": "Cancel this gate pass request?",
     "deleteConfirm": "Delete this request?",
     "approvedSuccess": "Approved — the gate pass request has been accepted."
+  },
+  "vehicle": {
+    "title": "Vehicle Booking",
+    "subtitle": "Book a company vehicle, approved through your direct manager then Admin (vehicle dispatch)",
+    "listTitle": "Vehicle Bookings",
+    "createBtn": "+ New Booking",
+    "createTitle": "New Vehicle Booking",
+    "dateLabel": "Use Date",
+    "startTimeLabel": "Start Time",
+    "endTimeLabel": "End Time",
+    "timeRangeLabel": "Time Range",
+    "departureLabel": "Departure",
+    "destinationLabel": "Destination",
+    "routeLabel": "Route",
+    "purposeLabel": "Purpose",
+    "numberOfPeopleLabel": "Number of People",
+    "submitCreateBtn": "Create",
+    "tableCode": "Code",
+    "emptyState": "No vehicle bookings yet. Click \"New Booking\" to create one.",
+    "detailTitle": "Booking Detail",
+    "fillAllFields": "Please fill in all required fields.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Booking",
+    "cancelConfirm": "Cancel this vehicle booking?",
+    "deleteConfirm": "Delete this booking?",
+    "approveAdminBtn": "✔ Approve (Admin — vehicle dispatch)",
+    "approvedSuccess": "Approved — the vehicle booking has been accepted."
   }
 }

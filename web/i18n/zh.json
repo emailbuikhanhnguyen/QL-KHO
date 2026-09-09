@@ -34,7 +34,8 @@
     "leave": "请假",
     "overtime": "加班",
     "meal": "报餐",
-    "gatepass": "出入门"
+    "gatepass": "出入门",
+    "vehicle": "公务用车"
   },
   "login": {
     "title": "SEC ERP",
@@ -526,6 +527,16 @@
           "直属主管进行第一级审批，人事进行最终审批——流程与请假申请相同。"
         ]
       },
+      "vehicleHelp": {
+        "title": "公务用车",
+        "intro": "用于登记因公使用公司车辆。",
+        "steps": [
+          "进入公务用车 → 新建登记 → 选择日期、时间、出发地/目的地、目的、人数。",
+          "点击创建 → 提交审批。",
+          "直属主管进行第一级审批。",
+          "管理员（车辆调度）进行最终审批——与请假/加班/出入门不同（那些由人事进行最终审批）。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
         "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
@@ -818,5 +829,32 @@
     "cancelConfirm": "确定取消此出入门登记吗？",
     "deleteConfirm": "确定删除此登记吗？",
     "approvedSuccess": "已批准——出入门登记已通过。"
+  },
+  "vehicle": {
+    "title": "公务用车",
+    "subtitle": "登记使用公务用车，经直属主管审批后再经管理员（车辆调度）审批",
+    "listTitle": "用车登记列表",
+    "createBtn": "+ 新建登记",
+    "createTitle": "新建公务用车登记",
+    "dateLabel": "使用日期",
+    "startTimeLabel": "开始时间",
+    "endTimeLabel": "结束时间",
+    "timeRangeLabel": "时间段",
+    "departureLabel": "出发地",
+    "destinationLabel": "目的地",
+    "routeLabel": "路线",
+    "purposeLabel": "目的",
+    "numberOfPeopleLabel": "人数",
+    "submitCreateBtn": "创建",
+    "tableCode": "编号",
+    "emptyState": "暂无用车登记。点击“新建登记”创建。",
+    "detailTitle": "登记详情",
+    "fillAllFields": "请填写所有必填项。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消登记",
+    "cancelConfirm": "确定取消此用车登记吗？",
+    "deleteConfirm": "确定删除此登记吗？",
+    "approveAdminBtn": "✔ 批准（管理员——车辆调度）",
+    "approvedSuccess": "已批准——用车登记已通过。"
   }
 }

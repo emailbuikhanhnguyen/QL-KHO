@@ -672,6 +672,21 @@ Thêm 27 key dịch mới (namespace `gatepass`), tổng 551 key khớp tuyệt 
 npx prisma migrate dev --name add_gate_pass_request
 ```
 
+## 1.31. Cập nhật 09/09/2026 — SEC ERP: Module Xe công vụ
+
+**Module thứ 5 của SEC ERP**. Rút kinh nghiệm từ sự cố module trước (trùng lặp model do không kiểm tra trước khi ghi thêm vào schema) — lần này đã **kiểm tra kỹ trước khi bắt đầu** (`grep`/`find` xác nhận chưa có gì tồn tại), và **kiểm tra trùng lặp toàn bộ schema** ngay sau khi thêm, không chỉ riêng phần vừa viết.
+
+**Điểm khác biệt quan trọng so với 3 module trước** (Nghỉ phép/Tăng ca/Ra-vào cổng, đều dùng HR duyệt cấp cuối): module này dùng **ADMIN** duyệt cấp cuối (đúng theo yêu cầu gốc "Admin/Điều phối xe") — vì điều phối xe là nghiệp vụ hành chính/cơ sở vật chất, không phải nhân sự.
+
+**10 unit test mới, chạy thật pass 100%** — bao phủ đủ: tạo đăng ký, kiểm tra khung giờ hợp lệ, duyệt đúng phòng ban, **duyệt cấp cuối là Admin (không phải HR)**, hủy/xóa, từ chối.
+
+Thêm 29 key dịch mới, tổng 580 key khớp tuyệt đối 3 ngôn ngữ.
+
+**Lưu ý migration**: cần chạy trên máy có mạng đầy đủ:
+```
+npx prisma migrate dev --name add_vehicle_booking_request
+```
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

@@ -34,7 +34,8 @@
     "leave": "Nghỉ phép",
     "overtime": "Tăng ca",
     "meal": "Báo cơm",
-    "gatepass": "Ra/vào cổng"
+    "gatepass": "Ra/vào cổng",
+    "vehicle": "Xe công vụ"
   },
   "login": {
     "title": "SEC ERP",
@@ -526,6 +527,16 @@
           "Quản lý trực tiếp duyệt cấp 1, HR duyệt cấp cuối — luồng giống Nghỉ phép."
         ]
       },
+      "vehicleHelp": {
+        "title": "Xe công vụ",
+        "intro": "Dùng khi cần đăng ký sử dụng xe của công ty cho công việc.",
+        "steps": [
+          "Vào Xe công vụ → Tạo đăng ký mới → chọn ngày, giờ, điểm đi/đến, mục đích, số người đi.",
+          "Bấm Tạo đăng ký → Gửi duyệt.",
+          "Quản lý trực tiếp duyệt cấp 1.",
+          "Admin (điều phối xe) duyệt cấp cuối — khác Nghỉ phép/Tăng ca/Ra-vào cổng (những module đó HR duyệt cấp cuối)."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -818,5 +829,32 @@
     "cancelConfirm": "Hủy đăng ký ra/vào cổng này?",
     "deleteConfirm": "Xóa đăng ký này?",
     "approvedSuccess": "Đã duyệt xong — đăng ký ra/vào cổng đã được chấp thuận."
+  },
+  "vehicle": {
+    "title": "Xe công vụ",
+    "subtitle": "Đăng ký sử dụng xe công vụ, gửi duyệt qua Quản lý trực tiếp rồi Admin (điều phối xe)",
+    "listTitle": "Danh sách đăng ký",
+    "createBtn": "+ Tạo đăng ký mới",
+    "createTitle": "Tạo đăng ký xe công vụ mới",
+    "dateLabel": "Ngày sử dụng",
+    "startTimeLabel": "Giờ bắt đầu",
+    "endTimeLabel": "Giờ kết thúc",
+    "timeRangeLabel": "Khung giờ",
+    "departureLabel": "Điểm đi",
+    "destinationLabel": "Điểm đến",
+    "routeLabel": "Lộ trình",
+    "purposeLabel": "Mục đích",
+    "numberOfPeopleLabel": "Số người",
+    "submitCreateBtn": "Tạo đăng ký",
+    "tableCode": "Mã đăng ký",
+    "emptyState": "Chưa có đăng ký xe công vụ nào. Bấm \"Tạo đăng ký mới\" để tạo.",
+    "detailTitle": "Chi tiết đăng ký",
+    "fillAllFields": "Vui lòng điền đầy đủ tất cả các trường bắt buộc.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy đăng ký",
+    "cancelConfirm": "Hủy đăng ký xe công vụ này?",
+    "deleteConfirm": "Xóa đăng ký này?",
+    "approveAdminBtn": "✔ Duyệt (Admin — điều phối xe)",
+    "approvedSuccess": "Đã duyệt xong — đăng ký xe công vụ đã được chấp thuận."
   }
 }
