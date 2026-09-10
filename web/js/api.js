@@ -9,6 +9,32 @@ const API_BASE = "/api";
 const TOKEN_KEY = "kho_npl_token";
 const USER_KEY = "kho_npl_user";
 
+// ==== THEME TOI (Dark mode) — them 09/09/2026 ====
+// Chay applyTheme() NGAY LUC file nay duoc load (khong doi DOMContentLoaded
+// hay renderTopbar) — giam toi da thoi gian "chop sang" truoc khi chuyen
+// sang giao dien toi. Van co the chop nhe (vi script dat cuoi body), neu
+// muon het han han nay hoan toan can them 1 doan script nho vao <head>
+// cua tung trang — chua lam vi phai sua ca 18 file HTML, chi lam neu can.
+const THEME_STORAGE_KEY = "kho_npl_theme";
+
+function getSavedTheme() {
+  return localStorage.getItem(THEME_STORAGE_KEY) || "light";
+}
+
+function applyTheme(theme) {
+  document.documentElement.classList.toggle("dark", theme === "dark");
+}
+
+function toggleTheme() {
+  const next = getSavedTheme() === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_STORAGE_KEY, next);
+  applyTheme(next);
+  const btn = document.getElementById("themeToggleBtn");
+  if (btn) btn.textContent = next === "dark" ? "☀️" : "🌙";
+}
+
+applyTheme(getSavedTheme());
+
 function getToken() {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -292,6 +318,7 @@ function renderTopbar(activePage) {
     <nav>${navHtml}</nav>
     <div class="user-info">
       <a href="/help.html${getHelpAnchorFor(activePage)}" title="Trợ giúp" style="color:#cfd8f5; font-size:18px; text-decoration:none;">❓</a>
+      <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">${getSavedTheme() === "dark" ? "☀️" : "🌙"}</button>
       ${safeLangSwitcher}
       <button class="user-name-btn" onclick="showProfileModal()">${user ? user.fullName + " (" + user.role + ")" : ""}</button>
       <button class="logout" onclick="logout()">${safeT("common.logout", "Đăng xuất")}</button>

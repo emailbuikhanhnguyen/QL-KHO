@@ -15,6 +15,50 @@
   --info: #2e75b6;
   --info-bg: #e8f0fb;
   --radius: 10px;
+
+  /* Them 09/09/2026 (theme toi) — bien moi de gom cac cho truoc day hardcode
+     mau truc tiep (#fff, #f7f8fc...) khong qua bien, khien theme toi khong
+     phu duoc. Tu gio moi noi deu di qua bien, theme toi chi can override
+     dung 1 cho duy nhat (khoi .dark ben duoi). */
+  --hover-bg: #f5f6fb;
+  --table-header-bg: #f7f8fc;
+  --badge-gray-bg: #eef0f5;
+  --badge-gray-text: #55607a;
+  --shadow-color: rgba(0, 0, 0, 0.18);
+  --modal-overlay: rgba(15, 18, 32, 0.5);
+  --warning-border: #f0c674;
+  --warning-strong: #8a5a00;
+}
+
+/* ==== THEME TOI (Dark mode) — them 09/09/2026 ====
+   Ap dung bang class "dark" tren the <html> (xem toggleTheme() trong
+   api.js) — chi can override dung cac bien mau, MOI CSS RULE khac ben
+   duoi deu tu dong doi theo vi da dung var(--...) nhat quan. */
+html.dark {
+  --navy: #2a3a8f;
+  --navy-light: #5b9bd5;
+  --bg: #10131f;
+  --card-bg: #1a1f30;
+  --border: #2e3550;
+  --text: #e4e7f0;
+  --muted: #9099b5;
+  --success: #4caf6a;
+  --success-bg: #163322;
+  --danger: #f0665e;
+  --danger-bg: #3a1c1c;
+  --warning: #e0b45a;
+  --warning-bg: #3a2f14;
+  --info: #6fa8dc;
+  --info-bg: #16283d;
+
+  --hover-bg: #232a42;
+  --table-header-bg: #202638;
+  --badge-gray-bg: #2a3148;
+  --badge-gray-text: #b6bdd6;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --warning-border: #6b551f;
+  --warning-strong: #e0b45a;
 }
 
 * { box-sizing: border-box; }
@@ -61,15 +105,15 @@ a:hover { text-decoration: underline; }
 .nav-dropdown-toggle .caret { font-size: 10px; }
 .nav-dropdown-menu {
   display: none; position: absolute; top: calc(100% + 8px); left: 0;
-  background: #fff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  background: var(--card-bg); border-radius: 8px; box-shadow: 0 8px 24px var(--shadow-color);
   min-width: 200px; padding: 6px; z-index: 100;
 }
 .nav-dropdown-menu.open { display: block; }
 .nav-dropdown-menu a {
-  display: block; color: var(--text, #1f2937) !important; font-size: 14px;
+  display: block; color: var(--text) !important; font-size: 14px;
   padding: 9px 12px; border-radius: 6px; white-space: nowrap;
 }
-.nav-dropdown-menu a:hover { background: #f3f4f6; }
+.nav-dropdown-menu a:hover { background: var(--hover-bg); }
 .nav-dropdown-menu a.active { background: var(--navy); color: #fff !important; font-weight: 600; }
 
 /* Nut chuyen doi ngon ngu — dat trong topbar, canh nut Dang xuat */
@@ -80,6 +124,13 @@ a:hover { text-decoration: underline; }
 }
 .lang-switcher .lang-btn:hover { background: #2a3572; color: #fff; }
 .lang-switcher .lang-btn.active { background: #fff; color: var(--navy); border-color: #fff; }
+
+/* Nut bat/tat theme toi — them 09/09/2026 */
+.theme-toggle-btn {
+  background: transparent; border: 1px solid #4a5798; color: #cfd8f5;
+  padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 14px;
+}
+.theme-toggle-btn:hover { background: #2a3572; color: #fff; }
 
 .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
 .page h1 { font-size: 24px; margin: 0 0 4px; color: var(--navy); }
@@ -103,7 +154,7 @@ a:hover { text-decoration: underline; }
 input[type="text"], input[type="number"], input[type="date"], input[type="email"],
 input[type="password"], select, textarea {
   width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 7px;
-  font-size: 14px; font-family: inherit; background: #fff; color: var(--text);
+  font-size: 14px; font-family: inherit; background: var(--card-bg); color: var(--text);
 }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-light); }
 textarea { resize: vertical; min-height: 60px; }
@@ -113,7 +164,7 @@ textarea { resize: vertical; min-height: 60px; }
 
 .line-item {
   border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px;
-  background: #fbfcfe; position: relative;
+  background: var(--hover-bg); position: relative;
 }
 .line-item .remove-line {
   position: absolute; top: 8px; right: 8px; background: none; border: none;
@@ -127,30 +178,30 @@ button.btn {
 }
 button.btn-primary { background: var(--navy); color: #fff; }
 button.btn-primary:hover { background: #151c4a; }
-button.btn-secondary { background: #fff; color: var(--navy); border: 1px solid var(--navy); }
-button.btn-secondary:hover { background: #f0f2fa; }
+button.btn-secondary { background: var(--card-bg); color: var(--navy); border: 1px solid var(--navy); }
+button.btn-secondary:hover { background: var(--hover-bg); }
 button.btn-success { background: var(--success); color: #fff; }
 button.btn-success:hover { background: #185f28; }
 button.btn-danger { background: var(--danger); color: #fff; }
 button.btn-danger:hover { background: #970000; }
 button.btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
-button.btn-outline:hover { background: #f5f6fb; }
+button.btn-outline:hover { background: var(--hover-bg); }
 button.btn-sm { padding: 5px 12px; font-size: 12.5px; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
 
 /* ---------- Table ---------- */
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-th { text-align: left; padding: 10px 12px; background: #f7f8fc; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+th { text-align: left; padding: 10px 12px; background: var(--table-header-bg); color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
 td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
 tr.clickable { cursor: pointer; }
-tr.clickable:hover { background: #f9fafc; }
+tr.clickable:hover { background: var(--hover-bg); }
 
 /* ---------- Badge (status) ---------- */
 .badge {
   display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
 }
-.badge-gray { background: #eef0f5; color: #55607a; }
+.badge-gray { background: var(--badge-gray-bg); color: var(--badge-gray-text); }
 .badge-warning { background: var(--warning-bg); color: var(--warning); }
 .badge-info { background: var(--info-bg); color: var(--info); }
 .badge-success { background: var(--success-bg); color: var(--success); }
@@ -191,7 +242,7 @@ tr.clickable:hover { background: #f9fafc; }
   background: linear-gradient(135deg, var(--navy) 0%, #2a3572 100%);
 }
 .login-box {
-  background: #fff; border-radius: 14px; padding: 40px; width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  background: var(--card-bg); border-radius: 14px; padding: 40px; width: 380px; box-shadow: 0 20px 50px var(--shadow-color);
 }
 .login-box h1 { font-size: 20px; color: var(--navy); margin: 0 0 4px; }
 .login-box .subtitle { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
@@ -200,7 +251,7 @@ tr.clickable:hover { background: #f9fafc; }
 .dash-section-title { margin: 32px 0 4px; font-size: 18px; color: var(--navy); }
 .dash-section-title:first-of-type { margin-top: 20px; }
 .dash-card {
-  background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
   text-align: center; transition: box-shadow 0.15s;
 }
 .dash-card:hover { box-shadow: 0 6px 20px rgba(30,39,97,0.1); }
@@ -210,13 +261,13 @@ tr.clickable:hover { background: #f9fafc; }
 
 /* ==== Modal thong tin ca nhan (profile) — dung chung, hien qua topbar ==== */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(15, 18, 32, 0.5);
+  position: fixed; inset: 0; background: var(--modal-overlay);
   display: flex; align-items: center; justify-content: center;
   z-index: 1000; padding: 20px;
 }
 .modal-box {
-  background: #fff; border-radius: 12px; padding: 24px; max-width: 480px; width: 100%;
-  max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  background: var(--card-bg); border-radius: 12px; padding: 24px; max-width: 480px; width: 100%;
+  max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px var(--shadow-color);
 }
 .modal-box h2 { margin: 0; color: var(--navy); font-size: 20px; }
 .modal-close-btn {
@@ -228,7 +279,7 @@ tr.clickable:hover { background: #f9fafc; }
 .profile-field .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
 .profile-field .value { font-size: 15px; color: var(--text); font-weight: 600; }
 .profile-duties-box {
-  background: #f7f8fc; border-radius: 8px; padding: 14px; margin-top: 6px;
+  background: var(--table-header-bg); border-radius: 8px; padding: 14px; margin-top: 6px;
   font-size: 13.5px; line-height: 1.6; color: var(--text);
 }
 .user-name-btn {
@@ -274,16 +325,16 @@ tr.clickable:hover { background: #f9fafc; }
 
 /* ==== Banner canh bao ton kho thap (Dashboard) ==== */
 .low-stock-banner {
-  background: #fdf3e0; border: 1px solid #f0c674; border-radius: 10px;
+  background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 10px;
   padding: 14px 18px; margin-bottom: 20px;
 }
 .low-stock-banner-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-.low-stock-banner-title { font-weight: 700; color: #8a5a00; display: flex; align-items: center; gap: 8px; }
+.low-stock-banner-title { font-weight: 700; color: var(--warning-strong); display: flex; align-items: center; gap: 8px; }
 .low-stock-banner-actions { display: flex; gap: 8px; }
 .low-stock-banner-actions button {
-  background: none; border: 1px solid #d9a441; color: #8a5a00; border-radius: 6px;
+  background: none; border: 1px solid var(--warning-border); color: var(--warning-strong); border-radius: 6px;
   padding: 5px 12px; font-size: 13px; cursor: pointer;
 }
-.low-stock-banner-actions button:hover { background: #f0c674; }
+.low-stock-banner-actions button:hover { background: var(--warning-border); }
 .low-stock-detail { margin-top: 12px; }
-.low-stock-detail table { background: #fff; border-radius: 8px; overflow: hidden; }
+.low-stock-detail table { background: var(--card-bg); border-radius: 8px; overflow: hidden; }
