@@ -28,6 +28,7 @@
   --modal-overlay: rgba(15, 18, 32, 0.5);
   --warning-border: #f0c674;
   --warning-strong: #8a5a00;
+  --heading-color: var(--navy);
 }
 
 /* ==== THEME TOI (Dark mode) — them 09/09/2026 ====
@@ -59,6 +60,12 @@ html.dark {
   --modal-overlay: rgba(0, 0, 0, 0.7);
   --warning-border: #6b551f;
   --warning-strong: #e0b45a;
+  /* Rieng heading can mau SANG hon --navy thong thuong de du tuong phan
+     tren nen toi — neu dung chung --navy (dung lam nen topbar/nut chinh,
+     buoc phai giu tong dam) thi chu tieu de se bi kho doc nhu da phat
+     hien. Chon rieng 1 tong xanh duong sang, khac voi --navy-light (dung
+     cho link) de khong bi lan 2 loai chu. */
+  --heading-color: #8aa2e8;
 }
 
 * { box-sizing: border-box; }
@@ -133,7 +140,7 @@ a:hover { text-decoration: underline; }
 .theme-toggle-btn:hover { background: #2a3572; color: #fff; }
 
 .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
-.page h1 { font-size: 24px; margin: 0 0 4px; color: var(--navy); }
+.page h1 { font-size: 24px; margin: 0 0 4px; color: var(--heading-color); }
 .page .subtitle { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
 
 /* ---------- Card ---------- */
@@ -144,7 +151,7 @@ a:hover { text-decoration: underline; }
   padding: 20px;
   margin-bottom: 20px;
 }
-.card h2 { font-size: 16px; margin: 0 0 16px; color: var(--navy); }
+.card h2 { font-size: 16px; margin: 0 0 16px; color: var(--heading-color); }
 .card h3 { font-size: 14px; margin: 0 0 10px; color: var(--text); }
 
 /* ---------- Form ---------- */
@@ -178,7 +185,7 @@ button.btn {
 }
 button.btn-primary { background: var(--navy); color: #fff; }
 button.btn-primary:hover { background: #151c4a; }
-button.btn-secondary { background: var(--card-bg); color: var(--navy); border: 1px solid var(--navy); }
+button.btn-secondary { background: var(--card-bg); color: var(--heading-color); border: 1px solid var(--heading-color); }
 button.btn-secondary:hover { background: var(--hover-bg); }
 button.btn-success { background: var(--success); color: #fff; }
 button.btn-success:hover { background: #185f28; }
@@ -235,7 +242,7 @@ tr.clickable:hover { background: var(--hover-bg); }
   background: none; border: none; padding: 10px 16px; font-size: 14px; font-weight: 600;
   color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
 }
-.tabs button.active { color: var(--navy); border-bottom-color: var(--navy); }
+.tabs button.active { color: var(--heading-color); border-bottom-color: var(--heading-color); }
 
 .login-wrapper {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
@@ -244,11 +251,11 @@ tr.clickable:hover { background: var(--hover-bg); }
 .login-box {
   background: var(--card-bg); border-radius: 14px; padding: 40px; width: 380px; box-shadow: 0 20px 50px var(--shadow-color);
 }
-.login-box h1 { font-size: 20px; color: var(--navy); margin: 0 0 4px; }
+.login-box h1 { font-size: 20px; color: var(--heading-color); margin: 0 0 4px; }
 .login-box .subtitle { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
 
 .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; margin-top: 10px; }
-.dash-section-title { margin: 32px 0 4px; font-size: 18px; color: var(--navy); }
+.dash-section-title { margin: 32px 0 4px; font-size: 18px; color: var(--heading-color); }
 .dash-section-title:first-of-type { margin-top: 20px; }
 .dash-card {
   background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
@@ -256,7 +263,7 @@ tr.clickable:hover { background: var(--hover-bg); }
 }
 .dash-card:hover { box-shadow: 0 6px 20px rgba(30,39,97,0.1); }
 .dash-card .icon { font-size: 32px; margin-bottom: 10px; }
-.dash-card h3 { margin: 0 0 6px; color: var(--navy); }
+.dash-card h3 { margin: 0 0 6px; color: var(--heading-color); }
 .dash-card p { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
 
 /* ==== Modal thong tin ca nhan (profile) — dung chung, hien qua topbar ==== */
@@ -269,7 +276,7 @@ tr.clickable:hover { background: var(--hover-bg); }
   background: var(--card-bg); border-radius: 12px; padding: 24px; max-width: 480px; width: 100%;
   max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px var(--shadow-color);
 }
-.modal-box h2 { margin: 0; color: var(--navy); font-size: 20px; }
+.modal-box h2 { margin: 0; color: var(--heading-color); font-size: 20px; }
 .modal-close-btn {
   background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted);
   line-height: 1; padding: 4px 8px;
