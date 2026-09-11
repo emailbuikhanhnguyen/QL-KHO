@@ -132,6 +132,13 @@ a:hover { text-decoration: underline; }
 .lang-switcher .lang-btn:hover { background: #2a3572; color: #fff; }
 .lang-switcher .lang-btn.active { background: #fff; color: var(--navy); border-color: #fff; }
 
+/* Badge so viec cho duyet tren menu — them 10/09/2026 */
+.approval-badge {
+  display: inline-block; background: var(--danger); color: #fff;
+  border-radius: 20px; padding: 0 6px; margin-left: 5px;
+  font-size: 11px; font-weight: 700; min-width: 17px; text-align: center;
+}
+
 /* Nut bat/tat theme toi — them 09/09/2026 */
 .theme-toggle-btn {
   background: transparent; border: 1px solid #4a5798; color: #cfd8f5;

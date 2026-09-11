@@ -724,6 +724,34 @@ npx prisma migrate dev --name add_purchase_module
 ```
 **Bắt buộc thêm trên Render Environment Variables** (KHÔNG PHẢI GitHub Secrets — khác ngữ cảnh với 2 script cũ): `GMAIL_USER`, `GMAIL_APP_PASSWORD` — nếu thiếu, email thông báo sẽ không gửi được (nhưng không làm crash app, chỉ log lỗi).
 
+## 1.34. Cập nhật 10/09/2026 — "Việc cần tôi duyệt" (hộp thư gom chung)
+
+**Vấn đề giải quyết**: sau khi có 6 module cần duyệt (Nghỉ phép, Tăng ca, Ra/vào cổng, Xe công vụ, Yêu cầu mua hàng, PR có giá), người duyệt phải mở lần lượt 6 trang để kiểm tra xem có việc gì đang chờ mình — không thực tế, nhất là khi mở rộng quy mô.
+
+**Giải pháp**: 1 trang gom chung tất cả (`/my-approvals.html`), lọc đúng theo vai trò người đăng nhập:
+- Trưởng bộ phận: chỉ thấy phiếu cấp Quản lý của ĐÚNG phòng ban mình
+- HR: cấp cuối của Nghỉ phép/Tăng ca/Ra-vào cổng
+- Admin: cấp cuối Xe công vụ (+ thấy tất cả, không lọc phòng ban)
+- BOD: cấp cuối Yêu cầu mua hàng
+- Kế toán: cấp cuối PR có giá
+- Nhân viên thường: không thấy gì (và không tốn 1 truy vấn nào)
+
+**Giữ đúng nguyên tắc Separation of Duties**: phiếu do chính mình tạo KHÔNG hiện ra (nếu hiện, bấm duyệt cũng bị chặn — gây khó hiểu).
+
+**Tính năng hỗ trợ**:
+- Phiếu chờ lâu nhất xếp lên đầu; chờ từ 3 ngày trở lên tô đỏ số ngày
+- Badge số lượng đỏ trên menu + ô riêng trên Trang chủ (tự ẩn nếu không có việc)
+- Bấm 1 dòng → sang thẳng đúng phiếu nhờ tham số `?open=<id>` (đã thêm hỗ trợ vào cả 6 trang module)
+- Badge/ô Dashboard nạp bất đồng bộ, lỗi không ảnh hưởng phần còn lại của trang
+
+**API mới**: `GET /api/my-approvals`, `GET /api/my-approvals/count`
+
+**10 unit test mới**, chạy thật pass 100% — bao phủ đủ 6 vai trò, quy tắc SoD, sắp xếp theo thời gian chờ.
+
+Thêm 13 key dịch mới, tổng 653 key khớp tuyệt đối 3 ngôn ngữ.
+
+**KHÔNG cần chạy migration** — module này chỉ đọc dữ liệu sẵn có, không thêm/sửa bảng nào.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

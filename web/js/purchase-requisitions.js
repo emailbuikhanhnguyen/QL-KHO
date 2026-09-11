@@ -10,6 +10,12 @@ let lineCounter = 0;
   await loadItemNameSuggestions();
   addLine(); // luon co san 1 dong khi mo form
   await loadList();
+
+  // Ho tro mo san 1 phieu cu the qua ?open=<id> — dung khi bam tu trang
+  // "Viec can toi duyet" sang, de khong phai tim lai phieu trong danh sach.
+  const openId = new URLSearchParams(window.location.search).get("open");
+  if (openId) openDetail(Number(openId));
+
 })();
 
 // -------------------------------------------------------------------------

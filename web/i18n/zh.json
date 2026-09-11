@@ -39,7 +39,8 @@
     "groupKho": "仓储",
     "groupErp": "行政人事",
     "purchase-requisition": "采购申请",
-    "pricedpr": "报价单"
+    "pricedpr": "报价单",
+    "myapprovals": "待我审批"
   },
   "login": {
     "title": "SEC ERP",
@@ -564,6 +565,17 @@
           "报价单批准后，系统不会自动创建采购订单（PO）——采购员自行联系供应商并手动记录（纸质）。"
         ]
       },
+      "myApprovalsHelp": {
+        "title": "待我审批",
+        "intro": "将系统6个不同模块中所有等待您审批的单据集中到一处——无需逐个页面查看。",
+        "steps": [
+          "点击菜单中的\"待我审批\"（红色数字显示待处理数量）。",
+          "单据按类型分组（请假、加班、采购……），等待最久的排在最上面。",
+          "等待3天以上的单据会用红色显示天数——请优先处理。",
+          "点击任意一行可直接跳转到该单据，照常审批/拒绝。",
+          "注意：您自己创建的单据不会显示在此处，因为不能审批自己的申请。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
         "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
@@ -939,5 +951,16 @@
     "overThresholdWarning": "⚠️ 此申请超过2,000美元。请先发邮件请董事会批准，再在此处批准。",
     "confirmEmailCheckbox": "我已发邮件请董事会批准",
     "mustConfirmEmailFirst": "请先勾选确认已发邮件请董事会批准。"
+  },
+  "myapprovals": {
+    "title": "待我审批",
+    "subtitle": "系统各模块中所有等待您审批的单据，集中在此处",
+    "emptyState": "没有等待您审批的事项。",
+    "stageManager": "等待主管审批",
+    "stageFinal": "等待最终审批",
+    "waitedToday": "今天提交",
+    "waitedPrefix": "已等待",
+    "waitedDays": "天",
+    "pendingCountSuffix": "项待您审批"
   }
 }

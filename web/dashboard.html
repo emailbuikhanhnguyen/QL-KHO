@@ -15,6 +15,21 @@
 
     <div id="lowStockBanner"></div>
 
+    <!-- "Viec can toi duyet" dat TREN CUNG, khong nam trong nhom nao —
+         day la viec dung hang ngay cua nguoi duyet, can thay dau tien.
+         O nay tu AN neu nguoi dang nhap khong co viec nao cho duyet
+         (xem renderApprovalsCard() o cuoi trang). -->
+    <div id="approvalsCardWrapper" style="display:none;">
+      <div class="dash-grid">
+        <a href="/my-approvals.html" class="dash-card" style="text-decoration:none;">
+          <div class="icon">📥</div>
+          <h3 data-i18n="myapprovals.title">Việc cần tôi duyệt</h3>
+          <p id="approvalsCardDesc"></p>
+          <span class="btn btn-primary btn-sm" data-i18n="dashboard.open">Mở</span>
+        </a>
+      </div>
+    </div>
+
     <h2 class="dash-section-title">📦 <span data-i18n="nav.groupKho">Kho vận</span></h2>
     <div class="dash-grid">
       <a href="/goods-receipts.html" class="dash-card" style="text-decoration:none;">
@@ -152,7 +167,22 @@
         `${user.fullName} — ${user.department ? user.department.name : ""}`;
 
       await loadLowStockBanner();
+      await renderApprovalsCard();
     })();
+
+    // O "Viec can toi duyet" — CHI hien khi thuc su co viec cho duyet, de
+    // nhan vien thuong (khong duyet gi) khong thay 1 o trong vo nghia.
+    async function renderApprovalsCard() {
+      try {
+        const res = await apiFetch("/my-approvals/count");
+        if (!res.ok || !res.data || !res.data.count) return;
+        document.getElementById("approvalsCardDesc").textContent =
+          `${res.data.count} ${t("myapprovals.pendingCountSuffix")}`;
+        document.getElementById("approvalsCardWrapper").style.display = "block";
+      } catch {
+        // Loi o day KHONG duoc lam hong phan con lai cua Trang chu.
+      }
+    }
 
     // Canh bao ton kho thap — goi 1 lan khi vao Trang chu, hien banner neu
     // co vat tu nao dang duoi han muc toi thieu.

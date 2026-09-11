@@ -23,6 +23,7 @@ import { GatePassRequestModule } from './modules/gate-pass-request/gate-pass-req
 import { VehicleBookingRequestModule } from './modules/vehicle-booking-request/vehicle-booking-request.module';
 import { PurchaseRequisitionModule } from './modules/purchase-requisition/purchase-requisition.module';
 import { PurchaseRequestModule } from './modules/purchase-request/purchase-request.module';
+import { MyApprovalsModule } from './modules/my-approvals/my-approvals.module';
 import { IssueRequestModule } from './modules/issue-request/issue-request.module';
 import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-transfer.module';
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
@@ -76,6 +77,7 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
     VehicleBookingRequestModule,
     PurchaseRequisitionModule,
     PurchaseRequestModule,
+    MyApprovalsModule,
     IssueRequestModule,
     WarehouseTransferModule,
     StockLedgerModule,

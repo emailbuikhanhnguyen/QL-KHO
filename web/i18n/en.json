@@ -39,7 +39,8 @@
     "groupKho": "Warehouse",
     "groupErp": "HR & Admin",
     "purchase-requisition": "Requisition",
-    "pricedpr": "Priced PR"
+    "pricedpr": "Priced PR",
+    "myapprovals": "My Approvals"
   },
   "login": {
     "title": "SEC ERP",
@@ -564,6 +565,17 @@
           "Once the Priced PR is approved, the system does NOT automatically create a Purchase Order (PO) — the Purchaser contacts the supplier directly and records it manually (on paper)."
         ]
       },
+      "myApprovalsHelp": {
+        "title": "My Approvals",
+        "intro": "Gathers everything awaiting your approval from 6 different parts of the system into one place — no need to check each page one by one.",
+        "steps": [
+          "Click \"My Approvals\" in the menu (the red number shows how many items are pending).",
+          "Items are grouped by type (Leave, Overtime, Purchase...), with the longest-waiting ones at the top.",
+          "Items waiting 3+ days show the day count in red — handle those first.",
+          "Click any row to jump straight to that item and approve/reject as usual.",
+          "Note: items you created yourself won't appear here, since you cannot approve your own requests."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -939,5 +951,16 @@
     "overThresholdWarning": "⚠️ This request exceeds 2,000 USD. Please email the BOD for approval BEFORE approving here.",
     "confirmEmailCheckbox": "I have emailed the BOD for approval",
     "mustConfirmEmailFirst": "Please check the confirmation that you've emailed the BOD before approving."
+  },
+  "myapprovals": {
+    "title": "My Approvals",
+    "subtitle": "Everything waiting for your approval, gathered from across the system",
+    "emptyState": "Nothing is waiting for your approval.",
+    "stageManager": "Awaiting manager approval",
+    "stageFinal": "Awaiting final approval",
+    "waitedToday": "Submitted today",
+    "waitedPrefix": "Waiting",
+    "waitedDays": "day(s)",
+    "pendingCountSuffix": "item(s) awaiting your approval"
   }
 }

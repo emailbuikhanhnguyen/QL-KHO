@@ -39,7 +39,8 @@
     "groupKho": "Kho vận",
     "groupErp": "Hành chính - Nhân sự",
     "purchase-requisition": "Yêu cầu mua hàng",
-    "pricedpr": "PR có giá"
+    "pricedpr": "PR có giá",
+    "myapprovals": "Việc cần tôi duyệt"
   },
   "login": {
     "title": "SEC ERP",
@@ -564,6 +565,17 @@
           "Sau khi PR có giá được duyệt xong, hệ thống KHÔNG tự tạo đơn đặt hàng (PO) — nhân viên Thu mua tự liên hệ nhà cung cấp và ghi nhận thủ công (in giấy)."
         ]
       },
+      "myApprovalsHelp": {
+        "title": "Việc cần tôi duyệt",
+        "intro": "Gom tất cả đơn/phiếu đang chờ bạn duyệt từ 6 phần khác nhau của hệ thống vào 1 chỗ — không phải mở lần lượt từng trang để kiểm tra.",
+        "steps": [
+          "Bấm \"Việc cần tôi duyệt\" trên thanh menu (có số đỏ báo số việc đang chờ).",
+          "Danh sách được gom nhóm theo từng loại (Nghỉ phép, Tăng ca, Mua hàng...), phiếu chờ lâu nhất nằm trên cùng.",
+          "Phiếu đã chờ từ 3 ngày trở lên hiện số ngày màu đỏ — ưu tiên xử lý trước.",
+          "Bấm vào 1 dòng bất kỳ để sang thẳng phiếu đó và duyệt/từ chối như bình thường.",
+          "Lưu ý: phiếu do chính bạn tạo sẽ không hiện ở đây, vì theo quy định không được tự duyệt đơn của mình."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -939,5 +951,16 @@
     "overThresholdWarning": "⚠️ Phiếu này vượt 2.000 USD. Vui lòng gửi mail xin Ban Giám Đốc approve TRƯỚC khi duyệt tại đây.",
     "confirmEmailCheckbox": "Tôi đã gửi mail xin BOD approve",
     "mustConfirmEmailFirst": "Vui lòng tick xác nhận đã gửi mail xin BOD approve trước khi duyệt."
+  },
+  "myapprovals": {
+    "title": "Việc cần tôi duyệt",
+    "subtitle": "Tất cả đơn/phiếu đang chờ bạn duyệt, gom chung từ mọi phần của hệ thống",
+    "emptyState": "Không có việc nào đang chờ bạn duyệt.",
+    "stageManager": "Chờ Quản lý duyệt",
+    "stageFinal": "Chờ duyệt cấp cuối",
+    "waitedToday": "Gửi hôm nay",
+    "waitedPrefix": "Đã chờ",
+    "waitedDays": "ngày",
+    "pendingCountSuffix": "đơn/phiếu đang chờ bạn duyệt"
   }
 }

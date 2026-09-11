@@ -292,6 +292,11 @@ function renderTopbar(activePage) {
 
   const dashboardHtml = `<a href="${dashboardLink.href}" class="${dashboardLink.key === activePage ? "active" : ""}">${safeT(dashboardLink.labelKey, dashboardLink.fallback)}</a>`;
 
+  // "Viec can toi duyet" de NGANG CAP voi Trang chu (khong nhet vao dropdown)
+  // — day la viec dung hang ngay cua nguoi duyet, can thay ngay khong phai
+  // bam mo nhom. Badge so luong duoc dien sau boi loadApprovalBadge().
+  const approvalsHtml = `<a href="/my-approvals.html" class="${activePage === "myapprovals" ? "active" : ""}">${safeT("nav.myapprovals", "Việc cần tôi duyệt")}<span id="approvalBadge" class="approval-badge" style="display:none;"></span></a>`;
+
   const groupsHtml = groups
     .map((g) => {
       const isGroupActive = g.links.some((l) => l.key === activePage);
@@ -311,7 +316,7 @@ function renderTopbar(activePage) {
     })
     .join("");
 
-  const navHtml = dashboardHtml + groupsHtml;
+  const navHtml = dashboardHtml + approvalsHtml + groupsHtml;
 
   el.innerHTML = `
     <div class="brand">SEC ERP</div>
@@ -333,6 +338,24 @@ function renderTopbar(activePage) {
       </div>
     </div>
   `;
+
+  loadApprovalBadge();
+}
+
+// Nap so luong viec dang cho minh duyet, hien thanh badge tren menu.
+// KHONG dung await o renderTopbar — de menu hien ra ngay, badge dien sau
+// khi co ket qua (tranh ca trang phai doi 1 API call moi ve duoc).
+async function loadApprovalBadge() {
+  const badge = document.getElementById("approvalBadge");
+  if (!badge) return;
+  try {
+    const res = await apiFetch("/my-approvals/count");
+    if (!res.ok || !res.data || !res.data.count) return;
+    badge.textContent = res.data.count;
+    badge.style.display = "inline-block";
+  } catch {
+    // Loi tai badge KHONG duoc lam anh huong gi den phan con lai cua trang.
+  }
 }
 
 // Mo/dong dropdown menu nhom nav — dung click (khong dua vao :hover CSS)
@@ -415,6 +438,7 @@ function getHelpAnchorFor(activePage) {
     vehicle: "#vehicleHelp",
     "purchase-requisition": "#purchaseHelp",
     pricedpr: "#purchaseHelp",
+    myapprovals: "#myApprovalsHelp",
   };
   return map[activePage] ? map[activePage] : "";
 }

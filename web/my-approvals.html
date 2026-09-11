@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Việc cần tôi duyệt — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .approval-group { margin-bottom: 22px; }
+    .approval-group-title {
+      font-size: 14px; font-weight: 700; color: var(--heading-color);
+      margin: 0 0 8px; display: flex; align-items: center; gap: 8px;
+    }
+    .approval-count-pill {
+      background: var(--navy); color: #fff; border-radius: 20px;
+      padding: 1px 9px; font-size: 12px; font-weight: 600;
+    }
+    .approval-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 8px; cursor: pointer; background: var(--card-bg);
+    }
+    .approval-row:hover { background: var(--hover-bg); }
+    .approval-main { min-width: 0; }
+    .approval-code { font-weight: 700; font-size: 13.5px; }
+    .approval-title { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .approval-meta { text-align: right; font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .waiting-long { color: var(--danger); font-weight: 600; }
+    @media (max-width: 640px) {
+      .approval-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .approval-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="myapprovals.title">Việc cần tôi duyệt</h1>
+    <p class="subtitle" data-i18n="myapprovals.subtitle">Tất cả đơn/phiếu đang chờ bạn duyệt, gom chung từ mọi phần của hệ thống</p>
+
+    <div class="card">
+      <div id="listContainer" data-i18n="common.loading">Đang tải...</div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/my-approvals.js"></script>
+</body>
+</html>
