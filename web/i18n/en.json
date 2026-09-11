@@ -40,7 +40,10 @@
     "groupErp": "HR & Admin",
     "purchase-requisition": "Requisition",
     "pricedpr": "Priced PR",
-    "myapprovals": "My Approvals"
+    "myapprovals": "My Approvals",
+    "sop": "How to Use",
+    "groupDocs": "Documents",
+    "help": "Help"
   },
   "login": {
     "title": "SEC ERP",
@@ -962,5 +965,137 @@
     "waitedPrefix": "Waiting",
     "waitedDays": "day(s)",
     "pendingCountSuffix": "item(s) awaiting your approval"
+  },
+  "sop": {
+    "pageTitle": "How to Use SEC ERP",
+    "pageSubtitle": "Guidance by role — what you need to do, and in what order",
+    "sections": {
+      "employee": {
+        "title": "Employee (all departments)",
+        "intro": "Applies to every employee, including those not working in the warehouse. These are things you can do on your own.",
+        "steps": [
+          "Log in with your company email and the password you were given. Change your password on first login.",
+          "Request leave: go to HR & Admin → Leave → Create request → fill in dates and reason → Submit. It goes to your direct manager, then HR.",
+          "Meal registration: go to Meals → pick a date → tick Lunch and/or Overtime Meal → Register. Takes effect immediately, no approval needed. To change, pick the same date again and re-submit.",
+          "Going out during work hours: go to Gate Pass → create a request with your time out and purpose. Leave Time In blank if you are not returning that day.",
+          "Need a company vehicle: go to Vehicle Booking → create a request with departure, destination and number of people.",
+          "Request a purchase: go to Purchase Requisition → create a request listing each item needed (no prices required) → Submit.",
+          "Track your requests: reopen the same page and check the Status column to see which step it is at."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "Once submitted, a request cannot be edited. If you need changes, cancel it and create a new one.",
+          "You can only edit or delete a request while it is still in Draft status."
+        ]
+      },
+      "deptHead": {
+        "title": "Department Head",
+        "intro": "In addition to everything a regular employee does, you are the first-level approver for your department.",
+        "steps": [
+          "Each morning, check the top menu: a red number next to \"My Approvals\" means items are waiting for you.",
+          "Click \"My Approvals\" — everything awaiting your approval (Leave, Overtime, Gate Pass, Vehicle, Purchase) is gathered here.",
+          "The longest-waiting items are at the top. Items waiting 3+ days show the day count in red — handle those first.",
+          "Click a row to open that item, review the details, then Approve or Reject (a reason is required when rejecting).",
+          "For priced PRs over 2,000 USD: the system shows a warning — you must email the BOD for approval first, then tick the confirmation and approve in the app.",
+          "After you approve, the item moves to the next level automatically and the system emails that person."
+        ],
+        "notesLabel": "Important notes",
+        "notes": [
+          "You can only approve requests from employees in your own department.",
+          "You CANNOT approve requests you created yourself — this is a mandatory rule to avoid conflicts of interest. Your own requests are approved by a higher level or by an Admin."
+        ]
+      },
+      "warehouse": {
+        "title": "Warehouse Staff",
+        "intro": "Daily warehouse workflow, in order from goods arriving to goods leaving.",
+        "steps": [
+          "Goods arrive: go to Warehouse → Goods Receipt → create a receipt, choose the supplier, enter each item and the actual counted quantity → Submit.",
+          "Wait for QC inspection (see the QC section). Only goods that pass QC are officially received into stock.",
+          "Issuing goods: go to Issue Request → create a request. The system suggests issuing the earliest-expiring lot first (FEFO).",
+          "Transferring between warehouses: go to Warehouse Transfer → create a transfer → the sending side confirms dispatch → the receiving side confirms receipt.",
+          "Periodic stocktake: go to Stocktake → create a session → use your phone to open QR Scan, scan the label on each lot and enter the actual count.",
+          "Check stock: go to Reports for current stock, movement history, or export to Excel.",
+          "If the Dashboard shows a yellow low-stock warning, notify the relevant department so they can plan a purchase."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "While a stocktake is running, that warehouse is locked for receipts and issues to prevent discrepancies.",
+          "Goods that fail QC do not disappear on their own — a Disposal Request must be created under Defect Handling, approved by QA and then the BOD."
+        ]
+      },
+      "qc": {
+        "title": "QC Staff",
+        "intro": "Inspect incoming goods before they are officially received into stock.",
+        "steps": [
+          "Go to Warehouse → QC Inspection to see receipts awaiting inspection.",
+          "Open a receipt, inspect the actual goods, take photos as evidence and upload them.",
+          "Enter the result: Pass / Fail / Conditional Pass, with notes if needed.",
+          "Submit the result. Goods that pass are officially received into stock.",
+          "Failed goods: go to Defect Handling to create a disposal request (you approve at the QA step, then the BOD gives final approval)."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "Photos are important evidence during customer audits — take clear shots from enough angles."
+        ]
+      },
+      "hr": {
+        "title": "HR",
+        "intro": "You are the final approver for people-related requests.",
+        "steps": [
+          "Go to \"My Approvals\" to see everything awaiting your final approval.",
+          "Give final approval for: Leave, Overtime, Gate Pass (after the department head has approved at level 1).",
+          "Meal reporting: go to Meals → Summary Report, pick a date to see total lunches and overtime meals by department — use these numbers when ordering from the caterer."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "Vehicle Booking is NOT approved by you — its final approver is the Admin (vehicle dispatcher)."
+        ]
+      },
+      "purchaser": {
+        "title": "Purchaser",
+        "intro": "You handle the second stage of purchasing — after the BOD has agreed to the purchase.",
+        "steps": [
+          "When a purchase requisition is approved by the BOD, the system emails you automatically.",
+          "Go to HR & Admin → Priced PR → Create → select the corresponding requisition.",
+          "Contact suppliers for quotes, then enter the unit price for each line. The system calculates the total.",
+          "Submit. It goes to the department head, then Accounting.",
+          "Once fully approved you receive an email. Place the order with the supplier and print the document for the paper file per company policy."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "A priced PR can only be created from a requisition ALREADY approved by the BOD.",
+          "Quantities may differ from the original requisition if the actual order differs (e.g. the supplier sells by the case)."
+        ]
+      },
+      "accountant": {
+        "title": "Accountant",
+        "intro": "You are the final approver for priced purchase requests.",
+        "steps": [
+          "Go to \"My Approvals\" to see priced PRs awaiting you.",
+          "Check that unit prices, totals and the supplier are reasonable.",
+          "Approve if you agree, or Reject with a reason if it needs revisiting.",
+          "After you approve, the purchaser receives an email and proceeds with the order."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "For requests over 2,000 USD, the department head must already have obtained BOD approval by email before it reaches you."
+        ]
+      },
+      "bod": {
+        "title": "Board of Directors",
+        "intro": "You approve matters with significant financial or asset impact.",
+        "steps": [
+          "Go to \"My Approvals\" to see your pending list.",
+          "Approve purchase requisitions (deciding whether to buy at all — prices are not involved yet).",
+          "Approve disposal requests for defective goods (after QA approval) — the final decision on destroying goods.",
+          "Approve high-value stock issue requests.",
+          "Check stock reports at any time for an overall picture."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "For purchase requests over 2,000 USD you will receive an approval request by email from the department head before they approve in the system."
+        ]
+      }
+    }
   }
 }

@@ -288,6 +288,18 @@ function renderTopbar(activePage) {
         { href: "/purchase-requests.html", key: "pricedpr", labelKey: "nav.pricedpr", fallback: "PR có giá" },
       ],
     },
+    {
+      // Nhom thu 3 — tai lieu huong dan, khong phai module nghiep vu.
+      // Luon dat CUOI CUNG, khong chen module moi vao day.
+      id: "docs",
+      icon: "📚",
+      labelKey: "nav.groupDocs",
+      fallback: "Tài liệu",
+      links: [
+        { href: "/sop.html", key: "sop", labelKey: "nav.sop", fallback: "Quy trình sử dụng" },
+        { href: "/help.html", key: "help", labelKey: "nav.help", fallback: "Trợ giúp" },
+      ],
+    },
   ];
 
   const dashboardHtml = `<a href="${dashboardLink.href}" class="${dashboardLink.key === activePage ? "active" : ""}">${safeT(dashboardLink.labelKey, dashboardLink.fallback)}</a>`;

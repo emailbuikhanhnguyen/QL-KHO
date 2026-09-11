@@ -25,7 +25,7 @@ const SECTION_ORDER = [
 
 (async function init() {
   await loadI18n();
-  renderTopbar(null); // khong co muc nao tren topbar tuong ung "Tro giup" duoc highlight rieng
+  renderTopbar("help");
   applyTranslations();
   renderHelpPage();
   handleDeepLink();

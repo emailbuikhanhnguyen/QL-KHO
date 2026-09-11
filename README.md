@@ -779,6 +779,29 @@ Model `User` hiện **không lưu ngày sinh/giới tính** — chỉ email, h�
 
 **Khuyến nghị**: lên kế hoạch nâng NestJS 10→12 thành 1 đợt riêng, có cửa sổ bảo trì và test kỹ, thay vì nâng vội lẫn với tính năng mới.
 
+## 1.36. Cập nhật 10/09/2026 — Trang "Quy trình sử dụng SEC ERP" + nhóm Tài liệu
+
+**Khác gì với trang Trợ giúp đã có**: Trợ giúp tổ chức theo TỪNG MODULE ("nút này dùng thế nào"), còn trang mới tổ chức theo VAI TRÒ ("bạn làm công việc gì, theo thứ tự nào") — để người mới vào đọc 1 lần là biết đường làm việc, không phải đọc rải rác 26 mục của Trợ giúp.
+
+**8 vai trò** được hướng dẫn riêng: Nhân viên (mọi phòng ban), Trưởng bộ phận, Thủ kho, Nhân viên QC, Nhân sự (HR), Nhân viên Thu mua, Kế toán, Ban Giám Đốc.
+
+Mỗi vai trò gồm: phần giới thiệu ngắn, các bước làm việc theo đúng thứ tự thực tế, và khối "Lưu ý" riêng (VD: Trưởng bộ phận không được tự duyệt đơn của chính mình).
+
+**Cơ chế giống hệt trang Trợ giúp**: nội dung cố định trong i18n, người dùng chỉ đọc — KHÔNG sửa/tải xuống được. Chỉ cập nhật khi các module trong app thay đổi.
+
+**Dashboard được chia lại thành 3 nhóm** (trước đây Trợ giúp đứng lẻ loi cuối trang):
+1. 📦 Kho vận
+2. 👥 Hành chính - Nhân sự
+3. 📚 **Tài liệu** (mới) — gồm Quy trình sử dụng + Trợ giúp
+
+Menu ngang cũng có thêm dropdown thứ 3 "📚 Tài liệu" tương ứng.
+
+**QUY TẮC CỐ ĐỊNH**: nhóm Tài liệu LUÔN đặt cuối cùng; module nghiệp vụ mới phải thêm vào 1 trong 2 nhóm ở trên, không bao giờ thêm vào nhóm Tài liệu.
+
+Thêm 45 key dịch mới, tổng 698 key khớp tuyệt đối 3 ngôn ngữ.
+
+**KHÔNG cần migration** — chỉ thêm trang tĩnh, không đụng database.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

@@ -132,6 +132,13 @@ a:hover { text-decoration: underline; }
 .lang-switcher .lang-btn:hover { background: #2a3572; color: #fff; }
 .lang-switcher .lang-btn.active { background: #fff; color: var(--navy); border-color: #fff; }
 
+/* Khoi "Luu y" trong trang Quy trinh su dung — them 10/09/2026 */
+.sop-note {
+  background: var(--warning-bg); border-left: 3px solid var(--warning-border);
+  border-radius: 6px; padding: 12px 14px; margin-top: 14px; font-size: 13.5px;
+}
+.sop-note strong { color: var(--warning-strong); }
+
 /* Badge so viec cho duyet tren menu — them 10/09/2026 */
 .approval-badge {
   display: inline-block; background: var(--danger); color: #fff;

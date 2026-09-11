@@ -40,7 +40,10 @@
     "groupErp": "Hành chính - Nhân sự",
     "purchase-requisition": "Yêu cầu mua hàng",
     "pricedpr": "PR có giá",
-    "myapprovals": "Việc cần tôi duyệt"
+    "myapprovals": "Việc cần tôi duyệt",
+    "sop": "Quy trình sử dụng",
+    "groupDocs": "Tài liệu",
+    "help": "Trợ giúp"
   },
   "login": {
     "title": "SEC ERP",
@@ -962,5 +965,137 @@
     "waitedPrefix": "Đã chờ",
     "waitedDays": "ngày",
     "pendingCountSuffix": "đơn/phiếu đang chờ bạn duyệt"
+  },
+  "sop": {
+    "pageTitle": "Quy trình sử dụng SEC ERP",
+    "pageSubtitle": "Hướng dẫn theo vai trò — bạn cần làm gì, theo thứ tự nào",
+    "sections": {
+      "employee": {
+        "title": "Nhân viên (mọi phòng ban)",
+        "intro": "Áp dụng cho tất cả nhân viên, kể cả khi bạn không làm ở kho. Đây là những việc bạn tự làm được mà không cần ai hỗ trợ.",
+        "steps": [
+          "Đăng nhập bằng email công ty và mật khẩu được cấp. Lần đầu đăng nhập nên đổi mật khẩu ngay.",
+          "Xin nghỉ phép: vào Hành chính - Nhân sự → Nghỉ phép → Tạo đơn → điền ngày nghỉ và lý do → Gửi duyệt. Đơn đi qua Quản lý trực tiếp rồi HR.",
+          "Báo cơm: vào Báo cơm → chọn ngày → tick Cơm trưa và/hoặc Cơm tăng ca → Đăng ký. Có hiệu lực ngay, không cần ai duyệt. Muốn đổi ý thì chọn lại đúng ngày đó và bấm lại.",
+          "Ra ngoài trong giờ làm: vào Ra/vào cổng → tạo đăng ký, ghi rõ giờ ra và mục đích. Nếu không quay lại trong ngày thì để trống Giờ vào lại.",
+          "Cần dùng xe công ty: vào Xe công vụ → tạo đăng ký, ghi điểm đi/điểm đến/số người đi.",
+          "Đề nghị mua hàng: vào Yêu cầu mua hàng → tạo phiếu, liệt kê từng loại vật tư cần mua (chưa cần biết giá) → Gửi duyệt.",
+          "Theo dõi đơn của mình: mở lại đúng trang đó, xem cột Trạng thái để biết đơn đang ở bước nào."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Đơn đã gửi duyệt thì không sửa được nữa. Nếu cần sửa, phải Hủy rồi tạo đơn mới.",
+          "Chỉ sửa/xóa được khi đơn còn ở trạng thái Nháp."
+        ]
+      },
+      "deptHead": {
+        "title": "Trưởng bộ phận",
+        "intro": "Ngoài các việc của nhân viên thường, bạn còn là người duyệt cấp 1 cho nhân viên trong phòng ban mình.",
+        "steps": [
+          "Mỗi sáng vào hệ thống, nhìn menu trên cùng: nếu có số đỏ cạnh \"Việc cần tôi duyệt\" nghĩa là đang có đơn chờ bạn.",
+          "Bấm vào \"Việc cần tôi duyệt\" — tất cả đơn chờ duyệt từ mọi loại (Nghỉ phép, Tăng ca, Ra/vào cổng, Xe công vụ, Mua hàng) gom chung ở đây.",
+          "Đơn chờ lâu nhất nằm trên cùng. Đơn chờ từ 3 ngày trở lên hiện số ngày màu đỏ — ưu tiên xử lý trước.",
+          "Bấm vào 1 dòng để mở thẳng đơn đó, xem chi tiết rồi bấm Duyệt hoặc Từ chối (nếu từ chối phải ghi lý do).",
+          "Với PR có giá trên 2.000 USD: hệ thống sẽ hiện cảnh báo, bạn phải gửi email xin Ban Giám Đốc duyệt trước, rồi mới tick xác nhận và duyệt trong app.",
+          "Sau khi duyệt, đơn tự động chuyển sang cấp tiếp theo và hệ thống tự gửi email báo cho người đó."
+        ],
+        "notesLabel": "Lưu ý quan trọng",
+        "notes": [
+          "Bạn chỉ duyệt được đơn của nhân viên thuộc đúng phòng ban mình.",
+          "Bạn KHÔNG tự duyệt được đơn do chính mình tạo — đây là quy định bắt buộc để tránh xung đột lợi ích. Đơn của bạn sẽ do cấp trên hoặc Admin duyệt."
+        ]
+      },
+      "warehouse": {
+        "title": "Thủ kho",
+        "intro": "Quy trình hàng ngày tại kho, theo đúng thứ tự từ lúc hàng về đến lúc xuất đi.",
+        "steps": [
+          "Hàng về kho: vào Kho vận → Nhập kho → Tạo phiếu nhập, chọn nhà cung cấp, nhập từng loại vật tư và số lượng thực đếm → Gửi duyệt.",
+          "Chờ QC kiểm hàng (xem phần Nhân viên QC). Hàng đạt QC mới được nhập chính thức vào kho.",
+          "Xuất hàng: vào Xuất kho → tạo yêu cầu xuất. Hệ thống tự gợi ý xuất lô hết hạn trước (nguyên tắc FEFO).",
+          "Chuyển hàng giữa 2 kho: vào Điều chuyển kho → tạo phiếu → kho gửi xác nhận xuất → kho nhận xác nhận nhận.",
+          "Kiểm kê định kỳ: vào Kiểm kê → tạo đợt kiểm kê → dùng điện thoại mở Quét QR Kiểm kê, quét tem trên từng lô hàng và nhập số đếm thực tế.",
+          "Xem tồn kho: vào Báo cáo để biết tồn hiện tại, lịch sử biến động, hoặc xuất file Excel.",
+          "Nếu Trang chủ hiện cảnh báo vàng \"vật tư dưới hạn mức\" — cần báo bộ phận liên quan để lên kế hoạch mua bổ sung."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Trong lúc đang có đợt kiểm kê, kho đó sẽ bị khóa không cho nhập/xuất để tránh sai lệch số liệu.",
+          "Hàng không đạt QC không tự biến mất — phải làm Phiếu hủy ở mục Xử lý hàng lỗi, có QA và Ban Giám Đốc duyệt."
+        ]
+      },
+      "qc": {
+        "title": "Nhân viên QC",
+        "intro": "Kiểm tra chất lượng hàng đầu vào trước khi cho nhập chính thức vào kho.",
+        "steps": [
+          "Vào Kho vận → QC — Kiểm tra chất lượng, xem danh sách phiếu nhập đang chờ kiểm.",
+          "Mở phiếu, kiểm tra hàng thực tế, chụp ảnh làm bằng chứng và tải lên hệ thống.",
+          "Nhập kết quả: Đạt / Không đạt / Đạt có điều kiện, kèm ghi chú nếu cần.",
+          "Gửi duyệt kết quả. Hàng Đạt sẽ được nhập chính thức vào kho.",
+          "Hàng Không đạt: chuyển sang mục Xử lý hàng lỗi để làm phiếu hủy (bạn duyệt ở bước QA, sau đó Ban Giám Đốc duyệt cuối)."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Ảnh chụp là bằng chứng quan trọng khi khách hàng kiểm tra (audit) — nên chụp rõ, đủ góc."
+        ]
+      },
+      "hr": {
+        "title": "Nhân sự (HR)",
+        "intro": "Bạn là người duyệt cấp cuối cho các đơn liên quan đến nhân sự.",
+        "steps": [
+          "Vào \"Việc cần tôi duyệt\" để xem tất cả đơn đang chờ bạn duyệt cấp cuối.",
+          "Duyệt cấp cuối cho: Nghỉ phép, Tăng ca, Ra/vào cổng (sau khi Trưởng bộ phận đã duyệt cấp 1).",
+          "Xem báo cáo suất ăn: vào Báo cơm → mục Báo cáo tổng hợp, chọn ngày để biết tổng số suất cơm trưa và cơm tăng ca, chia theo từng phòng ban — dùng số này để báo nhà cung cấp suất ăn."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Xe công vụ KHÔNG do bạn duyệt — cấp cuối của Xe công vụ là Admin (người điều phối xe)."
+        ]
+      },
+      "purchaser": {
+        "title": "Nhân viên Thu mua",
+        "intro": "Bạn làm bước thứ 2 của quy trình mua hàng — sau khi Ban Giám Đốc đã đồng ý cho mua.",
+        "steps": [
+          "Khi có Yêu cầu mua hàng được Ban Giám Đốc duyệt, hệ thống tự gửi email báo cho bạn.",
+          "Vào Hành chính - Nhân sự → PR có giá → Tạo PR mới → chọn Yêu cầu mua hàng tương ứng.",
+          "Liên hệ nhà cung cấp lấy báo giá, rồi điền đơn giá cho từng dòng vật tư. Hệ thống tự tính tổng tiền.",
+          "Gửi duyệt. Phiếu đi qua Trưởng bộ phận rồi Kế toán.",
+          "Sau khi duyệt xong, bạn nhận email báo. Lúc này tiến hành đặt hàng với nhà cung cấp và in phiếu lưu hồ sơ giấy theo quy định công ty."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Chỉ tạo được PR có giá từ Yêu cầu mua hàng ĐÃ được Ban Giám Đốc duyệt.",
+          "Số lượng có thể điều chỉnh so với yêu cầu gốc nếu thực tế đặt hàng khác (VD: nhà cung cấp bán theo thùng)."
+        ]
+      },
+      "accountant": {
+        "title": "Kế toán",
+        "intro": "Bạn duyệt cấp cuối cho các phiếu mua hàng đã có giá.",
+        "steps": [
+          "Vào \"Việc cần tôi duyệt\" để xem các PR có giá đang chờ bạn.",
+          "Kiểm tra đơn giá, tổng tiền, nhà cung cấp có hợp lý không.",
+          "Bấm Duyệt nếu đồng ý, hoặc Từ chối kèm lý do nếu cần xem lại.",
+          "Sau khi bạn duyệt, nhân viên Thu mua nhận email báo để tiến hành đặt hàng."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Với phiếu trên 2.000 USD, Trưởng bộ phận đã phải xin Ban Giám Đốc duyệt qua email trước khi chuyển đến bạn."
+        ]
+      },
+      "bod": {
+        "title": "Ban Giám Đốc",
+        "intro": "Bạn duyệt những việc có ảnh hưởng lớn về tài chính hoặc tài sản công ty.",
+        "steps": [
+          "Vào \"Việc cần tôi duyệt\" để xem danh sách chờ.",
+          "Duyệt Yêu cầu mua hàng (quyết định có cho mua hay không, chưa liên quan giá cả).",
+          "Duyệt Phiếu hủy hàng lỗi (sau khi QA đã duyệt) — quyết định cuối cùng về việc tiêu hủy hàng.",
+          "Duyệt Yêu cầu xuất kho có giá trị lớn.",
+          "Xem Báo cáo tồn kho bất cứ lúc nào để nắm tình hình chung."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Với phiếu mua hàng trên 2.000 USD, bạn sẽ nhận email xin duyệt từ Trưởng bộ phận trước khi họ duyệt trong hệ thống."
+        ]
+      }
+    }
   }
 }
