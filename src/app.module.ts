@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { PrismaModule } from './prisma/prisma.module';
@@ -34,6 +35,10 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    // Gioi han so lan goi API — them 10/09/2026. Hien CHI ap dung cho
+    // /auth/login (chong do mat khau), khai bao o day de dung chung ve
+    // sau neu can gioi han them endpoint khac.
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 5 }]),
     // Phuc vu giao dien web tinh (HTML/CSS/JS thuan) tu thu muc `web/` o
     // goc project. Loai tru duong dan /api/* de khong bi tranh chap voi
     // cac API controller — static file va API cung chung 1 server/1 port.

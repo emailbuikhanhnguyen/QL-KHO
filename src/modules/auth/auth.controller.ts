@@ -1,5 +1,6 @@
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Role } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -25,7 +26,21 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
+  // Gioi han chong do mat khau (brute-force) — them 10/09/2026 sau dot ra
+  // soat bao mat. Toi da 5 lan goi /login trong 1 phut tinh theo dia chi IP;
+  // vuot qua se tra ve 429 Too Many Requests.
+  //
+  // Vi sao 5 lan/phut: du rong cho nguoi that go nham mat khau vai lan,
+  // nhung du chat de viec do tu dien mat khau tro nen khong kha thi
+  // (truoc day KHONG co gioi han nao — do duoc khong gioi han so lan).
+  //
+  // LUU Y: gioi han tinh theo IP. Neu ca cong ty di chung 1 duong mang ra
+  // Internet (thuong gap), nhieu nguoi dang nhap cung luc co the dung han
+  // chung. Neu thuc te gap tinh trang do, can nang so lan len hoac chuyen
+  // sang gioi han theo email thay vi theo IP.
   @Post('login')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }

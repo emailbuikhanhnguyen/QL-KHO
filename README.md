@@ -752,6 +752,33 @@ Thêm 13 key dịch mới, tổng 653 key khớp tuyệt đối 3 ngôn ngữ.
 
 **KHÔNG cần chạy migration** — module này chỉ đọc dữ liệu sẵn có, không thêm/sửa bảng nào.
 
+## 1.35. Cập nhật 10/09/2026 — Rà soát bảo mật tổng thể (lần đầu làm toàn diện)
+
+Trước đây chỉ vá lỗi lẻ tẻ theo từng phát hiện. Đây là lần đầu rà soát có hệ thống, gồm 5 điểm:
+
+### (1) Giới hạn đăng nhập sai — ĐÃ VÁ
+**Phát hiện**: hoàn toàn CHƯA có giới hạn nào — kẻ tấn công dò mật khẩu được không giới hạn số lần.
+**Đã sửa**: cài `@nestjs/throttler@5.2.0` (bản tương thích NestJS 10), giới hạn **5 lần/phút theo IP** cho `/auth/login`, vượt quá trả về 429.
+**Lưu ý**: giới hạn tính theo IP. Nếu cả công ty đi chung 1 đường mạng ra Internet, nhiều người đăng nhập cùng lúc có thể dùng chung hạn mức — nếu thực tế gặp, cần nâng số lần hoặc chuyển sang giới hạn theo email.
+
+### (2) Log lỗi có lộ thông tin nhạy cảm — KHÔNG CÓ VẤN ĐỀ
+Rà toàn bộ `src/`: chỉ có 2 dòng `console.log` trong `main.ts` (in port + link Swagger). Không nơi nào log mật khẩu/token.
+
+### (3) Dữ liệu cá nhân — TỐT HƠN DỰ KIẾN
+Model `User` hiện **không lưu ngày sinh/giới tính** — chỉ email, họ tên, vai trò, phòng ban. Mọi API trả user đều đi qua `sanitizeUser()` loại bỏ `passwordHash`. Các truy vấn user ở module khác chỉ dùng nội bộ (lấy email gửi thông báo), không trả về client.
+**Cần lưu ý khi mở rộng 262 người**: nếu sau này nhập thêm ngày sinh/CCCD từ file nhân sự, phải đánh giá lại mục này.
+
+### (4) JWT lưu ở localStorage — GHI NHẬN, CHƯA ĐỔI
+Đây là đánh đổi có chủ đích: localStorage dễ bị đánh cắp qua XSS hơn httpOnly cookie, nhưng đơn giản hơn nhiều khi triển khai. Chuyển sang cookie cần sửa cả backend lẫn toàn bộ frontend + xử lý CSRF — rủi ro cao cho hệ thống đang chạy thật. **Quyết định: giữ nguyên, ghi nhận là nợ kỹ thuật**, xem xét lại khi có nhu cầu bảo mật cao hơn.
+
+### (5) `npm audit` — LẦN ĐẦU CHẠY
+**Kết quả**: 19 lỗ hổng trong dependencies chạy thật (1 critical, 8 high).
+- **`tar` (critical)**: chỉ nằm trong `node-pre-gyp` — công cụ biên dịch lúc **cài đặt** `bcrypt`, KHÔNG chạy khi app hoạt động → rủi ro thực tế thấp hơn nhiều so với nhãn "critical"
+- **`multer` (high, 8 CVE dạng từ chối dịch vụ)**: đây là cái đáng lưu tâm nhất vì app có chức năng tải ảnh QC. Bản vá là `multer@2.x` — nhưng `@nestjs/platform-express@10` phụ thuộc `multer@1.x`, nâng riêng sẽ vỡ
+- `npm audit fix` an toàn chỉ giảm 19→18; các bản vá còn lại đều cần nâng phiên bản lớn (NestJS 10→12, bcrypt 5→6) — **rủi ro cao cho hệ thống đang chạy thật, chưa thực hiện**
+
+**Khuyến nghị**: lên kế hoạch nâng NestJS 10→12 thành 1 đợt riêng, có cửa sổ bảo trì và test kỹ, thay vì nâng vội lẫn với tính năng mới.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:
