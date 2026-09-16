@@ -17,6 +17,7 @@ const MODULE_LABEL_KEY = {
   "purchase-requisition": "nav.purchase-requisition",
   pricedpr: "nav.pricedpr",
   edoc: "nav.edoc",
+  guest: "nav.guest",
 };
 
 const MODULE_ICON = {
@@ -27,6 +28,7 @@ const MODULE_ICON = {
   "purchase-requisition": "🛒",
   pricedpr: "💵",
   edoc: "📄",
+  guest: "🪪",
 };
 
 async function loadList() {

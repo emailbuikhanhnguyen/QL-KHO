@@ -20,6 +20,7 @@ const DEPARTMENTS = [
   { code: 'HR', name: 'Phong Nhan su (HR)' }, // Them 04/09/2026 (SEC ERP)
   { code: 'PROCUREMENT', name: 'Phong Mua hang (Thu mua)' }, // Them 09/09/2026 (Module Mua hang)
   { code: 'ACCOUNTING', name: 'Phong Ke toan' }, // Them 09/09/2026 (Module Mua hang)
+  { code: 'SECURITY', name: 'Bao ve' }, // Them 16/09/2026 (Module Khach/NCC vao cong)
 ];
 
 async function main() {

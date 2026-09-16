@@ -58,6 +58,8 @@ enum Role {
                     // hang da duoc BOD duyet (giai doan 1)
   ACCOUNTANT       // Them 09/09/2026 (Module Mua hang) — ky duyet PR co
                     // gia (giai doan 2), theo dung xac nhan cua Sep Thanh
+  GUARD            // Them 16/09/2026 (Module Khach/NCC vao cong) — Bao ve,
+                    // CHI co quyen quet QR check-in, KHONG tao/duyet don gi
 
   @@map("role")
 }
@@ -85,6 +87,7 @@ model Department {
   vehicleBookingRequests VehicleBookingRequest[]
   purchaseRequisitions PurchaseRequisition[]
   electronicDocuments ElectronicDocument[]
+  guestRegistrations GuestRegistration[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -1545,4 +1548,89 @@ model DocumentApprovalStep {
   @@index([documentId])
   @@index([approverId, status])
   @@map("document_approval_steps")
+}
+
+// =============================================================================
+// Module Khach/NCC vao cong — 16/09/2026, theo xac nhan cua Sep Thanh:
+//   - Ap dung DUNG quy trinh giay hien tai: nhan vien bo phan dang ky ho
+//     khach TRUOC → Quan ly → BOD duyet (2 cap co dinh, giong 6 module cu
+//     — KHONG dung kien truc N-cap dong nhu Ho so dien tu).
+//   - Ban giay hien tai: Bao ve doi chieu du thong tin + chu ky nguoi dang
+//     ky (NCC) va Thanh (BOD). Ban dien tu: sau khi APPROVED, he thong tao
+//     ma QR — Bao ve dung dien thoai quet (tai dung UI Html5Qrcode da co
+//     o module Kiem ke) de xac nhan, THAY THE cho viec doi chieu+ky giay.
+//   - Toi da dang ky truoc 2 ngay (kiem tra luc tao/gui duyet).
+//   - Ho tro khoang ngay (nhieu ngay) — GuestCheckIn la 1 LOG rieng, cho
+//     phep quet NHIEU LAN trong khoang ngay da duyet (khach ra vao nhieu
+//     lan/nhieu ngay), khong chi 1 lan duy nhat.
+// =============================================================================
+enum GuestRegistrationStatus {
+  DRAFT
+  PENDING_MANAGER_APPROVAL
+  PENDING_BOD_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("guest_registration_status")
+}
+
+model GuestRegistration {
+  id                Int                       @id @default(autoincrement())
+  code              String                    @unique @map("code") // VD: GR-2026-000001
+
+  requestedBy       Int                       @map("requested_by")
+  departmentId      Int                       @map("department_id")
+  department        Department                @relation(fields: [departmentId], references: [id])
+
+  visitorFullName   String                    @map("visitor_full_name")
+  idNumber          String                    @map("id_number") // CCCD hoac Passport
+  companyName       String                    @map("company_name") // Ten cong ty/NCC/nha thau
+  purpose           String?                   @map("purpose")
+
+  startDate         DateTime                  @map("start_date") @db.Date
+  endDate           DateTime                  @map("end_date") @db.Date
+
+  status            GuestRegistrationStatus   @default(DRAFT) @map("status")
+
+  submittedAt       DateTime?                 @map("submitted_at")
+  managerApprovedBy Int?                      @map("manager_approved_by")
+  managerApprovedAt DateTime?                 @map("manager_approved_at")
+  bodApprovedBy     Int?                      @map("bod_approved_by")
+  bodApprovedAt     DateTime?                 @map("bod_approved_at")
+
+  rejectedBy        Int?                      @map("rejected_by")
+  rejectedAt        DateTime?                 @map("rejected_at")
+  rejectionReason   String?                   @map("rejection_reason")
+
+  cancelledAt       DateTime?                 @map("cancelled_at")
+
+  checkIns          GuestCheckIn[]
+
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @updatedAt @map("updated_at")
+  createdBy         Int?                      @map("created_by")
+  updatedBy         Int?                      @map("updated_by")
+
+  @@index([requestedBy])
+  @@index([departmentId])
+  @@index([status])
+  @@map("guest_registrations")
+}
+
+// Log moi lan Bao ve quet QR xac nhan khach vao/ra cong — thay the cho
+// viec doi chieu CCCD + ky giay trong quy trinh cu. 1 dang ky co the co
+// NHIEU dong (khach vao ra nhieu lan trong khoang ngay da duyet).
+model GuestCheckIn {
+  id                  Int               @id @default(autoincrement())
+
+  guestRegistrationId Int              @map("guest_registration_id")
+  guestRegistration    GuestRegistration @relation(fields: [guestRegistrationId], references: [id], onDelete: Cascade)
+
+  checkedInBy         Int              @map("checked_in_by") // Bao ve thuc hien quet
+  checkedInAt         DateTime         @default(now()) @map("checked_in_at")
+  notes               String?          @map("notes")
+
+  @@index([guestRegistrationId])
+  @@map("guest_check_ins")
 }

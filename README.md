@@ -832,6 +832,44 @@ npx prisma migrate dev --name add_electronic_document
 ```
 Sau khi migrate, **cần Admin gọi `PUT /auth/users/:id/reports-to` để cấu hình sơ đồ tổ chức** cho các tài khoản liên quan trước khi module này dùng được thật — chưa cấu hình thì không submit được.
 
+## 1.38. Cập nhật 16/09/2026 — Module Khách/NCC vào cổng (module SEC ERP cuối cùng — 8/8 hoàn thành)
+
+**Áp dụng đúng quy trình giấy hiện tại**, theo xác nhận của Sếp Thành: bản giấy hiện tại Bảo vệ đối chiếu đủ thông tin kèm chữ ký người đăng ký (NCC) và Thành. Bản điện tử thay thế đúng bước đó bằng mã QR.
+
+### Thiết kế
+
+- **`Role.GUARD`** (vai trò mới) — chỉ có đúng 1 quyền: quét QR xác nhận khách vào cổng. Không tạo/duyệt đơn gì cả.
+- **Duyệt 2 cấp cố định** (Quản lý → BOD) — theo đúng xác nhận của Sếp, **KHÔNG** dùng kiến trúc N-cấp động như Module Hồ sơ điện tử.
+- **Tối đa đăng ký trước 2 ngày** — validate ngay lúc tạo đăng ký.
+- **Sau khi duyệt xong, hệ thống tự sinh mã QR** (chứa mã đăng ký) để đưa cho khách hoặc Bảo vệ.
+- **Bảo vệ quét QR bằng điện thoại** tại trang riêng `/guest-checkin-scan.html` (không nằm trong menu chính — để trên điện thoại dùng cố định ở cổng), tái dùng đúng thư viện quét (`html5-qrcode`) đã dùng ở Module Kiểm kê.
+- **Hỗ trợ quét nhiều lần** trong đúng khoảng ngày đã duyệt (khách ra vào nhiều lần) — mỗi lần quét lưu 1 dòng lịch sử riêng (`GuestCheckIn`), không giới hạn 1 lần duy nhất.
+- Quét ngoài khoảng ngày đã duyệt sẽ bị chặn, báo lỗi rõ ràng.
+
+**2 model mới**: `GuestRegistration` (đơn đăng ký) + `GuestCheckIn` (log mỗi lần quét).
+
+**7 API endpoint**: tạo, gửi duyệt, hủy, duyệt cấp Quản lý, duyệt cấp BOD, từ chối, check-in.
+
+**Sinh mã QR ở phía trình duyệt** — lần đầu dùng năng lực này trong dự án (trước đây chỉ có quét, chưa từng tạo). Dùng thư viện `davidshimjs/qrcodejs` qua CDN jsDelivr — **đã tự phát hiện và sửa 1 lỗi trước khi giao**: URL thư viện dự định dùng ban đầu (gói `qrcode` trên unpkg) thực ra không có file build sẵn, đã đổi sang thư viện khác đã xác minh hoạt động đúng.
+
+**Đã tích hợp vào "Việc cần tôi duyệt"** — cùng cơ chế 2 cấp cố định như Yêu cầu mua hàng.
+
+**15 unit test mới**, chạy thật pass 100% — bao phủ: validate quá 2 ngày, ngày kết thúc trước ngày bắt đầu, SoD (không tự duyệt), sai vai trò khi duyệt/check-in, quét ngoài khoảng ngày, quét nhiều lần.
+
+Thêm 45 key dịch mới, tổng 778 key khớp tuyệt đối 3 ngôn ngữ. Đã cập nhật cả trang Quy trình sử dụng (thêm mục "Bảo vệ", bổ sung bước liên quan vào mục Nhân viên/Trưởng bộ phận/BOD).
+
+### ⚠️ Cần làm sau khi lên Render — nếu không làm, chưa ai dùng được vai trò Bảo vệ
+
+Vai trò `GUARD` là hoàn toàn mới — **chưa có tài khoản nào** mang vai trò này. Cần tạo tài khoản demo mẫu qua Swagger (`POST /api/auth/register`) hoặc Prisma Studio, ví dụ:
+
+```json
+{ "email": "baove@sec.com", "password": "Demo@123456", "fullName": "Nguyen Van Bao Ve", "role": "GUARD", "departmentId": 1 }
+```
+
+```
+npx prisma migrate dev --name add_guest_registration
+```
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

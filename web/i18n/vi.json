@@ -44,7 +44,8 @@
     "sop": "Quy trình sử dụng",
     "groupDocs": "Tài liệu",
     "help": "Trợ giúp",
-    "edoc": "Hồ sơ điện tử"
+    "edoc": "Hồ sơ điện tử",
+    "guest": "Khách/NCC vào cổng"
   },
   "login": {
     "title": "SEC ERP",
@@ -596,6 +597,23 @@
           "Không dùng chữ ký số có giá trị pháp lý (theo quy định an ninh công ty) — chỉ là xác nhận nội bộ từng cấp."
         ]
       },
+      "guestHelp": {
+        "title": "Khách/NCC vào cổng",
+        "intro": "Áp dụng đúng quy trình giấy hiện tại: đăng ký trước, duyệt 2 cấp (Quản lý → BOD), Bảo vệ quét QR xác nhận khi khách vào cổng — thay cho việc đối chiếu CCCD và ký giấy tay.",
+        "steps": [
+          "Vào Khách/NCC vào cổng → Đăng ký mới → điền họ tên khách, số CCCD/Passport, tên công ty/NCC/nhà thầu, khoảng ngày khách vào → Tạo đăng ký.",
+          "Chỉ đăng ký được trước tối đa 2 ngày so với ngày khách vào — hệ thống sẽ báo lỗi nếu chọn ngày xa hơn.",
+          "Bấm Gửi duyệt. Đơn đi qua Quản lý trực tiếp rồi BOD, giống các đơn khác (Nghỉ phép, Xe công vụ...).",
+          "Sau khi duyệt xong, mở lại đăng ký để thấy mã QR — đưa mã này cho khách hoặc lưu lại để đưa cho Bảo vệ khi khách tới.",
+          "Bảo vệ vào trang Quét QR Khách/NCC (đường dẫn riêng, không nằm trong menu chính), dùng điện thoại quét mã — hệ thống hiện tên khách và CCCD để Bảo vệ đối chiếu, bấm Xác nhận vào cổng.",
+          "Nếu khách vào ra nhiều lần trong những ngày đã đăng ký, Bảo vệ quét xác nhận mỗi lần — hệ thống lưu lại đầy đủ lịch sử."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Quét QR chỉ hoạt động trong đúng khoảng ngày đã được duyệt — quét trước hoặc sau khoảng ngày đó sẽ bị báo lỗi.",
+          "Chỉ tài khoản có vai trò Bảo vệ mới quét check-in được."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -998,6 +1016,7 @@
           "Ra ngoài trong giờ làm: vào Ra/vào cổng → tạo đăng ký, ghi rõ giờ ra và mục đích. Nếu không quay lại trong ngày thì để trống Giờ vào lại.",
           "Cần dùng xe công ty: vào Xe công vụ → tạo đăng ký, ghi điểm đi/điểm đến/số người đi.",
           "Đề nghị mua hàng: vào Yêu cầu mua hàng → tạo phiếu, liệt kê từng loại vật tư cần mua (chưa cần biết giá) → Gửi duyệt.",
+          "Đăng ký khách/NCC/nhà thầu vào cổng: vào Khách/NCC vào cổng → tạo đăng ký, điền thông tin khách và khoảng ngày (tối đa trước 2 ngày) → Gửi duyệt. Sau khi duyệt xong, đưa mã QR cho khách hoặc Bảo vệ.",
           "Theo dõi đơn của mình: mở lại đúng trang đó, xem cột Trạng thái để biết đơn đang ở bước nào."
         ],
         "notesLabel": "Lưu ý",
@@ -1020,7 +1039,8 @@
         "notesLabel": "Lưu ý quan trọng",
         "notes": [
           "Bạn chỉ duyệt được đơn của nhân viên thuộc đúng phòng ban mình.",
-          "Bạn KHÔNG tự duyệt được đơn do chính mình tạo — đây là quy định bắt buộc để tránh xung đột lợi ích. Đơn của bạn sẽ do cấp trên hoặc Admin duyệt."
+          "Bạn KHÔNG tự duyệt được đơn do chính mình tạo — đây là quy định bắt buộc để tránh xung đột lợi ích. Đơn của bạn sẽ do cấp trên hoặc Admin duyệt.",
+          "Duyệt cấp 1 cho Khách/NCC vào cổng cũng theo đúng quy tắc này — không được tự duyệt đăng ký của chính mình."
         ]
       },
       "warehouse": {
@@ -1099,6 +1119,21 @@
           "Với phiếu trên 2.000 USD, Trưởng bộ phận đã phải xin Ban Giám Đốc duyệt qua email trước khi chuyển đến bạn."
         ]
       },
+      "guard": {
+        "title": "Bảo vệ",
+        "intro": "Vai trò mới — chỉ có đúng 1 việc: quét mã QR xác nhận khách/NCC/nhà thầu vào cổng, thay cho việc đối chiếu CCCD và ký giấy tay như trước.",
+        "steps": [
+          "Vào đường dẫn riêng \"Quét QR Khách/NCC\" (không nằm trong menu chính, thường được đặt sẵn trên điện thoại dùng ở cổng).",
+          "Khi khách tới, xin xem mã QR (khách được cấp mã này sau khi đăng ký đã duyệt xong) → đưa camera điện thoại vào mã.",
+          "Hệ thống tự hiện tên khách, tên công ty/NCC và số CCCD/Passport — đối chiếu với giấy tờ thật của khách.",
+          "Đúng người thì bấm Xác nhận vào cổng. Camera tự bật lại ngay để quét người tiếp theo."
+        ],
+        "notesLabel": "Lưu ý",
+        "notes": [
+          "Chỉ quét được trong đúng khoảng ngày đã đăng ký và được duyệt — quét trước hoặc sau khoảng ngày đó sẽ bị báo lỗi.",
+          "Nếu khách ra vào nhiều lần trong những ngày đó, quét xác nhận lại mỗi lần — hệ thống tự lưu đầy đủ lịch sử."
+        ]
+      },
       "bod": {
         "title": "Ban Giám Đốc",
         "intro": "Bạn duyệt những việc có ảnh hưởng lớn về tài chính hoặc tài sản công ty.",
@@ -1107,6 +1142,7 @@
           "Duyệt Yêu cầu mua hàng (quyết định có cho mua hay không, chưa liên quan giá cả).",
           "Duyệt Phiếu hủy hàng lỗi (sau khi QA đã duyệt) — quyết định cuối cùng về việc tiêu hủy hàng.",
           "Duyệt Yêu cầu xuất kho có giá trị lớn.",
+          "Duyệt cấp cuối cho Khách/NCC vào cổng (sau khi Trưởng bộ phận đã duyệt) — xác nhận cho phép khách/NCC/nhà thầu vào cổng công ty.",
           "Xem Báo cáo tồn kho bất cứ lúc nào để nắm tình hình chung."
         ],
         "notesLabel": "Lưu ý",
@@ -1145,5 +1181,43 @@
     "stepPending": "Đang chờ duyệt",
     "uploadedByLabel": "Người tải lên",
     "approvalChainLabel": "Chuỗi duyệt theo sơ đồ tổ chức"
+  },
+  "guest": {
+    "title": "Khách/NCC vào cổng",
+    "subtitle": "Đăng ký khách/nhà cung cấp/nhà thầu vào cổng trước, gửi duyệt qua Quản lý trực tiếp rồi BOD",
+    "listTitle": "Danh sách đăng ký",
+    "createBtn": "+ Đăng ký mới",
+    "createTitle": "Đăng ký khách/NCC mới",
+    "visitorNameLabel": "Họ tên khách",
+    "idNumberLabel": "Số CCCD/Passport",
+    "companyNameLabel": "Tên công ty/NCC/nhà thầu",
+    "startDateLabel": "Ngày bắt đầu",
+    "endDateLabel": "Ngày kết thúc",
+    "advanceHint": "Chỉ đăng ký được trước tối đa 2 ngày.",
+    "purposeLabel": "Mục đích",
+    "submitCreateBtn": "Tạo đăng ký",
+    "tableCode": "Mã đăng ký",
+    "dateRangeLabel": "Khoảng ngày",
+    "emptyState": "Chưa có đăng ký nào. Bấm \"Đăng ký mới\" để tạo.",
+    "detailTitle": "Chi tiết đăng ký",
+    "fillAllFields": "Vui lòng điền đủ các trường có dấu *.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy đăng ký",
+    "cancelConfirm": "Hủy đăng ký này?",
+    "deleteConfirm": "Xóa đăng ký này?",
+    "approveBtn": "✔ Duyệt",
+    "approvedSuccess": "Đã duyệt xong.",
+    "qrHint": "Đưa mã này cho khách hoặc Bảo vệ để quét khi vào cổng.",
+    "checkInHistoryLabel": "Lịch sử vào cổng"
+  },
+  "guestScan": {
+    "title": "📷 Quét QR Khách/NCC",
+    "hint": "Đưa camera vào mã QR khách đưa cho bạn",
+    "confirmBtn": "✔ Xác nhận vào cổng",
+    "rescanHint": "Sau khi xác nhận, camera tự bật lại để quét người tiếp theo.",
+    "cameraError": "Không mở được camera. Kiểm tra đã cho phép quyền camera chưa.",
+    "invalidQrFormat": "Mã QR này không phải mã Khách/NCC vào cổng.",
+    "cannotReadId": "Không đọc được mã đăng ký từ QR này.",
+    "checkInSuccess": "Đã xác nhận vào cổng thành công."
   }
 }

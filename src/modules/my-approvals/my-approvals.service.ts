@@ -181,6 +181,23 @@ export class MyApprovalsService {
       });
     }
 
+    // ---------- 8. Khach/NCC vao cong (cap cuoi la BOD, giong Yeu cau
+    // mua hang — 2 cap co dinh, KHONG dung N-cap dong nhu Ho so dien tu) ----------
+    if (canApproveAsManager) {
+      const rows = await this.prisma.guestRegistration.findMany({
+        where: { status: 'PENDING_MANAGER_APPROVAL', ...managerWhere },
+        include: { department: true },
+      });
+      items.push(...rows.map((r) => this.toItem('guest', '/guest-registrations.html', r.id, r.code, `${r.visitorFullName} — ${r.companyName}`, r.department?.name, r.submittedAt, 'MANAGER')));
+    }
+    if (isAdmin || currentUser.role === Role.BOD) {
+      const rows = await this.prisma.guestRegistration.findMany({
+        where: { status: 'PENDING_BOD_APPROVAL', ...(isAdmin ? {} : { NOT: { requestedBy: currentUser.id } }) },
+        include: { department: true },
+      });
+      items.push(...rows.map((r) => this.toItem('guest', '/guest-registrations.html', r.id, r.code, `${r.visitorFullName} — ${r.companyName}`, r.department?.name, r.submittedAt, 'FINAL')));
+    }
+
     // Phieu cho lau nhat len dau — de khong ai bi bo quen.
     items.sort((a, b) => {
       const ta = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;

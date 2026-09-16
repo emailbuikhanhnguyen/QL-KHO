@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Quét QR Khách/NCC vào cổng — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* Giao dien rieng, toi uu cho man hinh dien thoai luc Bao ve cam di quet */
+    body { background: #0f1220; }
+    .scan-page { max-width: 480px; margin: 0 auto; padding: 16px; min-height: 100vh; box-sizing: border-box; }
+    .scan-header { text-align: center; color: #fff; padding: 12px 0 20px; position: relative; }
+    .scan-header h1 { font-size: 18px; margin: 0 0 4px; }
+    .scan-header p { font-size: 13px; color: #9aa3c7; margin: 0; }
+    .scan-lang-switcher { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
+    .scan-lang-switcher .lang-btn {
+      background: transparent; border: 1px solid #4a5798; color: #9aa3c7;
+      padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600;
+    }
+    .scan-lang-switcher .lang-btn.active { background: #fff; color: var(--navy); border-color: #fff; }
+    #qr-reader { border-radius: 14px; overflow: hidden; border: 3px solid #2e75b6; }
+    .result-card { background: #fff; border-radius: 14px; padding: 20px; margin-top: 16px; display: none; }
+    .result-card.show { display: block; }
+    .result-card .visitor-name { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .result-card .company-name { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .result-card .id-number { font-size: 15px; font-weight: 600; background: #f7f8fc; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 14px; }
+    .big-btn { width: 100%; padding: 16px; font-size: 16px; border-radius: 10px; }
+    .scan-again-hint { text-align: center; color: #9aa3c7; font-size: 12px; margin-top: 14px; }
+    .status-msg { text-align: center; color: #fff; padding: 10px; font-size: 13px; min-height: 20px; }
+    .status-msg.error { color: #ff8a8a; }
+    .status-msg.success { color: #7be08a; }
+  </style>
+</head>
+<body>
+  <div class="scan-page">
+    <div class="scan-lang-switcher" id="langSwitcherSlot"></div>
+    <div class="scan-header">
+      <h1 data-i18n="guestScan.title">📷 Quét QR Khách/NCC</h1>
+      <p data-i18n="guestScan.hint">Đưa camera vào mã QR khách đưa cho bạn</p>
+    </div>
+
+    <div id="qr-reader"></div>
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="result-card" id="resultCard">
+      <div class="visitor-name" id="resultVisitorName"></div>
+      <div class="company-name" id="resultCompanyName"></div>
+      <div class="id-number" id="resultIdNumber"></div>
+      <button class="btn btn-success big-btn" id="confirmBtn" onclick="confirmCheckIn()" data-i18n="guestScan.confirmBtn">✔ Xác nhận vào cổng</button>
+    </div>
+
+    <p class="scan-again-hint" data-i18n="guestScan.rescanHint">Sau khi xác nhận, camera tự bật lại để quét người tiếp theo.</p>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="/js/guest-checkin-scan.js"></script>
+</body>
+</html>

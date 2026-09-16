@@ -16,6 +16,7 @@ const SOP_ORDER = [
   "hr",
   "purchaser",
   "accountant",
+  "guard",
   "bod",
 ];
 

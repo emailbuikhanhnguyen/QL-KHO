@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khách/NCC vào cổng — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .qr-box { text-align: center; padding: 20px; background: var(--hover-bg); border-radius: 10px; margin: 16px 0; }
+    .qr-box canvas { margin: 0 auto; }
+    .qr-box .qr-hint { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="guest.title">Khách/NCC vào cổng</h1>
+    <p class="subtitle" data-i18n="guest.subtitle">Đăng ký khách/nhà cung cấp/nhà thầu vào cổng trước, gửi duyệt qua Quản lý trực tiếp rồi BOD</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="guest.listTitle">Danh sách đăng ký</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="guest.createBtn">+ Đăng ký mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="guest.createTitle">Đăng ký khách/NCC mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label data-i18n="guest.visitorNameLabel">Họ tên khách *</label>
+        <input type="text" id="f_visitorFullName" />
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label data-i18n="guest.idNumberLabel">Số CCCD/Passport *</label>
+          <input type="text" id="f_idNumber" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="guest.companyNameLabel">Tên công ty/NCC/nhà thầu *</label>
+          <input type="text" id="f_companyName" />
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label data-i18n="guest.startDateLabel">Ngày bắt đầu *</label>
+          <input type="date" id="f_startDate" />
+        </div>
+        <div class="form-row">
+          <label data-i18n="guest.endDateLabel">Ngày kết thúc *</label>
+          <input type="date" id="f_endDate" />
+        </div>
+      </div>
+      <p class="hint" data-i18n="guest.advanceHint">Chỉ đăng ký được trước tối đa 2 ngày.</p>
+      <div class="form-row">
+        <label data-i18n="guest.purposeLabel">Mục đích (không bắt buộc)</label>
+        <textarea id="f_purpose"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="guest.submitCreateBtn">Tạo đăng ký</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="guest.detailTitle">Chi tiết đăng ký</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="/js/guest-registrations.js"></script>
+</body>
+</html>

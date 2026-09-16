@@ -44,7 +44,8 @@
     "sop": "How to Use",
     "groupDocs": "Documents",
     "help": "Help",
-    "edoc": "E-Documents"
+    "edoc": "E-Documents",
+    "guest": "Guest/Vendor Gate"
   },
   "login": {
     "title": "SEC ERP",
@@ -596,6 +597,23 @@
           "No legally-binding digital signature is used (per company security policy) — each level is only an internal confirmation."
         ]
       },
+      "guestHelp": {
+        "title": "Guest/Vendor Gate Registration",
+        "intro": "Follows the current paper process exactly: register in advance, 2-level approval (Manager → BOD), Guard scans a QR code to confirm entry — replacing manual ID checking and paper signatures.",
+        "steps": [
+          "Go to Guest/Vendor Gate → New Registration → fill in the visitor's name, ID/Passport number, company/vendor/contractor name, and the visit date range → Create.",
+          "Registration can only be made up to 2 days before the visit — the system will reject dates further out.",
+          "Click Submit. It goes through the direct manager, then the BOD, like other requests (Leave, Vehicle...).",
+          "Once approved, reopen the registration to see the QR code — give it to the guest or keep it to show the Guard on arrival.",
+          "The Guard opens the Guest/Vendor QR Scan page (a separate link, not in the main menu), scans with their phone — the system shows the visitor's name and ID for the Guard to check, then confirms entry.",
+          "If the guest enters/exits multiple times within the approved dates, the Guard scans each time — the system keeps a full history."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "Scanning only works within the approved date range — scanning before or after it returns an error.",
+          "Only accounts with the Guard role can check people in."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -998,6 +1016,7 @@
           "Going out during work hours: go to Gate Pass → create a request with your time out and purpose. Leave Time In blank if you are not returning that day.",
           "Need a company vehicle: go to Vehicle Booking → create a request with departure, destination and number of people.",
           "Request a purchase: go to Purchase Requisition → create a request listing each item needed (no prices required) → Submit.",
+          "Register a guest/vendor/contractor: go to Guest/Vendor Gate → create a registration with the visitor's info and date range (up to 2 days in advance) → Submit. Once approved, give the QR code to the guest or the Guard.",
           "Track your requests: reopen the same page and check the Status column to see which step it is at."
         ],
         "notesLabel": "Notes",
@@ -1020,7 +1039,8 @@
         "notesLabel": "Important notes",
         "notes": [
           "You can only approve requests from employees in your own department.",
-          "You CANNOT approve requests you created yourself — this is a mandatory rule to avoid conflicts of interest. Your own requests are approved by a higher level or by an Admin."
+          "You CANNOT approve requests you created yourself — this is a mandatory rule to avoid conflicts of interest. Your own requests are approved by a higher level or by an Admin.",
+          "Approving Guest/Vendor Gate registrations at level 1 follows the same rule — you cannot approve your own registration."
         ]
       },
       "warehouse": {
@@ -1099,6 +1119,21 @@
           "For requests over 2,000 USD, the department head must already have obtained BOD approval by email before it reaches you."
         ]
       },
+      "guard": {
+        "title": "Guard",
+        "intro": "A new role with exactly one job: scan a QR code to confirm a guest/vendor/contractor's entry, replacing manual ID checking and paper signatures.",
+        "steps": [
+          "Open the separate \"Guest/Vendor QR Scan\" link (not in the main menu, usually kept ready on the gate phone).",
+          "When a guest arrives, ask to see their QR code (issued after their registration is approved) → point the phone camera at it.",
+          "The system shows the visitor's name, company/vendor name, and ID/Passport number — check these against their actual ID.",
+          "If it matches, tap Confirm Entry. The camera restarts immediately to scan the next person."
+        ],
+        "notesLabel": "Notes",
+        "notes": [
+          "Scanning only works within the approved date range — scanning outside it returns an error.",
+          "If a guest enters/exits multiple times on those days, scan again each time — the system keeps a full history."
+        ]
+      },
       "bod": {
         "title": "Board of Directors",
         "intro": "You approve matters with significant financial or asset impact.",
@@ -1107,6 +1142,7 @@
           "Approve purchase requisitions (deciding whether to buy at all — prices are not involved yet).",
           "Approve disposal requests for defective goods (after QA approval) — the final decision on destroying goods.",
           "Approve high-value stock issue requests.",
+          "Give final approval for Guest/Vendor Gate registrations (after the department head has approved) — confirming the visitor may enter company premises.",
           "Check stock reports at any time for an overall picture."
         ],
         "notesLabel": "Notes",
@@ -1145,5 +1181,43 @@
     "stepPending": "Awaiting approval",
     "uploadedByLabel": "Uploaded by",
     "approvalChainLabel": "Approval Chain (by org chart)"
+  },
+  "guest": {
+    "title": "Guest/Vendor Gate Registration",
+    "subtitle": "Register a guest/vendor/contractor in advance, approved by direct manager then BOD",
+    "listTitle": "Registrations",
+    "createBtn": "+ New Registration",
+    "createTitle": "New Guest/Vendor Registration",
+    "visitorNameLabel": "Visitor Full Name",
+    "idNumberLabel": "ID Card/Passport No.",
+    "companyNameLabel": "Company/Vendor/Contractor Name",
+    "startDateLabel": "Start Date",
+    "endDateLabel": "End Date",
+    "advanceHint": "Can only register up to 2 days in advance.",
+    "purposeLabel": "Purpose",
+    "submitCreateBtn": "Create Registration",
+    "tableCode": "Code",
+    "dateRangeLabel": "Date Range",
+    "emptyState": "No registrations yet. Click \"New Registration\" to create one.",
+    "detailTitle": "Registration Detail",
+    "fillAllFields": "Please fill in all required (*) fields.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Registration",
+    "cancelConfirm": "Cancel this registration?",
+    "deleteConfirm": "Delete this registration?",
+    "approveBtn": "✔ Approve",
+    "approvedSuccess": "Approved successfully.",
+    "qrHint": "Give this code to the guest or Guard to scan at the gate.",
+    "checkInHistoryLabel": "Check-in History"
+  },
+  "guestScan": {
+    "title": "📷 Scan Guest/Vendor QR",
+    "hint": "Point the camera at the QR code the guest shows you",
+    "confirmBtn": "✔ Confirm Entry",
+    "rescanHint": "After confirming, the camera restarts automatically for the next person.",
+    "cameraError": "Could not open the camera. Check that camera permission is allowed.",
+    "invalidQrFormat": "This QR code is not a Guest/Vendor gate code.",
+    "cannotReadId": "Could not read a registration ID from this QR code.",
+    "checkInSuccess": "Entry confirmed successfully."
   }
 }

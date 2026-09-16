@@ -244,4 +244,24 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     en: 'You are not the approver for the current step of this document',
     zh: '您不是该文档当前步骤的审批人',
   },
+  MAX_ADVANCE_DAYS_EXCEEDED: {
+    vi: 'Chỉ được đăng ký trước tối đa 2 ngày. Vui lòng chọn ngày bắt đầu gần hơn',
+    en: 'Registration can only be made up to 2 days in advance. Please choose an earlier start date',
+    zh: '最多只能提前2天登记。请选择更早的开始日期',
+  },
+  END_DATE_BEFORE_START_DATE: {
+    vi: 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu',
+    en: 'End date must be on or after the start date',
+    zh: '结束日期必须晚于或等于开始日期',
+  },
+  CHECK_IN_OUTSIDE_APPROVED_RANGE: {
+    vi: 'Hôm nay nằm ngoài khoảng ngày đã được duyệt cho khách này',
+    en: 'Today falls outside this visitor\'s approved date range',
+    zh: '今天不在此访客已批准的日期范围内',
+  },
+  ONLY_GUARD_CAN_CHECK_IN: {
+    vi: 'Chỉ Bảo vệ mới được quét xác nhận khách vào cổng',
+    en: 'Only Guard accounts can check in visitors',
+    zh: '只有保安账户才能为访客办理入场登记',
+  },
 };

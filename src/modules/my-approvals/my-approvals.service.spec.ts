@@ -37,6 +37,7 @@ describe('MyApprovalsService', () => {
       gatePassRequest: emptyModel(),
       vehicleBookingRequest: emptyModel(),
       purchaseRequisition: emptyModel(),
+      guestRegistration: emptyModel(),
       purchaseRequest: emptyModel(),
     };
 

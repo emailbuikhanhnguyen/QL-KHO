@@ -75,6 +75,14 @@ const DEMO_USERS = [
     role: Role.ACCOUNTANT,
     deptCode: 'ACCOUNTING',
   },
+  {
+    // Them 16/09/2026 (Module Khach/NCC vao cong) — quet QR check-in,
+    // KHONG tao/duyet don gi
+    email: 'guard@sec.com',
+    fullName: 'Vo Van Bao Ve',
+    role: Role.GUARD,
+    deptCode: 'SECURITY',
+  },
 ];
 
 async function main() {
