@@ -183,15 +183,15 @@ async function renderDetail() {
   let actionsHtml = "";
   if (r.status === "DRAFT" && isOwner) {
     actionsHtml = `
-      <button class="btn btn-primary" onclick="doSubmit()">${t("edoc.submitBtn")}</button>
-      <button class="btn btn-danger" onclick="doDelete()">${t("common.delete")}</button>`;
+      <button class="btn btn-primary" onclick="doSubmit(event)">${t("edoc.submitBtn")}</button>
+      <button class="btn btn-danger" onclick="doDelete(event)">${t("common.delete")}</button>`;
   } else if (r.status === "PENDING_APPROVAL" && isOwner) {
-    actionsHtml = `<button class="btn btn-danger" onclick="doCancel()">${t("edoc.cancelBtn")}</button>`;
+    actionsHtml = `<button class="btn btn-danger" onclick="doCancel(event)">${t("edoc.cancelBtn")}</button>`;
   }
   if (r.status === "PENDING_APPROVAL" && isMyTurn) {
     actionsHtml += `
-      <button class="btn btn-success" onclick="doApprove()">${t("edoc.approveBtn")}</button>
-      <button class="btn btn-danger" onclick="doReject()">${t("common.reject")}</button>`;
+      <button class="btn btn-success" onclick="doApprove(event)">${t("edoc.approveBtn")}</button>
+      <button class="btn btn-danger" onclick="doReject(event)">${t("common.reject")}</button>`;
   }
   if (r.status === "APPROVED" && isOwner) {
     actionsHtml += `<button class="btn btn-outline" onclick="openNewVersionPrompt()">${t("edoc.newVersionBtn")}</button>`;
@@ -234,47 +234,81 @@ async function renderDetail() {
   `;
 }
 
-async function doSubmit() {
+async function doSubmit(event) {
   hideError("detailError");
+  const btn = event.target;
+  btn.disabled = true;
   const res = await apiFetch(`/electronic-documents/${currentDetailId}/submit`, { method: "POST" });
-  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  if (!res.ok) {
+    btn.disabled = false; // mo lai nut de thu lai duoc, vi day co the chi la loi mang tam thoi
+    showError("detailError", extractErrorMessage(res.data));
+    return;
+  }
   await renderDetail();
   await loadList();
 }
 
-async function doCancel() {
+async function doCancel(event) {
   if (!confirm(t("edoc.cancelConfirm"))) return;
   hideError("detailError");
+  const btn = event.target;
+  btn.disabled = true;
   const res = await apiFetch(`/electronic-documents/${currentDetailId}/cancel`, { method: "POST" });
-  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  if (!res.ok) {
+    btn.disabled = false;
+    showError("detailError", extractErrorMessage(res.data));
+    return;
+  }
   await renderDetail();
   await loadList();
 }
 
-async function doApprove() {
+// Khoa nut NGAY LUC BAM (truoc khi cho ket qua API ve) — sua loi da phat
+// hien 14/09/2026: bam 2 lan lien tiep truoc khi man hinh kip ve lai se
+// gui 2 request cho CUNG 1 buoc duyet, request thu 2 bi tu choi dung logic
+// (buoc do da duyet xong) nhung trai nghiem nguoi dung thay nhu la loi.
+async function doApprove(event) {
   hideError("detailError");
+  const btn = event.target;
+  btn.disabled = true;
   const res = await apiFetch(`/electronic-documents/${currentDetailId}/approve`, { method: "POST", body: JSON.stringify({}) });
-  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  if (!res.ok) {
+    btn.disabled = false;
+    showError("detailError", extractErrorMessage(res.data));
+    return;
+  }
   showSuccess("detailSuccess", t("edoc.approvedSuccess"));
   await renderDetail();
   await loadList();
 }
 
-async function doReject() {
+async function doReject(event) {
   const reason = prompt(t("disposal.rejectReasonPrompt"));
   if (!reason) return;
   hideError("detailError");
+  const btn = event.target;
+  btn.disabled = true;
   const res = await apiFetch(`/electronic-documents/${currentDetailId}/reject`, { method: "POST", body: JSON.stringify({ reason }) });
-  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  if (!res.ok) {
+    btn.disabled = false;
+    showError("detailError", extractErrorMessage(res.data));
+    return;
+  }
   await renderDetail();
   await loadList();
 }
 
-async function doDelete() {
+async function doDelete(event) {
   if (!confirm(t("edoc.deleteConfirm"))) return;
   hideError("detailError");
+  const btn = event.target;
+  btn.disabled = true;
   const res = await apiFetch(`/electronic-documents/${currentDetailId}`, { method: "DELETE" });
-  if (!res.ok) { showError("detailError", extractErrorMessage(res.data)); return; }
+  if (!res.ok) {
+    btn.disabled = false;
+    showError("detailError", extractErrorMessage(res.data));
+    return;
+  }
   closeDetail();
   await loadList();
 }
