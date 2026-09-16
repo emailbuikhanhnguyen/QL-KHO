@@ -78,7 +78,14 @@ async function apiFetch(path, options = {}) {
 
   let response;
   try {
-    response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    // "cache: no-store" — them 15/09/2026 sau khi phat hien bug: duyet
+    // xong 1 buoc thanh cong nhung man hinh khong tu cap nhat trang thai
+    // moi, phai bam lai lan 2 moi "lo ra" loi (that ra da duyet xong roi).
+    // Nghi ngo trinh duyet cache lai response GET ngay sau khi POST vua
+    // xong. Ap dung cho TOAN BO app (khong chi rieng 1 module) vi day la
+    // thuc hanh dung cho moi API doc du lieu hay doi lien tuc — an toan,
+    // khong co rui ro phu, chi co loi.
+    response = await fetch(`${API_BASE}${path}`, { ...options, headers, cache: "no-store" });
   } catch (networkErr) {
     return { ok: false, status: 0, data: { message: "Khong ket noi duoc toi server. Kiem tra app da chay chua." } };
   }
