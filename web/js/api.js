@@ -286,6 +286,7 @@ function renderTopbar(activePage) {
         { href: "/vehicle-booking-requests.html", key: "vehicle", labelKey: "nav.vehicle", fallback: "Xe công vụ" },
         { href: "/purchase-requisitions.html", key: "purchase-requisition", labelKey: "nav.purchase-requisition", fallback: "Yêu cầu mua hàng" },
         { href: "/purchase-requests.html", key: "pricedpr", labelKey: "nav.pricedpr", fallback: "PR có giá" },
+        { href: "/electronic-documents.html", key: "edoc", labelKey: "nav.edoc", fallback: "Hồ sơ điện tử" },
       ],
     },
     {
@@ -451,6 +452,7 @@ function getHelpAnchorFor(activePage) {
     "purchase-requisition": "#purchaseHelp",
     pricedpr: "#purchaseHelp",
     myapprovals: "#myApprovalsHelp",
+    edoc: "#edocHelp",
   };
   return map[activePage] ? map[activePage] : "";
 }

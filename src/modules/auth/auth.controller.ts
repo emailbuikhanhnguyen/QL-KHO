@@ -1,10 +1,11 @@
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Role } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { SetReportsToDto } from './dto/set-reports-to.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
@@ -57,5 +58,16 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   findUsers(@Query('departmentId') departmentId?: string) {
     return this.authService.findUsers(departmentId ? Number(departmentId) : undefined);
+  }
+
+  // Them 14/09/2026 — Admin cau hinh "cap tren truc tiep" cho tung nhan
+  // vien, phuc vu so do to chuc that ma Module Ho so dien tu can dung de
+  // dung chuoi duyet N cap dong. Truyen reportsToId=null de xoa (dinh cao
+  // nhat, khong bao cao ai).
+  @Put('users/:id/reports-to')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  setReportsTo(@Param('id', ParseIntPipe) id: number, @Body() dto: SetReportsToDto) {
+    return this.authService.setReportsTo(id, dto.reportsToId ?? null);
   }
 }

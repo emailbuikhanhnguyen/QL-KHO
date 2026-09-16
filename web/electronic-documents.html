@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hồ sơ điện tử — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .approval-chain { margin: 16px 0; }
+    .approval-chain-step {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px;
+      background: var(--card-bg);
+    }
+    .approval-chain-step.is-approved { border-left: 4px solid var(--success); }
+    .approval-chain-step.is-rejected { border-left: 4px solid var(--danger); }
+    .approval-chain-step.is-pending { border-left: 4px solid var(--warning); }
+    .approval-chain-step.is-skipped { opacity: 0.5; border-left: 4px solid var(--border); }
+    .approval-chain-level {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--hover-bg);
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+      font-weight: 700; color: var(--muted); flex-shrink: 0;
+    }
+    .approval-chain-main { flex: 1; min-width: 0; }
+    .approval-chain-name { font-weight: 600; font-size: 13.5px; }
+    .approval-chain-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="edoc.title">Hồ sơ điện tử</h1>
+    <p class="subtitle" data-i18n="edoc.subtitle">Lưu trữ hồ sơ hàng ngày của bộ phận, duyệt theo đúng sơ đồ tổ chức thật</p>
+
+    <!-- ============ DANH SACH ============ -->
+    <div class="card" id="listCard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;" data-i18n="edoc.listTitle">Danh sách hồ sơ</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleCreateForm()" data-i18n="edoc.createBtn">+ Tải hồ sơ mới</button>
+      </div>
+      <div id="listContainer" style="margin-top: 16px;" data-i18n="common.loading">Đang tải...</div>
+    </div>
+
+    <!-- ============ FORM TAO MOI ============ -->
+    <div class="card" id="createCard" style="display:none;">
+      <h2 data-i18n="edoc.createTitle">Tải hồ sơ mới</h2>
+      <div class="error-box" id="createError"></div>
+
+      <div class="form-row">
+        <label data-i18n="edoc.titleLabel">Tên hồ sơ *</label>
+        <input type="text" id="f_title" placeholder="VD: Biên bản giao ca 10/09/2026" />
+      </div>
+      <div class="form-row">
+        <label data-i18n="edoc.categoryLabel">Loại hồ sơ (không bắt buộc)</label>
+        <input type="text" id="f_category" list="categorySuggestions" placeholder="VD: Biên bản giao ca" />
+      </div>
+      <div class="form-row">
+        <label data-i18n="edoc.fileLabel">File *</label>
+        <input type="file" id="f_file" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp" />
+        <p class="hint" data-i18n="edoc.fileHint">Hỗ trợ PDF, Word, Excel, hoặc ảnh — tối đa 10MB</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="edoc.submitCreateBtn">Tải lên</button>
+        <button class="btn btn-outline" onclick="toggleCreateForm()" data-i18n="common.cancel">Hủy</button>
+      </div>
+    </div>
+
+    <!-- ============ CHI TIET ============ -->
+    <div class="card" id="detailCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;"><span data-i18n="edoc.detailTitle">Chi tiết hồ sơ</span> <span id="detailCode"></span></h2>
+        <button class="btn btn-outline btn-sm" onclick="closeDetail()" data-i18n="common.close">Đóng</button>
+      </div>
+      <div class="success-box" id="detailSuccess"></div>
+      <div class="error-box" id="detailError"></div>
+      <div id="detailContainer"></div>
+    </div>
+  </div>
+
+  <datalist id="categorySuggestions"></datalist>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/electronic-documents.js"></script>
+</body>
+</html>

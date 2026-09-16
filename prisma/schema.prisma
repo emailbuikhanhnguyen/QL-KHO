@@ -84,6 +84,7 @@ model Department {
   gatePassRequests GatePassRequest[]
   vehicleBookingRequests VehicleBookingRequest[]
   purchaseRequisitions PurchaseRequisition[]
+  electronicDocuments ElectronicDocument[]
 
   @@index([deletedAt])
   @@map("departments")
@@ -103,6 +104,21 @@ model User {
   department   Department @relation(fields: [departmentId], references: [id])
 
   isActive     Boolean   @default(true) @map("is_active")
+
+  // Them 14/09/2026 — "Cap tren truc tiep" cua nguoi nay, dung xay SO DO
+  // TO CHUC THAT (theo yeu cau Sep Thanh cho Module Ho so dien tu — duyet
+  // theo dung chuoi cap tren, khong phai 2 cap co dinh nhu 6 module truoc).
+  // Self-relation: 1 nguoi co dung 1 cap tren truc tiep (hoac null neu la
+  // dinh cao nhat, VD Giam doc). Chuoi duyet duoc "di bo" tu nguoi tao len
+  // dan theo day, KHONG gioi han cung 1 vai tro/1 phong ban nhu truoc.
+  //
+  // QUAN TRONG: truong nay hien CHI duoc Module Ho so dien tu su dung.
+  // 6 module cu (Nghi phep/Tang ca/Ra-vao cong/Xe cong vu/Mua hang) VAN
+  // GIU NGUYEN co che 2 cap co dinh, KHONG doc truong nay — tranh anh
+  // huong nguoc lai he thong dang chay on dinh.
+  reportsToId  Int?      @map("reports_to_id")
+  reportsTo    User?     @relation("UserReportsTo", fields: [reportsToId], references: [id])
+  directReports User[]   @relation("UserReportsTo")
 
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
@@ -1419,4 +1435,114 @@ model PurchaseRequestLine {
 
   @@index([purchaseRequestId])
   @@map("purchase_request_lines")
+}
+
+// =============================================================================
+// Module Ho so dien tu — 14/09/2026, theo xac nhan cua Sep Thanh:
+//   - Khong lien quan ho so hanh chinh cong ty, chi su dung hang ngay (loai
+//     ho so cu the CHUA duoc xac nhan ro — thiet ke MO, cho tu do dat ten/
+//     phan loai khi upload, khong ep cung 1 danh sach loai co dinh).
+//   - "Nhan vien thong ke bo phan" KHONG phai vai tro rieng — chi la
+//     REQUESTER binh thuong, moi bo phan co 1 nguoi phu trach.
+//   - Duyet theo dung SO DO TO CHUC THAT (Sub-leader -> Leader/Supervisor
+//     -> Head department...), KHONG phai 2 cap co dinh nhu 6 module truoc.
+//     Xem User.reportsToId — chuoi duyet duoc "di bo" len tu nguoi tao,
+//     KHONG gioi han cung 1 vai tro.
+//   - Khong dung chu ky so phap ly (theo quy dinh an ninh cong ty) — chi
+//     can xac nhan noi bo tung cap.
+//
+// QUYET DINH KY THUAT (Claude tu chon, khong hoi lai Sep — xem ghi chu
+// trong bao cao gui Sep): pham vi CHI ap dung co che duyet N cap dong nay
+// cho DUNG module nay. 6 module cu (Nghi phep/Tang ca/Ra-vao cong/Xe cong
+// vu/Mua hang) GIU NGUYEN 2 cap co dinh, KHONG doi gi — tranh anh huong
+// nguoc lai he thong dang chay on dinh. Thiet ke duoc lam DUNG DE TAI SU
+// DUNG cho module khac sau nay neu Sep muon mo rong.
+// =============================================================================
+enum ElectronicDocumentStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("electronic_document_status")
+}
+
+enum ApprovalStepStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SKIPPED // dung khi phieu bi tu choi som — cac buoc con lai khong can xet nua
+
+  @@map("approval_step_status")
+}
+
+model ElectronicDocument {
+  id                Int                      @id @default(autoincrement())
+  code              String                   @unique @map("code") // VD: ED-2026-000001
+
+  uploadedBy        Int                      @map("uploaded_by")
+  departmentId      Int                      @map("department_id")
+  department        Department               @relation(fields: [departmentId], references: [id])
+
+  title             String                   @map("title")
+  category          String?                  @map("category") // tu do, co goi y theo lich su da nhap truoc do
+
+  fileName          String                   @map("file_name") // ten file da luu tren dia (duy nhat)
+  originalFileName  String                   @map("original_file_name") // ten file goc, hien thi cho nguoi dung
+
+  // Quan ly phien ban — file moi thay the file cu, van giu lai ban cu de
+  // tra cuu lich su (yeu cau cua Sep: co giu ban cu khi cap nhat).
+  version           Int                      @default(1) @map("version")
+  previousVersionId Int?                     @map("previous_version_id")
+  previousVersion   ElectronicDocument?       @relation("DocumentVersionHistory", fields: [previousVersionId], references: [id])
+  nextVersions      ElectronicDocument[]      @relation("DocumentVersionHistory")
+
+  status            ElectronicDocumentStatus @default(DRAFT) @map("status")
+  submittedAt       DateTime?                @map("submitted_at")
+
+  rejectedBy        Int?                     @map("rejected_by")
+  rejectedAt        DateTime?                @map("rejected_at")
+  rejectionReason   String?                  @map("rejection_reason")
+
+  cancelledAt       DateTime?                @map("cancelled_at")
+
+  approvalSteps     DocumentApprovalStep[]
+
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @updatedAt @map("updated_at")
+  createdBy         Int?                     @map("created_by")
+  updatedBy         Int?                     @map("updated_by")
+
+  @@index([uploadedBy])
+  @@index([departmentId])
+  @@index([status])
+  @@map("electronic_documents")
+}
+
+// Chuoi duyet DONG — duoc "chup lai" (snapshot) ngay luc Gui duyet, bang
+// cach di theo User.reportsToId tu nguoi tao len dan. Khac han 6 module
+// cu (chi co dung 2 truong managerApprovedBy/hrApprovedBy co dinh), o day
+// SO CAP LA BAO NHIEU CUNG DUOC — vi moi bo phan/nguoi co so cap tren
+// khac nhau trong thuc te (VD: khoi San xuat co toi 9 bo phan con, moi
+// noi so cap co the khac nhau).
+model DocumentApprovalStep {
+  id            Int                @id @default(autoincrement())
+
+  documentId    Int                @map("document_id")
+  document      ElectronicDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  level         Int                @map("level") // 1 = cap gan nguoi tao nhat
+  approverId    Int                @map("approver_id")
+
+  status        ApprovalStepStatus @default(PENDING) @map("status")
+  actedAt       DateTime?          @map("acted_at")
+  actedBy       Int?               @map("acted_by") // thuong = approverId, nhung co the la Admin duyet thay
+  comment       String?            @map("comment")
+
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  @@index([documentId])
+  @@index([approverId, status])
+  @@map("document_approval_steps")
 }

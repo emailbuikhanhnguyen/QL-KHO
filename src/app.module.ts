@@ -25,6 +25,7 @@ import { VehicleBookingRequestModule } from './modules/vehicle-booking-request/v
 import { PurchaseRequisitionModule } from './modules/purchase-requisition/purchase-requisition.module';
 import { PurchaseRequestModule } from './modules/purchase-request/purchase-request.module';
 import { MyApprovalsModule } from './modules/my-approvals/my-approvals.module';
+import { ElectronicDocumentModule } from './modules/electronic-document/electronic-document.module';
 import { IssueRequestModule } from './modules/issue-request/issue-request.module';
 import { WarehouseTransferModule } from './modules/warehouse-transfer/warehouse-transfer.module';
 import { StockLedgerModule } from './modules/stock-ledger/stock-ledger.module';
@@ -83,6 +84,7 @@ import { AppInfoModule } from './modules/app-info/app-info.module';
     PurchaseRequisitionModule,
     PurchaseRequestModule,
     MyApprovalsModule,
+    ElectronicDocumentModule,
     IssueRequestModule,
     WarehouseTransferModule,
     StockLedgerModule,

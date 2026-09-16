@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MyApprovalsService } from './my-approvals.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ElectronicDocumentService } from '../electronic-document/electronic-document.service';
 
 jest.mock('@prisma/client', () => ({
   PrismaClient: class {},
@@ -15,6 +16,7 @@ import { Role } from '@prisma/client';
 describe('MyApprovalsService', () => {
   let service: MyApprovalsService;
   let prisma: any;
+  let electronicDocumentService: any;
 
   const deptHead = { id: 200, role: Role.DEPT_HEAD, departmentId: 1 };
   const hr = { id: 300, role: Role.HR, departmentId: 5 };
@@ -38,8 +40,14 @@ describe('MyApprovalsService', () => {
       purchaseRequest: emptyModel(),
     };
 
+    electronicDocumentService = { findPendingForUser: jest.fn().mockResolvedValue([]) };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MyApprovalsService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        MyApprovalsService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: ElectronicDocumentService, useValue: electronicDocumentService },
+      ],
     }).compile();
 
     service = module.get<MyApprovalsService>(MyApprovalsService);
@@ -124,6 +132,31 @@ describe('MyApprovalsService', () => {
       const where = prisma.leaveRequest.findMany.mock.calls[0][0].where;
       expect(where.departmentId).toBeUndefined();
       expect(where.NOT).toBeUndefined();
+    });
+  });
+
+  describe('Ho so dien tu — N cap dong (khac 6 module con lai)', () => {
+    it('gom vao danh sach, hien dung level/totalLevels (khong phai MANAGER/FINAL co dinh)', async () => {
+      electronicDocumentService.findPendingForUser.mockResolvedValue([
+        {
+          level: 2,
+          document: {
+            id: 9,
+            code: 'ED-2026-000009',
+            title: 'Bien ban giao ca',
+            submittedAt: new Date('2026-09-01'),
+            department: { name: 'PMC' },
+            approvalSteps: [{ level: 1 }, { level: 2 }, { level: 3 }], // 3 cap
+          },
+        },
+      ]);
+
+      const result = await service.getMyApprovals(deptHead as any);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].module).toBe('edoc');
+      expect(result[0].level).toBe(2);
+      expect(result[0].totalLevels).toBe(3);
     });
   });
 

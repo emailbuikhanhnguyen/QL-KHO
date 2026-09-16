@@ -802,6 +802,36 @@ Thêm 45 key dịch mới, tổng 698 key khớp tuyệt đối 3 ngôn ngữ.
 
 **KHÔNG cần migration** — chỉ thêm trang tĩnh, không đụng database.
 
+## 1.37. Cập nhật 14/09/2026 — Module Hồ sơ điện tử (kiến trúc duyệt N cấp động — HOÀN TOÀN MỚI)
+
+**Đây là năng lực mới, khác hẳn 6 module trước** — theo đúng xác nhận của Sếp Thành: *"đúng quản lý của từng bộ phận theo quy trình cấp dưới lên tới cấp trên, thông thường chỉ cần duyệt 3 cấp"*. 6 module cũ (Nghỉ phép/Tăng ca/Ra-vào cổng/Xe công vụ/Mua hàng) đều dùng **2 cấp cố định** (1 phòng ban = 1 người duyệt). Module này dùng **N cấp động theo đúng sơ đồ tổ chức thật** — số cấp có thể khác nhau tùy từng bộ phận (khối Sản xuất có 9 bộ phận con, mỗi nơi có thể khác số cấp).
+
+**Quyết định phạm vi (Claude tự chọn, không hỏi lại vì đây là quyết định kỹ thuật thuần túy — xem lý do trong trao đổi với Nguyên)**: cơ chế N cấp CHỈ áp dụng cho module này, KHÔNG đụng tới 6 module cũ đang chạy ổn định. Thiết kế được làm để dễ tái sử dụng cho module khác sau này nếu Sếp muốn mở rộng.
+
+### Thiết kế kỹ thuật
+
+**`User.reportsToId`** (mới) — quan hệ tự tham chiếu, mỗi người có đúng 1 cấp trên trực tiếp (hoặc null nếu là đỉnh cao nhất). Đây chính là "sơ đồ tổ chức thật" mà hệ thống dựa vào.
+
+**Thuật toán chuỗi duyệt**: lúc Gửi duyệt, hệ thống "đi bộ" từ người tạo theo `reportsToId` lên dần, tạo ra N bước duyệt (snapshot lại tại thời điểm đó, không đổi theo dù tổ chức có thay đổi sau). Tự dừng đúng lúc tới đỉnh (Giám đốc). Có phát hiện vòng lặp nếu dữ liệu tổ chức bị cấu hình sai (VD: A báo cáo cho B, B lại báo cáo ngược lại A) — chặn ngay, không rơi vào lặp vô hạn.
+
+**API mới quan trọng**: `PUT /auth/users/:id/reports-to` (chỉ Admin) — cấu hình cấp trên trực tiếp cho từng nhân viên. **Bắt buộc phải cấu hình trước khi ai đó gửi duyệt hồ sơ**, nếu không sẽ báo lỗi rõ ràng "chưa cấu hình cấp trên".
+
+**Quản lý phiên bản**: hồ sơ đã duyệt xong có thể tải phiên bản mới, hệ thống tự giữ lại bản cũ để tra cứu lịch sử (đúng yêu cầu gốc của Sếp).
+
+**Loại hồ sơ**: theo quyết định của Nguyên (không chờ câu trả lời còn thiếu của Sếp) — thiết kế MỞ, cho tự do đặt tên/phân loại khi tải lên, không ép cứng 1 danh sách loại cố định.
+
+**Tích hợp "Việc cần tôi duyệt"**: đã nối vào, hiển thị đúng "Cấp X/Y" (không phải nhãn MANAGER/FINAL cố định như 6 module kia).
+
+**20 unit test mới** (9 cho service chính + thêm 1 cho tích hợp My Approvals), chạy thật pass 100% — test kỹ nhất: chuỗi 3 cấp đúng thứ tự, dừng đúng lúc tới đỉnh, và phát hiện vòng lặp tổ chức.
+
+Thêm 45 key dịch mới, tổng 733 key khớp tuyệt đối 3 ngôn ngữ.
+
+**Lưu ý migration quan trọng**:
+```
+npx prisma migrate dev --name add_electronic_document
+```
+Sau khi migrate, **cần Admin gọi `PUT /auth/users/:id/reports-to` để cấu hình sơ đồ tổ chức** cho các tài khoản liên quan trước khi module này dùng được thật — chưa cấu hình thì không submit được.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -108,5 +109,41 @@ export class AuthService {
       orderBy: { fullName: 'asc' },
     });
     return users.map((u) => this.sanitizeUser(u));
+  }
+
+  // Them 14/09/2026 — Admin cau hinh "cap tren truc tiep" cho tung nhan
+  // vien, phuc vu SO DO TO CHUC THAT ma Module Ho so dien tu can dung.
+  // Kiem tra vong lap NGAY LUC GAN (khong doi den luc Gui duyet moi phat
+  // hien) — an toan hon, bao loi som cho Admin thay vi de nhan vien gap
+  // loi luc dang can gui gap.
+  async setReportsTo(userId: number, reportsToId: number | null) {
+    if (userId === reportsToId) {
+      throw new BadRequestException({ key: 'ORG_CHART_CYCLE_DETECTED' });
+    }
+
+    const target = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!target) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'User', id: userId } });
+
+    if (reportsToId !== null) {
+      const manager = await this.prisma.user.findUnique({ where: { id: reportsToId } });
+      if (!manager) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'User', id: reportsToId } });
+
+      // Di theo chuoi reportsToId cua "manager" duoc chi dinh — neu gap
+      // lai userId ban dau, nghia la gan vao se tao vong lap (VD: A hien
+      // dang bao cao cho B, gio lai gan B bao cao cho A).
+      let currentId: number | null = reportsToId;
+      const visited = new Set<number>([userId]);
+      while (currentId !== null) {
+        if (visited.has(currentId)) {
+          throw new BadRequestException({ key: 'ORG_CHART_CYCLE_DETECTED' });
+        }
+        visited.add(currentId);
+        const node = await this.prisma.user.findUnique({ where: { id: currentId }, select: { reportsToId: true } });
+        currentId = node?.reportsToId ?? null;
+      }
+    }
+
+    const updated = await this.prisma.user.update({ where: { id: userId }, data: { reportsToId } });
+    return this.sanitizeUser(updated);
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ElectronicDocumentService } from '../electronic-document/electronic-document.service';
 import { Role } from '@prisma/client';
 
 export interface RequestUser {
@@ -18,12 +19,20 @@ export interface ApprovalItem {
   title: string; // mo ta ngan de nhan ra phieu (ly do / diem den / muc dich...)
   departmentName: string | null;
   submittedAt: Date | null;
-  stage: 'MANAGER' | 'FINAL'; // cap dang cho: Quan ly truc tiep hay cap cuoi
+  stage: 'MANAGER' | 'FINAL'; // cap dang cho: Quan ly truc tiep hay cap cuoi (6 module co dinh)
+  // Them 14/09/2026 — cho Module Ho so dien tu (N cap DONG, khong co dung
+  // 2 loai MANAGER/FINAL). Khi co gia tri, frontend uu tien hien "Cap X/Y"
+  // thay vi nhan MANAGER/FINAL.
+  level?: number;
+  totalLevels?: number;
 }
 
 @Injectable()
 export class MyApprovalsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly electronicDocumentService: ElectronicDocumentService,
+  ) {}
 
   // Quy tac chung (giong het logic trong tung module, chi gom lai):
   //  - Cap QUAN LY: chi DEPT_HEAD cua DUNG phong ban do (Admin thay tat ca).
@@ -150,6 +159,26 @@ export class MyApprovalsService {
           this.toItem('pricedpr', '/purchase-requests.html', r.id, r.code, `${r.totalAmountUsd} USD`, r.purchaseRequisition?.department?.name, r.submittedAt, 'FINAL'),
         ),
       );
+    }
+
+    // ---------- 7. Ho so dien tu (N cap DONG theo so do to chuc — khac
+    // hoan toan 6 module tren, KHONG loc theo Role/Department co dinh, ma
+    // di theo dung chuoi reportsToId da duoc snapshot luc Gui duyet). ----------
+    const pendingDocSteps = await this.electronicDocumentService.findPendingForUser(currentUser.id);
+    for (const step of pendingDocSteps) {
+      const doc = (step as any).document;
+      items.push({
+        module: 'edoc',
+        href: '/electronic-documents.html',
+        id: doc.id,
+        code: doc.code,
+        title: doc.title,
+        departmentName: doc.department?.name ?? null,
+        submittedAt: doc.submittedAt,
+        stage: 'FINAL', // gia tri mac dinh, frontend se uu tien dung level/totalLevels ben duoi
+        level: step.level,
+        totalLevels: doc.approvalSteps ? doc.approvalSteps.length : undefined,
+      });
     }
 
     // Phieu cho lau nhat len dau — de khong ai bi bo quen.

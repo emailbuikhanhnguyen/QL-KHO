@@ -43,7 +43,8 @@
     "myapprovals": "待我审批",
     "sop": "使用流程",
     "groupDocs": "文档",
-    "help": "帮助"
+    "help": "帮助",
+    "edoc": "电子文档"
   },
   "login": {
     "title": "SEC ERP",
@@ -579,6 +580,22 @@
           "注意：您自己创建的单据不会显示在此处，因为不能审批自己的申请。"
         ]
       },
+      "edocHelp": {
+        "title": "电子文档",
+        "intro": "与之前6个模块（固定2级审批）不同，本模块按公司真实组织架构审批——不同部门的审批级数可能不同。",
+        "steps": [
+          "进入电子文档 → 上传文档 → 选择文件（PDF、Word、Excel或图片），填写名称和类型（可选）→ 上传。",
+          "点击提交。系统会自动沿您的直属上级链查找正确的审批人（副组长 → 组长/主管 → 部门主管……），级数不固定。",
+          "每完成一级审批，系统会自动邮件通知下一级。最后一级审批完成后，文档变为已批准。",
+          "任一级被拒绝，文档立即停止——后续级别无需审核。",
+          "已批准的文档需要更新：点击上传新版本——旧版本会保留以供查阅历史，不会被删除。"
+        ],
+        "notesLabel": "重要提示",
+        "notes": [
+          "若提交时提示“未配置上级”，请先联系管理员为您的账户设置直属上级。",
+          "不使用具法律效力的电子签名（依公司安全规定）——各级仅为内部确认。"
+        ]
+      },
       "scan": {
         "title": "扫码盘点",
         "intro": "首先需要在“盘点”页面为正确的仓库开始一个盘点会话。然后即可用手机快速盘点，无需手动查找批次。",
@@ -964,7 +981,8 @@
     "waitedToday": "今天提交",
     "waitedPrefix": "已等待",
     "waitedDays": "天",
-    "pendingCountSuffix": "项待您审批"
+    "pendingCountSuffix": "项待您审批",
+    "stageLevelPrefix": "第"
   },
   "sop": {
     "pageTitle": "SEC ERP 使用流程",
@@ -1097,5 +1115,35 @@
         ]
       }
     }
+  },
+  "edoc": {
+    "title": "电子文档",
+    "subtitle": "存储部门日常文档，按真实组织架构审批",
+    "listTitle": "文档列表",
+    "createBtn": "+ 上传文档",
+    "createTitle": "上传新文档",
+    "titleLabel": "文档名称",
+    "categoryLabel": "文档类型",
+    "fileLabel": "文件",
+    "fileHint": "支持PDF、Word、Excel或图片——最大10MB",
+    "submitCreateBtn": "上传",
+    "tableCode": "编号",
+    "emptyState": "暂无文档。点击“上传文档”创建。",
+    "detailTitle": "文档详情",
+    "versionLabel": "版本",
+    "fillAllFields": "请输入文档名称并选择文件。",
+    "submitBtn": "提交审批",
+    "cancelBtn": "取消文档",
+    "cancelConfirm": "确定取消此文档吗？",
+    "deleteConfirm": "确定删除此文档吗？",
+    "approveBtn": "✔ 批准",
+    "approvedSuccess": "您的审批步骤已完成。",
+    "newVersionBtn": "上传新版本",
+    "stepApproved": "已批准",
+    "stepRejected": "已拒绝",
+    "stepSkipped": "无需审核（文档已被提前拒绝）",
+    "stepPending": "等待审批",
+    "uploadedByLabel": "上传人",
+    "approvalChainLabel": "审批链（按组织架构）"
   }
 }

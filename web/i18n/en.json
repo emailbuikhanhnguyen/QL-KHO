@@ -43,7 +43,8 @@
     "myapprovals": "My Approvals",
     "sop": "How to Use",
     "groupDocs": "Documents",
-    "help": "Help"
+    "help": "Help",
+    "edoc": "E-Documents"
   },
   "login": {
     "title": "SEC ERP",
@@ -579,6 +580,22 @@
           "Note: items you created yourself won't appear here, since you cannot approve your own requests."
         ]
       },
+      "edocHelp": {
+        "title": "Electronic Documents",
+        "intro": "Unlike the 6 earlier modules (fixed 2-level approval), this module approves following the company's REAL org chart — the number of approval levels can differ by department.",
+        "steps": [
+          "Go to Electronic Documents → Upload Document → choose a file (PDF, Word, Excel, or image), give it a title and category (optional) → Upload.",
+          "Click Submit. The system automatically finds the right approver by following your direct-manager chain (Sub-leader → Leader/Supervisor → Head department...) — the number of levels is not fixed.",
+          "After each level approves, the system emails the next level automatically. Once the final level approves, the document becomes Approved.",
+          "If rejected at any level, the document stops immediately — later levels are skipped.",
+          "To update an already-approved document: click Upload New Version — the old version is kept for history, never deleted."
+        ],
+        "notesLabel": "Important notes",
+        "notes": [
+          "If submitting fails with \"no manager configured\", contact Admin to set up your direct manager first.",
+          "No legally-binding digital signature is used (per company security policy) — each level is only an internal confirmation."
+        ]
+      },
       "scan": {
         "title": "QR Scan Stocktake",
         "intro": "First start a stocktake session for the correct warehouse on the Stocktake page. Then use your phone for fast counting without manually searching for lots.",
@@ -964,7 +981,8 @@
     "waitedToday": "Submitted today",
     "waitedPrefix": "Waiting",
     "waitedDays": "day(s)",
-    "pendingCountSuffix": "item(s) awaiting your approval"
+    "pendingCountSuffix": "item(s) awaiting your approval",
+    "stageLevelPrefix": "Level"
   },
   "sop": {
     "pageTitle": "How to Use SEC ERP",
@@ -1097,5 +1115,35 @@
         ]
       }
     }
+  },
+  "edoc": {
+    "title": "Electronic Documents",
+    "subtitle": "Store daily department documents, approved following the real organizational chart",
+    "listTitle": "Documents",
+    "createBtn": "+ Upload Document",
+    "createTitle": "Upload New Document",
+    "titleLabel": "Document Title",
+    "categoryLabel": "Category",
+    "fileLabel": "File",
+    "fileHint": "Supports PDF, Word, Excel, or images — up to 10MB",
+    "submitCreateBtn": "Upload",
+    "tableCode": "Code",
+    "emptyState": "No documents yet. Click \"Upload Document\" to create one.",
+    "detailTitle": "Document Detail",
+    "versionLabel": "Version",
+    "fillAllFields": "Please enter a title and select a file.",
+    "submitBtn": "Submit for Approval",
+    "cancelBtn": "Cancel Document",
+    "cancelConfirm": "Cancel this document?",
+    "deleteConfirm": "Delete this document?",
+    "approveBtn": "✔ Approve",
+    "approvedSuccess": "Your step has been approved.",
+    "newVersionBtn": "Upload New Version",
+    "stepApproved": "Approved",
+    "stepRejected": "Rejected",
+    "stepSkipped": "Not needed (document already rejected earlier)",
+    "stepPending": "Awaiting approval",
+    "uploadedByLabel": "Uploaded by",
+    "approvalChainLabel": "Approval Chain (by org chart)"
   }
 }

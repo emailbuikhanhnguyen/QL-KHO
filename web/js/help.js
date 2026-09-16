@@ -18,6 +18,7 @@ const SECTION_ORDER = [
   "vehicleHelp",
   "purchaseHelp",
   "myApprovalsHelp",
+  "edocHelp",
   "scan",
   "permissions",
   "faq",

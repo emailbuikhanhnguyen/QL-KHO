@@ -59,4 +59,12 @@ export class NotificationService {
     });
     return users.map((u) => u.email);
   }
+
+  // Them 14/09/2026 — dung cho Module Ho so dien tu: chuoi duyet la theo
+  // TUNG NGUOI CU THE (qua User.reportsToId), khong theo Role/Department
+  // nhu 6 module cu, nen can tra ve email cua 1 user_id chinh xac.
+  async getEmailByUserId(userId: number): Promise<string | null> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    return user ? user.email : null;
+  }
 }

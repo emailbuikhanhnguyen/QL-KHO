@@ -229,4 +229,19 @@ export const MESSAGES: Record<string, Record<SupportedLang, string>> = {
     en: 'This request exceeds 2,000 USD — please confirm you have emailed the BOD for approval before proceeding',
     zh: '此申请超过2,000美元——请确认已发邮件请董事会批准后再继续',
   },
+  NO_APPROVER_CONFIGURED: {
+    vi: 'Tài khoản của bạn chưa được cấu hình cấp trên trực tiếp — liên hệ Admin để thiết lập trước khi gửi duyệt',
+    en: 'Your account has no direct manager configured — contact Admin to set this up before submitting',
+    zh: '您的账户尚未配置直属上级——请联系管理员设置后再提交',
+  },
+  ORG_CHART_CYCLE_DETECTED: {
+    vi: 'Sơ đồ tổ chức bị lỗi vòng lặp (cấp trên trỏ ngược lại cấp dưới) — liên hệ Admin kiểm tra lại',
+    en: 'The org chart has a cycle (a manager loops back to a subordinate) — contact Admin to fix this',
+    zh: '组织架构存在循环（上级又指回下级）——请联系管理员检查',
+  },
+  NOT_YOUR_APPROVAL_STEP: {
+    vi: 'Bạn không phải người cần duyệt ở bước hiện tại của hồ sơ này',
+    en: 'You are not the approver for the current step of this document',
+    zh: '您不是该文档当前步骤的审批人',
+  },
 };

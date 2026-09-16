@@ -43,7 +43,8 @@
     "myapprovals": "Việc cần tôi duyệt",
     "sop": "Quy trình sử dụng",
     "groupDocs": "Tài liệu",
-    "help": "Trợ giúp"
+    "help": "Trợ giúp",
+    "edoc": "Hồ sơ điện tử"
   },
   "login": {
     "title": "SEC ERP",
@@ -579,6 +580,22 @@
           "Lưu ý: phiếu do chính bạn tạo sẽ không hiện ở đây, vì theo quy định không được tự duyệt đơn của mình."
         ]
       },
+      "edocHelp": {
+        "title": "Hồ sơ điện tử",
+        "intro": "Khác 6 module trước (chỉ có 2 cấp duyệt cố định), module này duyệt theo ĐÚNG sơ đồ tổ chức thật của công ty — số cấp duyệt có thể khác nhau tùy từng bộ phận.",
+        "steps": [
+          "Vào Hồ sơ điện tử → Tải hồ sơ mới → chọn file (PDF, Word, Excel, hoặc ảnh), đặt tên và loại hồ sơ (không bắt buộc) → Tải lên.",
+          "Bấm Gửi duyệt. Hệ thống tự tìm đúng người cần duyệt theo chuỗi cấp trên trực tiếp của bạn (Sub-leader → Leader/Supervisor → Head department...), không cố định số cấp.",
+          "Mỗi cấp duyệt xong, hệ thống tự gửi email báo cho cấp tiếp theo. Duyệt xong cấp cuối cùng, hồ sơ chuyển trạng thái Đã duyệt.",
+          "Nếu bị từ chối ở bất kỳ cấp nào, hồ sơ dừng lại ngay — các cấp sau không cần xét nữa.",
+          "Hồ sơ đã duyệt xong muốn cập nhật: bấm Tải phiên bản mới — hệ thống giữ lại bản cũ để tra cứu lịch sử, không xóa mất."
+        ],
+        "notesLabel": "Lưu ý quan trọng",
+        "notes": [
+          "Nếu gửi duyệt bị báo lỗi \"chưa cấu hình cấp trên\", cần liên hệ Admin để thiết lập cấp trên trực tiếp cho tài khoản của bạn trước.",
+          "Không dùng chữ ký số có giá trị pháp lý (theo quy định an ninh công ty) — chỉ là xác nhận nội bộ từng cấp."
+        ]
+      },
       "scan": {
         "title": "Quét QR Kiểm kê",
         "intro": "Trước tiên cần bắt đầu 1 phiên kiểm kê cho đúng kho ở trang Kiểm kê. Sau đó dùng điện thoại để đếm nhanh, không cần gõ tay tìm lô hàng.",
@@ -964,7 +981,8 @@
     "waitedToday": "Gửi hôm nay",
     "waitedPrefix": "Đã chờ",
     "waitedDays": "ngày",
-    "pendingCountSuffix": "đơn/phiếu đang chờ bạn duyệt"
+    "pendingCountSuffix": "đơn/phiếu đang chờ bạn duyệt",
+    "stageLevelPrefix": "Cấp"
   },
   "sop": {
     "pageTitle": "Quy trình sử dụng SEC ERP",
@@ -1097,5 +1115,35 @@
         ]
       }
     }
+  },
+  "edoc": {
+    "title": "Hồ sơ điện tử",
+    "subtitle": "Lưu trữ hồ sơ hàng ngày của bộ phận, duyệt theo đúng sơ đồ tổ chức thật",
+    "listTitle": "Danh sách hồ sơ",
+    "createBtn": "+ Tải hồ sơ mới",
+    "createTitle": "Tải hồ sơ mới",
+    "titleLabel": "Tên hồ sơ",
+    "categoryLabel": "Loại hồ sơ",
+    "fileLabel": "File",
+    "fileHint": "Hỗ trợ PDF, Word, Excel, hoặc ảnh — tối đa 10MB",
+    "submitCreateBtn": "Tải lên",
+    "tableCode": "Mã hồ sơ",
+    "emptyState": "Chưa có hồ sơ nào. Bấm \"Tải hồ sơ mới\" để tạo.",
+    "detailTitle": "Chi tiết hồ sơ",
+    "versionLabel": "Phiên bản",
+    "fillAllFields": "Vui lòng nhập tên hồ sơ và chọn file.",
+    "submitBtn": "Gửi duyệt",
+    "cancelBtn": "Hủy hồ sơ",
+    "cancelConfirm": "Hủy hồ sơ này?",
+    "deleteConfirm": "Xóa hồ sơ này?",
+    "approveBtn": "✔ Duyệt",
+    "approvedSuccess": "Đã duyệt xong bước của bạn.",
+    "newVersionBtn": "Tải phiên bản mới",
+    "stepApproved": "Đã duyệt",
+    "stepRejected": "Đã từ chối",
+    "stepSkipped": "Không cần xét (phiếu đã bị từ chối trước đó)",
+    "stepPending": "Đang chờ duyệt",
+    "uploadedByLabel": "Người tải lên",
+    "approvalChainLabel": "Chuỗi duyệt theo sơ đồ tổ chức"
   }
 }

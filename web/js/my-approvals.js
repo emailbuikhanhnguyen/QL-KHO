@@ -16,6 +16,7 @@ const MODULE_LABEL_KEY = {
   vehicle: "nav.vehicle",
   "purchase-requisition": "nav.purchase-requisition",
   pricedpr: "nav.pricedpr",
+  edoc: "nav.edoc",
 };
 
 const MODULE_ICON = {
@@ -25,6 +26,7 @@ const MODULE_ICON = {
   vehicle: "🚗",
   "purchase-requisition": "🛒",
   pricedpr: "💵",
+  edoc: "📄",
 };
 
 async function loadList() {
@@ -68,7 +70,14 @@ async function loadList() {
 }
 
 function renderRow(item) {
-  const stageLabel = item.stage === "MANAGER" ? t("myapprovals.stageManager") : t("myapprovals.stageFinal");
+  // Ho so dien tu co N cap DONG (level/totalLevels) — uu tien hien "Cap
+  // X/Y" thay vi nhan MANAGER/FINAL co dinh (chi dung cho 6 module kia).
+  const stageLabel =
+    item.level && item.totalLevels
+      ? `${t("myapprovals.stageLevelPrefix")} ${item.level}/${item.totalLevels}`
+      : item.stage === "MANAGER"
+        ? t("myapprovals.stageManager")
+        : t("myapprovals.stageFinal");
   const waited = waitingDays(item.submittedAt);
   // Cho tu 3 ngay tro len thi to do — de khong ai bi bo quen qua lau.
   const waitedClass = waited >= 3 ? "waiting-long" : "";
