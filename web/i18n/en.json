@@ -1227,5 +1227,24 @@
     "invalidQrFormat": "This QR code is not a Guest/Vendor gate code.",
     "cannotReadId": "Could not read a registration ID from this QR code.",
     "checkInSuccess": "Entry confirmed successfully."
+  },
+  "bulkImport": {
+    "title": "Bulk Import Accounts",
+    "subtitle": "Admin only — create many accounts at once from an Excel file",
+    "accessDenied": "You don't have permission to use this page. Only Admin can bulk-import.",
+    "uploadTitle": "Upload File",
+    "uploadHint": "Use the correct template (header on row 3, data from row 4). Check the sample file if you don't have it.",
+    "submitBtn": "Import",
+    "chooseFileFirst": "Please choose a file first.",
+    "resultTitle": "Results",
+    "totalRows": "Total Rows",
+    "successCount": "Success",
+    "errorCount": "Errors",
+    "statusOk": "✔ Success",
+    "statusFail": "✕ Failed",
+    "colRow": "Row",
+    "colEmail": "Email",
+    "colDetail": "Detail",
+    "copyHint": "Copy each person's temporary password and send it to them separately — this is the only time it's shown."
   }
 }

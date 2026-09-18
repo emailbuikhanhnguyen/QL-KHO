@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Import hàng loạt — SEC ERP</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .result-row-success { color: var(--success); }
+    .result-row-error { color: var(--danger); }
+    .temp-password {
+      font-family: monospace; background: var(--hover-bg); padding: 2px 6px;
+      border-radius: 4px; font-size: 13px;
+    }
+    .summary-box {
+      display: flex; gap: 20px; margin: 16px 0; flex-wrap: wrap;
+    }
+    .summary-item { text-align: center; padding: 12px 20px; border-radius: 8px; background: var(--hover-bg); }
+    .summary-item .num { font-size: 24px; font-weight: 700; }
+    .summary-item .label { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+
+  <div class="page">
+    <h1 data-i18n="bulkImport.title">Import hàng loạt tài khoản</h1>
+    <p class="subtitle" data-i18n="bulkImport.subtitle">Chỉ dành cho Admin — tạo nhiều tài khoản cùng lúc từ file Excel</p>
+
+    <div class="card" id="deniedCard" style="display:none;">
+      <div class="error-box show" data-i18n="bulkImport.accessDenied">Bạn không có quyền dùng trang này. Chỉ Admin mới được import hàng loạt.</div>
+    </div>
+
+    <div class="card" id="uploadCard">
+      <h2 data-i18n="bulkImport.uploadTitle">Tải file lên</h2>
+      <p class="hint" data-i18n="bulkImport.uploadHint">Dùng đúng file mẫu (tiêu đề ở dòng 3, dữ liệu từ dòng 4). Xem lại file mẫu nếu chưa có.</p>
+      <div class="error-box" id="uploadError"></div>
+
+      <div class="form-row">
+        <input type="file" id="f_file" accept=".xlsx,.xls" />
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitImport(event)" data-i18n="bulkImport.submitBtn">Import</button>
+      </div>
+    </div>
+
+    <div class="card" id="resultCard" style="display:none;">
+      <h2 data-i18n="bulkImport.resultTitle">Kết quả</h2>
+      <div class="summary-box" id="summaryBox"></div>
+      <div id="resultContainer"></div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/bulk-import.js"></script>
+</body>
+</html>

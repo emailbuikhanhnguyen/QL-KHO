@@ -1,11 +1,13 @@
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Role } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { SetReportsToDto } from './dto/set-reports-to.dto';
+import { excelUploadMulterOptions } from './excel-upload.config';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
@@ -69,5 +71,20 @@ export class AuthController {
   @Roles(Role.ADMIN)
   setReportsTo(@Param('id', ParseIntPipe) id: number, @Body() dto: SetReportsToDto) {
     return this.authService.setReportsTo(id, dto.reportsToId ?? null);
+  }
+
+  // Them 17/09/2026 — Import hang loat tai khoan tu file Excel, dieu
+  // kien can truoc khi mo rong cho cap quan ly (Sub-leader/Leader/
+  // Supervisor/Head department) theo moc 30/9. Xem mau file tai
+  // GET /auth/users/bulk-import-template.
+  @Post('users/bulk-import')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @UseInterceptors(FileInterceptor('file', excelUploadMulterOptions))
+  bulkImportUsers(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new Error('Khong nhan duoc file. Kiem tra field name phai la "file".');
+    }
+    return this.authService.bulkImportUsers(file.buffer);
   }
 }

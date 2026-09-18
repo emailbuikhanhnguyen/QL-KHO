@@ -901,6 +901,34 @@ npx prisma migrate dev --name restructure_guest_visitors
 
 Vì đổi cấu trúc bảng (bỏ cột, thêm bảng con), **nếu đã có dữ liệu test cũ theo cấu trúc 1 người/phiếu (mục 1.38), dữ liệu đó sẽ không tự động chuyển đổi được** — nên xóa các bản ghi test cũ trước khi migrate, hoặc chấp nhận mất dữ liệu test (không phải dữ liệu thật).
 
+## 1.40. Cập nhật 17/09/2026 — Import hàng loạt tài khoản từ Excel
+
+**Điều kiện cần** đã xác định từ trước khi mở rộng SEC ERP cho cấp quản lý (Sub-leader/Leader/Supervisor/Head department), theo mốc 30/9 Sếp Thành đặt ra — không thể tạo tay từng tài khoản cho vài chục người.
+
+### Thiết kế
+
+**Endpoint mới**: `POST /api/auth/users/bulk-import` (chỉ Admin), nhận file `.xlsx`/`.xls` qua multipart upload.
+
+**Đọc file bằng `exceljs`** (thư viện đã có sẵn trong dự án — trước đây chỉ dùng để xuất báo cáo, giờ dùng thêm để đọc), không cần cài thêm gói mới.
+
+**Cấu trúc file**: dòng tiêu đề ở dòng 3, dữ liệu từ dòng 4 — gồm Email, Họ tên, Vai trò, Mã phòng ban, và **Email cấp trên (không bắt buộc)**.
+
+**Xử lý 2 lượt — điểm kỹ thuật quan trọng nhất**:
+- **Lượt 1**: tạo toàn bộ tài khoản (chưa gán cấp trên)
+- **Lượt 2**: gán `reportsToId` dựa vào cột "Email cấp trên", tái dùng đúng hàm `setReportsTo()` đã có (đã kiểm tra vòng lặp tổ chức từ trước)
+
+Lý do cần 2 lượt: **không phụ thuộc thứ tự dòng trong file** — nếu dòng 1 khai "cấp trên là người ở dòng 5", vẫn gán đúng được, vì tới lượt 2 người đó đã tồn tại.
+
+**1 dòng lỗi không làm dừng cả file** — ghi nhận lỗi, tiếp tục dòng sau, trả về báo cáo đầy đủ cuối cùng (tổng số dòng, số thành công, số lỗi kèm chi tiết từng dòng).
+
+**Mật khẩu**: tự sinh ngẫu nhiên riêng cho mỗi người (không dùng 1 mật khẩu chung — mất hết ý nghĩa bảo mật nếu ai cũng đoán được), trả về trong báo cáo để Admin gửi riêng cho từng người.
+
+**File mẫu** (`mau-import-nhan-vien.xlsx`, gửi kèm cùng đợt code này) — có sẵn 1 dòng ví dụ tô vàng, chú thích (comment) trên từng cột giải thích đúng định dạng cần điền, đặc biệt là danh sách vai trò hợp lệ.
+
+**13 unit test** (thêm 6 test mới), pass 100% — dùng chính `exceljs` để tạo file Excel thật trong lúc test (không mock thư viện đọc file, chỉ mock tầng Prisma), test kỹ nhất: gán đúng cấp trên dù người đó ở dòng sau, 1 dòng lỗi không làm dừng toàn bộ, dòng trống bị bỏ qua đúng.
+
+**Lưu ý về nợ kỹ thuật**: mật khẩu tạm hiện chưa bắt buộc đổi ở lần đăng nhập đầu — nên làm sau nếu triển khai thật cho nhiều người.
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

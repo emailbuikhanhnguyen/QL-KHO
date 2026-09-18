@@ -1227,5 +1227,24 @@
     "invalidQrFormat": "此二维码不是访客/供应商入门二维码。",
     "cannotReadId": "无法从此二维码读取登记编号。",
     "checkInSuccess": "已成功确认入门。"
+  },
+  "bulkImport": {
+    "title": "批量导入账户",
+    "subtitle": "仅限管理员——从Excel文件一次性创建多个账户",
+    "accessDenied": "您没有权限使用此页面。只有管理员才能批量导入。",
+    "uploadTitle": "上传文件",
+    "uploadHint": "请使用正确的模板（标题在第3行，数据从第4行开始）。如没有，请查看示例文件。",
+    "submitBtn": "导入",
+    "chooseFileFirst": "请先选择文件。",
+    "resultTitle": "结果",
+    "totalRows": "总行数",
+    "successCount": "成功",
+    "errorCount": "错误",
+    "statusOk": "✔ 成功",
+    "statusFail": "✕ 失败",
+    "colRow": "行",
+    "colEmail": "邮箱",
+    "colDetail": "详情",
+    "copyHint": "请复制每个人的临时密码并单独发送给他们——此密码只会显示这一次。"
   }
 }

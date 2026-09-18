@@ -1227,5 +1227,24 @@
     "invalidQrFormat": "Mã QR này không phải mã Khách/NCC vào cổng.",
     "cannotReadId": "Không đọc được mã đăng ký từ QR này.",
     "checkInSuccess": "Đã xác nhận vào cổng thành công."
+  },
+  "bulkImport": {
+    "title": "Import hàng loạt tài khoản",
+    "subtitle": "Chỉ dành cho Admin — tạo nhiều tài khoản cùng lúc từ file Excel",
+    "accessDenied": "Bạn không có quyền dùng trang này. Chỉ Admin mới được import hàng loạt.",
+    "uploadTitle": "Tải file lên",
+    "uploadHint": "Dùng đúng file mẫu (tiêu đề ở dòng 3, dữ liệu từ dòng 4). Xem lại file mẫu nếu chưa có.",
+    "submitBtn": "Import",
+    "chooseFileFirst": "Vui lòng chọn file trước.",
+    "resultTitle": "Kết quả",
+    "totalRows": "Tổng số dòng",
+    "successCount": "Thành công",
+    "errorCount": "Lỗi",
+    "statusOk": "✔ Thành công",
+    "statusFail": "✕ Lỗi",
+    "colRow": "Dòng",
+    "colEmail": "Email",
+    "colDetail": "Chi tiết",
+    "copyHint": "Copy lại mật khẩu tạm của từng người và gửi riêng cho họ — đây là lần duy nhất mật khẩu này hiện ra."
   }
 }
