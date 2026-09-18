@@ -24,6 +24,14 @@
     .result-card .visitor-name { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
     .result-card .company-name { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
     .result-card .id-number { font-size: 15px; font-weight: 600; background: #f7f8fc; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 14px; }
+    /* Danh sach nhieu nguoi trong 1 phieu — them 17/09/2026 de khop mau
+       giay that (toi da 10 nguoi/phieu). Moi dong du lon de Bao ve doi
+       chieu CCCD ngay tren man hinh dien thoai. */
+    .visitor-row {
+      background: #f7f8fc; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; text-align: left;
+    }
+    .visitor-row .v-name { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .visitor-row .v-id { font-size: 14px; color: var(--text); margin-top: 2px; }
     .big-btn { width: 100%; padding: 16px; font-size: 16px; border-radius: 10px; }
     .scan-again-hint { text-align: center; color: #9aa3c7; font-size: 12px; margin-top: 14px; }
     .status-msg { text-align: center; color: #fff; padding: 10px; font-size: 13px; min-height: 20px; }
@@ -43,9 +51,9 @@
     <div class="status-msg" id="statusMsg"></div>
 
     <div class="result-card" id="resultCard">
-      <div class="visitor-name" id="resultVisitorName"></div>
-      <div class="company-name" id="resultCompanyName"></div>
-      <div class="id-number" id="resultIdNumber"></div>
+      <div class="company-name" id="resultCompanyName" style="font-size:16px; font-weight:700; color:var(--navy); margin-bottom:2px;"></div>
+      <div class="company-name" id="resultPurpose"></div>
+      <div id="resultVisitorList" style="margin: 12px 0;"></div>
       <button class="btn btn-success big-btn" id="confirmBtn" onclick="confirmCheckIn()" data-i18n="guestScan.confirmBtn">✔ Xác nhận vào cổng</button>
     </div>
 

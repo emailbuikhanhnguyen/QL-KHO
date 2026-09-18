@@ -1,6 +1,7 @@
 requireAuth();
 
 let currentDetailId = null;
+let visitorLineCounter = 0;
 
 (async function init() {
   await loadI18n();
@@ -30,8 +31,8 @@ async function loadList() {
       (r) => `
         <tr class="clickable" onclick="openDetail(${r.id})">
           <td><strong>${r.code}</strong></td>
-          <td>${escapeHtml(r.visitorFullName)}</td>
           <td>${escapeHtml(r.companyName)}</td>
+          <td>${r.visitors ? r.visitors.length : "—"}</td>
           <td>${formatDate(r.startDate)} → ${formatDate(r.endDate)}</td>
           <td>${r.department ? escapeHtml(r.department.name) : "#" + r.departmentId}</td>
           <td>${statusBadge(r.status)}</td>
@@ -43,8 +44,8 @@ async function loadList() {
     <table>
       <thead><tr>
         <th>${t("guest.tableCode")}</th>
-        <th>${t("guest.visitorNameLabel")}</th>
         <th>${t("guest.companyNameLabel")}</th>
+        <th>${t("guest.visitorCountLabel")}</th>
         <th>${t("guest.dateRangeLabel")}</th>
         <th>${t("common.department")}</th>
         <th>${t("common.status")}</th>
@@ -54,26 +55,73 @@ async function loadList() {
 }
 
 // -------------------------------------------------------------------------
-// TAO MOI
+// TAO MOI — danh sach nguoi vao cong THEM/XOA DUOC, toi da 10 nguoi/phieu
+// (khop dung mau giay that SECI-CSR-ARFSOP008-2), tai dung dung pattern
+// da co o Mua hang (nhieu dong vat tu trong 1 phieu).
 // -------------------------------------------------------------------------
+const MAX_VISITORS = 10;
+
 function toggleCreateForm() {
   const card = document.getElementById("createCard");
   const isHidden = card.style.display === "none";
   card.style.display = isHidden ? "block" : "none";
   document.getElementById("detailCard").style.display = "none";
   hideError("createError");
+
+  if (isHidden) {
+    // Moi mo form: bat dau voi dung 1 dong trong, tranh nguoi dung phai
+    // tu bam "+ Them nguoi" ngay tu dau khi chi co 1 khach.
+    document.getElementById("visitorsContainer").innerHTML = "";
+    addVisitorLine();
+  }
+}
+
+function addVisitorLine() {
+  const container = document.getElementById("visitorsContainer");
+  if (container.children.length >= MAX_VISITORS) {
+    showError("createError", t("guest.maxVisitorsReached"));
+    return;
+  }
+  visitorLineCounter++;
+  const id = visitorLineCounter;
+  const row = document.createElement("div");
+  row.className = "line-row";
+  row.id = `visitor-line-${id}`;
+  row.innerHTML = `
+    <input type="text" placeholder="${t("guest.visitorNameLabel")}" class="line-fullName" />
+    <input type="text" placeholder="${t("guest.idNumberLabel")}" class="line-idNumber" />
+    <input type="text" placeholder="${t("guest.visitorNotePlaceholder")}" class="line-note" />
+    <button type="button" class="remove-line-btn" onclick="removeVisitorLine(${id})" title="${t("guest.removeVisitorBtn")}">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function removeVisitorLine(id) {
+  const row = document.getElementById(`visitor-line-${id}`);
+  if (row) row.remove();
+}
+
+function collectVisitors() {
+  return Array.from(document.querySelectorAll("#visitorsContainer .line-row"))
+    .map((row) => ({
+      fullName: row.querySelector(".line-fullName").value.trim(),
+      idNumber: row.querySelector(".line-idNumber").value.trim(),
+      note: row.querySelector(".line-note").value.trim() || undefined,
+    }))
+    .filter((v) => v.fullName && v.idNumber);
 }
 
 async function submitCreateForm() {
   hideError("createError");
-  const visitorFullName = document.getElementById("f_visitorFullName").value.trim();
-  const idNumber = document.getElementById("f_idNumber").value.trim();
   const companyName = document.getElementById("f_companyName").value.trim();
+  const contactPersonName = document.getElementById("f_contactPersonName").value.trim();
+  const contactPersonPhone = document.getElementById("f_contactPersonPhone").value.trim();
+  const purpose = document.getElementById("f_purpose").value.trim();
   const startDate = document.getElementById("f_startDate").value;
   const endDate = document.getElementById("f_endDate").value;
-  const purpose = document.getElementById("f_purpose").value.trim();
+  const visitors = collectVisitors();
 
-  if (!visitorFullName || !idNumber || !companyName || !startDate || !endDate) {
+  if (!companyName || !purpose || !startDate || !endDate || visitors.length === 0) {
     showError("createError", t("guest.fillAllFields"));
     return;
   }
@@ -83,7 +131,15 @@ async function submitCreateForm() {
 
   const res = await apiFetch("/guest-registrations", {
     method: "POST",
-    body: JSON.stringify({ visitorFullName, idNumber, companyName, startDate, endDate, purpose: purpose || undefined }),
+    body: JSON.stringify({
+      companyName,
+      contactPersonName: contactPersonName || undefined,
+      contactPersonPhone: contactPersonPhone || undefined,
+      purpose,
+      startDate,
+      endDate,
+      visitors,
+    }),
   });
 
   btn.disabled = false;
@@ -94,9 +150,10 @@ async function submitCreateForm() {
   }
 
   toggleCreateForm();
-  ["f_visitorFullName", "f_idNumber", "f_companyName", "f_startDate", "f_endDate", "f_purpose"].forEach(
+  ["f_companyName", "f_contactPersonName", "f_contactPersonPhone", "f_purpose", "f_startDate", "f_endDate"].forEach(
     (id) => (document.getElementById(id).value = ""),
   );
+  document.getElementById("visitorsContainer").innerHTML = "";
   await loadList();
   openDetail(res.data.id);
 }
@@ -152,6 +209,15 @@ async function renderDetail() {
       <button class="btn btn-danger" onclick="doReject(event)">${t("common.reject")}</button>`;
   }
 
+  const visitorsHtml = (r.visitors || [])
+    .map(
+      (v) => `
+      <div class="line-item">
+        <strong>${escapeHtml(v.fullName)}</strong> — ${escapeHtml(v.idNumber)}${v.note ? " · " + escapeHtml(v.note) : ""}
+      </div>`,
+    )
+    .join("");
+
   const checkInsHtml =
     r.checkIns && r.checkIns.length
       ? `<label style="font-weight:600; display:block; margin:16px 0 4px;">${t("guest.checkInHistoryLabel")}</label>` +
@@ -162,14 +228,17 @@ async function renderDetail() {
 
   document.getElementById("detailContainer").innerHTML = `
     <div class="detail-grid">
-      <div class="detail-field"><div class="label">${t("guest.visitorNameLabel")}</div><div class="value" style="font-weight:400;">${escapeHtml(r.visitorFullName)}</div></div>
-      <div class="detail-field"><div class="label">${t("guest.idNumberLabel")}</div><div class="value" style="font-weight:400;">${escapeHtml(r.idNumber)}</div></div>
       <div class="detail-field"><div class="label">${t("guest.companyNameLabel")}</div><div class="value" style="font-weight:400;">${escapeHtml(r.companyName)}</div></div>
+      ${r.contactPersonName ? `<div class="detail-field"><div class="label">${t("guest.contactPersonNameLabel")}</div><div class="value" style="font-weight:400;">${escapeHtml(r.contactPersonName)}</div></div>` : ""}
+      ${r.contactPersonPhone ? `<div class="detail-field"><div class="label">${t("guest.contactPersonPhoneLabel")}</div><div class="value" style="font-weight:400;">${escapeHtml(r.contactPersonPhone)}</div></div>` : ""}
       <div class="detail-field"><div class="label">${t("guest.dateRangeLabel")}</div><div class="value">${formatDate(r.startDate)} → ${formatDate(r.endDate)}</div></div>
       <div class="detail-field"><div class="label">${t("common.department")}</div><div class="value">${r.department ? escapeHtml(r.department.name) : "—"}</div></div>
     </div>
-    ${r.purpose ? `<p><strong>${t("guest.purposeLabel")}:</strong> ${escapeHtml(r.purpose)}</p>` : ""}
+    <p><strong>${t("guest.purposeLabel")}:</strong> ${escapeHtml(r.purpose)}</p>
     ${r.rejectionReason ? `<div class="error-box show">${t("disposal.rejectionReasonLabel")}: ${escapeHtml(r.rejectionReason)}</div>` : ""}
+
+    <label style="font-weight:600; display:block; margin:16px 0 4px;">${t("guest.visitorListLabel")} (${r.visitors ? r.visitors.length : 0})</label>
+    ${visitorsHtml}
 
     ${r.status === "APPROVED" ? `<div id="qrContainer"></div>` : ""}
     ${checkInsHtml}

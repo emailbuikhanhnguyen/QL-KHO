@@ -1016,7 +1016,7 @@
           "Ra ngoài trong giờ làm: vào Ra/vào cổng → tạo đăng ký, ghi rõ giờ ra và mục đích. Nếu không quay lại trong ngày thì để trống Giờ vào lại.",
           "Cần dùng xe công ty: vào Xe công vụ → tạo đăng ký, ghi điểm đi/điểm đến/số người đi.",
           "Đề nghị mua hàng: vào Yêu cầu mua hàng → tạo phiếu, liệt kê từng loại vật tư cần mua (chưa cần biết giá) → Gửi duyệt.",
-          "Đăng ký khách/NCC/nhà thầu vào cổng: vào Khách/NCC vào cổng → tạo đăng ký, điền thông tin khách và khoảng ngày (tối đa trước 2 ngày) → Gửi duyệt. Sau khi duyệt xong, đưa mã QR cho khách hoặc Bảo vệ.",
+          "Đăng ký khách/NCC/nhà thầu vào cổng: vào Khách/NCC vào cổng → tạo đăng ký, điền tên công ty/nội dung công việc/khoảng ngày (tối đa trước 2 ngày), rồi thêm TỪNG người vào danh sách (tối đa 10 người/phiếu, giống mẫu giấy) → Gửi duyệt. Sau khi duyệt xong, đưa mã QR cho khách hoặc Bảo vệ.",
           "Theo dõi đơn của mình: mở lại đúng trang đó, xem cột Trạng thái để biết đơn đang ở bước nào."
         ],
         "notesLabel": "Lưu ý",
@@ -1208,7 +1208,15 @@
     "approveBtn": "✔ Duyệt",
     "approvedSuccess": "Đã duyệt xong.",
     "qrHint": "Đưa mã này cho khách hoặc Bảo vệ để quét khi vào cổng.",
-    "checkInHistoryLabel": "Lịch sử vào cổng"
+    "checkInHistoryLabel": "Lịch sử vào cổng",
+    "addVisitorBtn": "+ Thêm người",
+    "contactPersonNameLabel": "Người liên hệ (phía NCC)",
+    "contactPersonPhoneLabel": "SĐT người liên hệ",
+    "maxVisitorsReached": "Tối đa 10 người trong 1 phiếu (theo đúng mẫu giấy hiện tại).",
+    "removeVisitorBtn": "Xóa người này",
+    "visitorCountLabel": "Số người",
+    "visitorListLabel": "Danh sách người vào cổng",
+    "visitorNotePlaceholder": "Ghi chú (không bắt buộc)"
   },
   "guestScan": {
     "title": "📷 Quét QR Khách/NCC",

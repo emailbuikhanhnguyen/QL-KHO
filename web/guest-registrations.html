@@ -9,6 +9,15 @@
     .qr-box { text-align: center; padding: 20px; background: var(--hover-bg); border-radius: 10px; margin: 16px 0; }
     .qr-box canvas { margin: 0 auto; }
     .qr-box .qr-hint { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+    /* Danh sach nguoi vao cong — them 17/09/2026 de khop mau giay that
+       (toi da 10 nguoi/phieu), tai dung dung pattern da co o Mua hang. */
+    .line-row { display: grid; grid-template-columns: 2fr 1.3fr 1.5fr auto; gap: 8px; margin-bottom: 8px; align-items: start; }
+    .line-row input { margin: 0; }
+    .remove-line-btn {
+      background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px;
+      padding: 8px; line-height: 1;
+    }
+    @media (max-width: 640px) { .line-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -33,18 +42,22 @@
       <div class="error-box" id="createError"></div>
 
       <div class="form-row">
-        <label data-i18n="guest.visitorNameLabel">Họ tên khách *</label>
-        <input type="text" id="f_visitorFullName" />
+        <label data-i18n="guest.companyNameLabel">Tên công ty/NCC/nhà thầu *</label>
+        <input type="text" id="f_companyName" />
       </div>
       <div class="form-grid">
         <div class="form-row">
-          <label data-i18n="guest.idNumberLabel">Số CCCD/Passport *</label>
-          <input type="text" id="f_idNumber" />
+          <label data-i18n="guest.contactPersonNameLabel">Người liên hệ phía NCC (không bắt buộc)</label>
+          <input type="text" id="f_contactPersonName" />
         </div>
         <div class="form-row">
-          <label data-i18n="guest.companyNameLabel">Tên công ty/NCC/nhà thầu *</label>
-          <input type="text" id="f_companyName" />
+          <label data-i18n="guest.contactPersonPhoneLabel">SĐT người liên hệ (không bắt buộc)</label>
+          <input type="text" id="f_contactPersonPhone" />
         </div>
+      </div>
+      <div class="form-row">
+        <label data-i18n="guest.purposeLabel">Nội dung công việc *</label>
+        <textarea id="f_purpose"></textarea>
       </div>
       <div class="form-grid">
         <div class="form-row">
@@ -57,10 +70,10 @@
         </div>
       </div>
       <p class="hint" data-i18n="guest.advanceHint">Chỉ đăng ký được trước tối đa 2 ngày.</p>
-      <div class="form-row">
-        <label data-i18n="guest.purposeLabel">Mục đích (không bắt buộc)</label>
-        <textarea id="f_purpose"></textarea>
-      </div>
+
+      <label style="font-weight:600; display:block; margin:18px 0 6px;" data-i18n="guest.visitorListLabel">Danh sách người vào cổng (tối đa 10 người) *</label>
+      <div id="visitorsContainer"></div>
+      <button class="btn btn-outline btn-sm" onclick="addVisitorLine()" data-i18n="guest.addVisitorBtn">+ Thêm người</button>
 
       <div class="btn-row">
         <button class="btn btn-primary" onclick="submitCreateForm()" data-i18n="guest.submitCreateBtn">Tạo đăng ký</button>

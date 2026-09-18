@@ -1583,10 +1583,13 @@ model GuestRegistration {
   departmentId      Int                       @map("department_id")
   department        Department                @relation(fields: [departmentId], references: [id])
 
-  visitorFullName   String                    @map("visitor_full_name")
-  idNumber          String                    @map("id_number") // CCCD hoac Passport
   companyName       String                    @map("company_name") // Ten cong ty/NCC/nha thau
-  purpose           String?                   @map("purpose")
+  // 2 truong nay them 17/09/2026 — khop dung mau giay that (Doc No.
+  // SECI-CSR-ARFSOP008-2): "Nguoi lien he/SDT" cua PHIA NCC, KHAC voi
+  // requestedBy (la nguoi CUA CONG TY minh dung ra dang ky).
+  contactPersonName String?                   @map("contact_person_name")
+  contactPersonPhone String?                  @map("contact_person_phone")
+  purpose           String                    @map("purpose") // "Noi dung cong viec/Scope of Work" tren mau giay — BAT BUOC, khac ban truoc (tuy chon)
 
   startDate         DateTime                  @map("start_date") @db.Date
   endDate           DateTime                  @map("end_date") @db.Date
@@ -1605,6 +1608,7 @@ model GuestRegistration {
 
   cancelledAt       DateTime?                 @map("cancelled_at")
 
+  visitors          GuestVisitor[]
   checkIns          GuestCheckIn[]
 
   createdAt         DateTime                  @default(now()) @map("created_at")
@@ -1618,9 +1622,31 @@ model GuestRegistration {
   @@map("guest_registrations")
 }
 
-// Log moi lan Bao ve quet QR xac nhan khach vao/ra cong — thay the cho
-// viec doi chieu CCCD + ky giay trong quy trinh cu. 1 dang ky co the co
-// NHIEU dong (khach vao ra nhieu lan trong khoang ngay da duyet).
+// Danh sach nguoi vao cong trong 1 phieu — them 17/09/2026 sau khi doi
+// chieu mau giay that (SECI-CSR-ARFSOP008-2): mau giay cho phep dang ky
+// TOI DA 10 NGUOI/phieu (1 nha thau cu ca doi vao lam viec cung luc), 1
+// truong don le (nhu ban truoc) KHONG DAT DUOC muc tieu "toi thieu bang
+// hien tai" ma Nguyen yeu cau — nen chuyen sang bang con, giong dung
+// PurchaseRequisitionLine.
+model GuestVisitor {
+  id                  Int               @id @default(autoincrement())
+
+  guestRegistrationId Int               @map("guest_registration_id")
+  guestRegistration   GuestRegistration @relation(fields: [guestRegistrationId], references: [id], onDelete: Cascade)
+
+  fullName            String            @map("full_name")
+  idNumber            String            @map("id_number") // CCCD hoac Passport
+  note                String?           @map("note")
+
+  @@index([guestRegistrationId])
+  @@map("guest_visitors")
+}
+
+// Log moi lan Bao ve quet QR xac nhan CA DOAN khach vao/ra cong (dung
+// mau giay: 1 phieu chi co DUNG 1 dong "Gio vao/Gio ra" cho ca nhom,
+// khong phai tung nguoi rieng) — thay the cho viec doi chieu CCCD + ky
+// giay trong quy trinh cu. 1 dang ky co the co NHIEU dong (khach vao ra
+// nhieu lan trong khoang ngay da duyet).
 model GuestCheckIn {
   id                  Int               @id @default(autoincrement())
 

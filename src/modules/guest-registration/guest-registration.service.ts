@@ -51,15 +51,19 @@ export class GuestRegistrationService {
         code,
         requestedBy: currentUser.id,
         departmentId: currentUser.departmentId,
-        visitorFullName: dto.visitorFullName,
-        idNumber: dto.idNumber,
         companyName: dto.companyName,
+        contactPersonName: dto.contactPersonName,
+        contactPersonPhone: dto.contactPersonPhone,
         purpose: dto.purpose,
         startDate,
         endDate,
         status: GuestRegistrationStatus.DRAFT,
         createdBy: currentUser.id,
+        // Toi da 10 nguoi/phieu da duoc chan o tang DTO (ArrayMaxSize) —
+        // o day chi tao nested, khong can kiem tra lai.
+        visitors: { create: dto.visitors.map((v) => ({ fullName: v.fullName, idNumber: v.idNumber, note: v.note })) },
       },
+      include: { visitors: true },
     });
   }
 
@@ -87,7 +91,7 @@ export class GuestRegistrationService {
   async findOne(id: number) {
     const found = await this.prisma.guestRegistration.findUnique({
       where: { id },
-      include: { department: true, checkIns: { orderBy: { checkedInAt: 'desc' } } },
+      include: { department: true, visitors: true, checkIns: { orderBy: { checkedInAt: 'desc' } } },
     });
     if (!found) throw new NotFoundException({ key: 'ENTITY_NOT_FOUND', params: { entity: 'GuestRegistration', id } });
     return this.attachUserNames(found);
@@ -171,7 +175,7 @@ export class GuestRegistrationService {
       await this.notification.sendToEmails(
         bodEmails,
         `[SEC ERP] Đăng ký khách ${reg.code} cần bạn duyệt`,
-        `<p>Đăng ký khách <b>${reg.code}</b> (${reg.visitorFullName} — ${reg.companyName}) đã qua Quản lý, đang chờ BOD duyệt.</p>`,
+        `<p>Đăng ký khách <b>${reg.code}</b> (${reg.visitors.length} người — ${reg.companyName}) đã qua Quản lý, đang chờ BOD duyệt.</p>`,
       );
     }
 
@@ -205,7 +209,7 @@ export class GuestRegistrationService {
       await this.notification.sendToEmails(
         [requesterEmail],
         `[SEC ERP] Đăng ký khách ${reg.code} đã được duyệt`,
-        `<p>Đăng ký khách <b>${reg.code}</b> (${reg.visitorFullName}) đã được duyệt xong. Có thể đưa mã QR cho khách hoặc bảo vệ để vào cổng.</p>`,
+        `<p>Đăng ký khách <b>${reg.code}</b> (${reg.visitors.length} người từ ${reg.companyName}) đã được duyệt xong. Có thể đưa mã QR cho khách hoặc bảo vệ để vào cổng.</p>`,
       );
     }
 

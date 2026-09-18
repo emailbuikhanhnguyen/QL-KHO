@@ -1016,7 +1016,7 @@
           "Going out during work hours: go to Gate Pass → create a request with your time out and purpose. Leave Time In blank if you are not returning that day.",
           "Need a company vehicle: go to Vehicle Booking → create a request with departure, destination and number of people.",
           "Request a purchase: go to Purchase Requisition → create a request listing each item needed (no prices required) → Submit.",
-          "Register a guest/vendor/contractor: go to Guest/Vendor Gate → create a registration with the visitor's info and date range (up to 2 days in advance) → Submit. Once approved, give the QR code to the guest or the Guard.",
+          "Register a guest/vendor/contractor: go to Guest/Vendor Gate → create a registration with the company name, work scope, and visit date range (up to 2 days ahead), then add EACH person to the visitor list (up to 10 people per registration, matching the paper form) → Submit. Once approved, give the QR code to the guest or the Guard.",
           "Track your requests: reopen the same page and check the Status column to see which step it is at."
         ],
         "notesLabel": "Notes",
@@ -1208,7 +1208,15 @@
     "approveBtn": "✔ Approve",
     "approvedSuccess": "Approved successfully.",
     "qrHint": "Give this code to the guest or Guard to scan at the gate.",
-    "checkInHistoryLabel": "Check-in History"
+    "checkInHistoryLabel": "Check-in History",
+    "addVisitorBtn": "+ Add Person",
+    "contactPersonNameLabel": "Contact Person (Vendor Side)",
+    "contactPersonPhoneLabel": "Contact Phone",
+    "maxVisitorsReached": "Maximum 10 people per registration (matching the current paper form).",
+    "removeVisitorBtn": "Remove this person",
+    "visitorCountLabel": "People",
+    "visitorListLabel": "Visitor List",
+    "visitorNotePlaceholder": "Note (optional)"
   },
   "guestScan": {
     "title": "📷 Scan Guest/Vendor QR",

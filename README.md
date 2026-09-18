@@ -870,6 +870,37 @@ Vai trò `GUARD` là hoàn toàn mới — **chưa có tài khoản nào** mang 
 npx prisma migrate dev --name add_guest_registration
 ```
 
+## 1.39. Cập nhật 17/09/2026 — Module Khách/NCC vào cổng: sửa lại theo đúng mẫu giấy thật (hỗ trợ NHIỀU người/phiếu)
+
+**Bối cảnh**: sau khi module hoàn thành (mục 1.38), Nguyên gửi ảnh chụp mẫu giấy thật đang dùng (Doc No. SECI-CSR-ARFSOP008-2) — phát hiện bản đầu tiên **chưa đạt yêu cầu tối thiểu**: mẫu giấy cho phép đăng ký **tối đa 10 người/phiếu** (1 nhà thầu cử cả đội vào làm việc cùng lúc), nhưng bản code ban đầu chỉ hỗ trợ đúng 1 người/phiếu.
+
+### Thay đổi cấu trúc dữ liệu (breaking change so với 1.38)
+
+- **Bỏ** trường đơn `visitorFullName`/`idNumber` trên `GuestRegistration`
+- **Thêm bảng con `GuestVisitor`** (giống hệt pattern `PurchaseRequisitionLine` của Module Mua hàng) — mỗi phiếu có thể có 1-10 người, mỗi người có họ tên + CCCD/Passport + ghi chú riêng
+- **Thêm** `contactPersonName`/`contactPersonPhone` (không bắt buộc) — thông tin người liên hệ **phía NCC**, khớp đúng ô trên mẫu giấy, khác với `requestedBy` (người của công ty mình đứng ra đăng ký)
+- **`purpose`** ("Nội dung công việc/Scope of Work") đổi từ **không bắt buộc → bắt buộc**, đúng mức độ quan trọng mẫu giấy thể hiện
+
+**Check-in vẫn giữ nguyên ở cấp phiếu** (không phải từng người) — đúng mẫu giấy chỉ có 1 dòng "Giờ vào/Giờ ra" cho cả nhóm, không phải xác nhận riêng từng người.
+
+### Frontend
+
+- Form tạo đăng ký: danh sách người thêm/xóa được (tối đa 10), tái dùng đúng pattern giao diện đã có ở Mua hàng
+- Trang chi tiết: hiển thị đầy đủ danh sách từng người thay vì 1 tên
+- Trang Bảo vệ quét QR: hiện **toàn bộ danh sách** người trong phiếu để đối chiếu, không chỉ 1 người
+
+**17 unit test** (viết lại hoàn toàn), pass 100% — thêm test case xác nhận tạo được nhiều người/phiếu và lưu đúng thông tin liên hệ NCC.
+
+Thêm 8 key dịch mới, tổng 786 key khớp tuyệt đối 3 ngôn ngữ.
+
+### ⚠️ Lưu ý migration — đây là breaking change
+
+```
+npx prisma migrate dev --name restructure_guest_visitors
+```
+
+Vì đổi cấu trúc bảng (bỏ cột, thêm bảng con), **nếu đã có dữ liệu test cũ theo cấu trúc 1 người/phiếu (mục 1.38), dữ liệu đó sẽ không tự động chuyển đổi được** — nên xóa các bản ghi test cũ trước khi migrate, hoặc chấp nhận mất dữ liệu test (không phải dữ liệu thật).
+
 ## 2. Cách chạy migration
 
 1. Cài dependency:

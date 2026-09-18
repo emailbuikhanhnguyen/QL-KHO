@@ -59,11 +59,26 @@ async function onScanSuccess(decodedText) {
 
   const r = res.data;
   pendingRegistrationId = id;
-  document.getElementById("resultVisitorName").textContent = r.visitorFullName;
   document.getElementById("resultCompanyName").textContent = r.companyName;
-  document.getElementById("resultIdNumber").textContent = r.idNumber;
+  document.getElementById("resultPurpose").textContent = r.purpose;
+  // Hien DU DANH SACH nguoi trong phieu (toi da 10 nguoi/phieu, khop mau
+  // giay that) — de Bao ve doi chieu TUNG NGUOI, khong chi 1 nguoi nhu
+  // ban truoc.
+  document.getElementById("resultVisitorList").innerHTML = (r.visitors || [])
+    .map(
+      (v) => `
+      <div class="visitor-row">
+        <div class="v-name">${escapeHtmlScan(v.fullName)}</div>
+        <div class="v-id">${escapeHtmlScan(v.idNumber)}</div>
+      </div>`,
+    )
+    .join("");
   document.getElementById("resultCard").classList.add("show");
   showStatus("", "");
+}
+
+function escapeHtmlScan(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 }
 
 async function confirmCheckIn() {

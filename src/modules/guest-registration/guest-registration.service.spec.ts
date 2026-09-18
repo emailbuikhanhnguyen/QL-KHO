@@ -21,6 +21,8 @@ function daysFromNow(n: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+const oneVisitor = [{ fullName: 'Nguyen Van A', idNumber: '079123456789' }];
+
 describe('GuestRegistrationService', () => {
   let service: GuestRegistrationService;
   let prisma: any;
@@ -33,23 +35,27 @@ describe('GuestRegistrationService', () => {
   const guard = { id: 400, role: Role.GUARD, departmentId: 1 };
   const admin = { id: 1, role: Role.ADMIN, departmentId: 1 };
 
+  // Them 17/09/2026: khop mau giay that (SECI-CSR-ARFSOP008-2) — 1 phieu
+  // co the co NHIEU nguoi (bang con GuestVisitor), khong con 1 truong
+  // visitorFullName/idNumber don le nhu ban truoc.
   const baseReg = {
     id: 1,
     code: 'GR-2026-000001',
     requestedBy: 100,
     departmentId: 1,
-    visitorFullName: 'Nguyen Van A',
     companyName: 'NCC ABC',
+    purpose: 'Sua chua may han',
     status: GuestRegistrationStatus.DRAFT,
     startDate: new Date(daysFromNow(1)),
     endDate: new Date(daysFromNow(2)),
+    visitors: [{ id: 1, fullName: 'Nguyen Van A', idNumber: '079123456789' }],
     checkIns: [],
   };
 
   beforeEach(async () => {
     prisma = {
       guestRegistration: {
-        create: jest.fn((args: any) => Promise.resolve({ ...baseReg, ...args.data })),
+        create: jest.fn((args: any) => Promise.resolve({ ...baseReg, ...args.data, visitors: args.data.visitors?.create || baseReg.visitors })),
         findMany: jest.fn(),
         findUnique: jest.fn(),
         count: jest.fn().mockResolvedValue(0),
@@ -81,19 +87,42 @@ describe('GuestRegistrationService', () => {
     prisma.guestRegistration.findUnique.mockResolvedValue(baseReg);
   });
 
-  describe('create — quy dinh toi da dang ky truoc 2 ngay', () => {
-    it('tao duoc voi ngay bat dau trong pham vi 2 ngay', async () => {
-      const dto = { visitorFullName: 'A', idNumber: '123', companyName: 'B', startDate: daysFromNow(2), endDate: daysFromNow(3) };
+  describe('create — ho tro NHIEU nguoi/phieu (khop mau giay that)', () => {
+    it('tao duoc voi 1 nguoi, ngay bat dau trong pham vi 2 ngay', async () => {
+      const dto = { companyName: 'B', purpose: 'Bao tri', visitors: oneVisitor, startDate: daysFromNow(2), endDate: daysFromNow(3) };
       await expect(service.create(dto as any, employee as any)).resolves.toBeDefined();
     });
 
+    it('tao duoc voi NHIEU nguoi trong CUNG 1 phieu (toi da 10 theo mau giay)', async () => {
+      const visitors = Array.from({ length: 5 }, (_, i) => ({ fullName: `Nguoi ${i + 1}`, idNumber: `07900000${i}` }));
+      const dto = { companyName: 'Cty XYZ', purpose: 'Bao tri he thong dien', visitors, startDate: daysFromNow(1), endDate: daysFromNow(2) };
+
+      await service.create(dto as any, employee as any);
+
+      const createArg = prisma.guestRegistration.create.mock.calls[0][0];
+      expect(createArg.data.visitors.create).toHaveLength(5);
+      expect(createArg.data.visitors.create[2]).toEqual(expect.objectContaining({ fullName: 'Nguoi 3', idNumber: '079000002' }));
+    });
+
+    it('luu duoc thong tin nguoi lien he phia NCC (contactPersonName/Phone)', async () => {
+      const dto = {
+        companyName: 'B', purpose: 'Bao tri', visitors: oneVisitor,
+        contactPersonName: 'Tran Van B', contactPersonPhone: '0909123456',
+        startDate: daysFromNow(1), endDate: daysFromNow(2),
+      };
+      await service.create(dto as any, employee as any);
+      const createArg = prisma.guestRegistration.create.mock.calls[0][0];
+      expect(createArg.data.contactPersonName).toBe('Tran Van B');
+      expect(createArg.data.contactPersonPhone).toBe('0909123456');
+    });
+
     it('BAO LOI ro rang neu dang ky truoc QUA 2 ngay', async () => {
-      const dto = { visitorFullName: 'A', idNumber: '123', companyName: 'B', startDate: daysFromNow(3), endDate: daysFromNow(4) };
+      const dto = { companyName: 'B', purpose: 'Bao tri', visitors: oneVisitor, startDate: daysFromNow(3), endDate: daysFromNow(4) };
       await expect(service.create(dto as any, employee as any)).rejects.toThrow(BadRequestException);
     });
 
     it('bao loi neu ngay ket thuc truoc ngay bat dau', async () => {
-      const dto = { visitorFullName: 'A', idNumber: '123', companyName: 'B', startDate: daysFromNow(1), endDate: daysFromNow(0) };
+      const dto = { companyName: 'B', purpose: 'Bao tri', visitors: oneVisitor, startDate: daysFromNow(1), endDate: daysFromNow(0) };
       await expect(service.create(dto as any, employee as any)).rejects.toThrow(BadRequestException);
     });
   });
@@ -138,7 +167,7 @@ describe('GuestRegistrationService', () => {
     });
   });
 
-  describe('checkIn — Bao ve quet QR', () => {
+  describe('checkIn — Bao ve quet QR (xac nhan CA DOAN, dung 1 lan quet cho ca nhom)', () => {
     // startDate = hom nay (khac baseReg dung ngay mai) — dung rieng cho
     // nhom test nay vi can "hom nay" NAM TRONG khoang duoc duyet.
     const approvedReg = { ...baseReg, status: GuestRegistrationStatus.APPROVED, startDate: new Date(daysFromNow(0)), endDate: new Date(daysFromNow(1)) };
