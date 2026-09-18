@@ -1233,7 +1233,7 @@
     "subtitle": "Admin only — create many accounts at once from an Excel file",
     "accessDenied": "You don't have permission to use this page. Only Admin can bulk-import.",
     "uploadTitle": "Upload File",
-    "uploadHint": "Use the correct template (header on row 3, data from row 4). Check the sample file if you don't have it.",
+    "uploadHint": "Column order: Employee Code, Email (optional — auto-generated if left blank), Full Name, Role, Department ID, Manager Email (optional).",
     "submitBtn": "Import",
     "chooseFileFirst": "Please choose a file first.",
     "resultTitle": "Results",
@@ -1245,6 +1245,7 @@
     "colRow": "Row",
     "colEmail": "Email",
     "colDetail": "Detail",
-    "copyHint": "Copy each person's temporary password and send it to them separately — this is the only time it's shown."
+    "copyHint": "Copy each person's temporary password and send it to them separately — this is the only time it's shown.",
+    "colEmployeeCode": "Employee Code"
   }
 }

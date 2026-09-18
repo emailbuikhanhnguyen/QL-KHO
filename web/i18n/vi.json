@@ -1233,7 +1233,7 @@
     "subtitle": "Chỉ dành cho Admin — tạo nhiều tài khoản cùng lúc từ file Excel",
     "accessDenied": "Bạn không có quyền dùng trang này. Chỉ Admin mới được import hàng loạt.",
     "uploadTitle": "Tải file lên",
-    "uploadHint": "Dùng đúng file mẫu (tiêu đề ở dòng 3, dữ liệu từ dòng 4). Xem lại file mẫu nếu chưa có.",
+    "uploadHint": "Thứ tự cột: Mã NV, Email (không bắt buộc — để trống sẽ tự sinh), Họ tên, Vai trò, Mã phòng ban, Email cấp trên (không bắt buộc).",
     "submitBtn": "Import",
     "chooseFileFirst": "Vui lòng chọn file trước.",
     "resultTitle": "Kết quả",
@@ -1245,6 +1245,7 @@
     "colRow": "Dòng",
     "colEmail": "Email",
     "colDetail": "Chi tiết",
-    "copyHint": "Copy lại mật khẩu tạm của từng người và gửi riêng cho họ — đây là lần duy nhất mật khẩu này hiện ra."
+    "copyHint": "Copy lại mật khẩu tạm của từng người và gửi riêng cho họ — đây là lần duy nhất mật khẩu này hiện ra.",
+    "colEmployeeCode": "Mã NV"
   }
 }

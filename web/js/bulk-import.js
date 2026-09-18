@@ -58,6 +58,7 @@ function renderResult(summary) {
       return `
         <tr>
           <td>${r.row}</td>
+          <td>${escapeHtml(r.employeeCode || "—")}</td>
           <td>${escapeHtml(r.email)}</td>
           <td class="${cls}">${r.success ? t("bulkImport.statusOk") : t("bulkImport.statusFail")}</td>
           <td>${detail}</td>
@@ -69,6 +70,7 @@ function renderResult(summary) {
     <table>
       <thead><tr>
         <th>${t("bulkImport.colRow")}</th>
+        <th>${t("bulkImport.colEmployeeCode")}</th>
         <th>${t("bulkImport.colEmail")}</th>
         <th>${t("common.status")}</th>
         <th>${t("bulkImport.colDetail")}</th>

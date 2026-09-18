@@ -21,6 +21,22 @@ const DEPARTMENTS = [
   { code: 'PROCUREMENT', name: 'Phong Mua hang (Thu mua)' }, // Them 09/09/2026 (Module Mua hang)
   { code: 'ACCOUNTING', name: 'Phong Ke toan' }, // Them 09/09/2026 (Module Mua hang)
   { code: 'SECURITY', name: 'Bao ve' }, // Them 16/09/2026 (Module Khach/NCC vao cong)
+
+  // Them 18/09/2026 — 11 bo phan con MOI, lay tu file nhan su that cong
+  // ty (DS_18_9.xlsx, 234 nguoi). 6 bo phan CON LAI trong file (PMC, CS,
+  // QA, HR, PROCUREMENT, ACCOUNTING) da co san tu truoc — KHONG tao
+  // trung, tai dung dung 6 department cu do.
+  { code: 'HEAT_TRANSFER', name: 'Heat Transfer' },
+  { code: 'PACKING', name: 'Packing' },
+  { code: 'MERCHANDISE', name: 'Merchandise' },
+  { code: 'WAREHOUSE_SECTION', name: 'Warehouse (Bo phan nhan su — khac 3 kho van hanh RM/FG/Tools)' },
+  { code: 'COMPLIANCE', name: 'Compliance' },
+  { code: 'AUTOMATION_TECHNOLOGY', name: 'Automation and Technology' },
+  { code: 'IMPORT_EXPORT', name: 'Import and Export' },
+  { code: 'POD', name: 'POD' },
+  { code: 'SUBLIMATION', name: 'Sublimation' },
+  { code: 'IE_CI', name: 'IE - CI' },
+  { code: 'WOVEN_LABEL', name: 'Woven Label' },
 ];
 
 async function main() {

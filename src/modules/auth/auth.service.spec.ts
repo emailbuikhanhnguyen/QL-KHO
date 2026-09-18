@@ -137,14 +137,14 @@ describe('AuthService', () => {
     });
   });
 
-  describe('bulkImportUsers — import hang loat tu file Excel', () => {
+  describe('bulkImportUsers — import hang loat tu file Excel (co Ma nhan vien)', () => {
     // Tao 1 file Excel THAT (dung dung thu vien exceljs, khong mock) —
-    // chi mock tang Prisma, de dam bao logic doc/parse file dung 100%
-    // nhu code thuc te se doc.
+    // chi mock tang Prisma. THU TU COT MOI (18/09/2026): Ma nhan vien,
+    // Email (tuy chon), Ho ten, Vai tro, Ma phong ban, Email cap tren.
     async function buildExcelBuffer(rows: string[][]): Promise<Buffer> {
       const wb = new ExcelJS.Workbook();
       const sheet = wb.addWorksheet('Sheet1');
-      sheet.addRow(['Email', 'Ho ten', 'Vai tro', 'Ma phong ban', 'Email cap tren']); // dong tieu de
+      sheet.addRow(['Ma NV', 'Email', 'Ho ten', 'Vai tro', 'Ma phong ban', 'Email cap tren']); // dong tieu de
       for (const r of rows) sheet.addRow(r);
       return (await wb.xlsx.writeBuffer()) as unknown as Buffer;
     }
@@ -155,13 +155,13 @@ describe('AuthService', () => {
     });
 
     it('tao thanh cong nhieu dong hop le, tra ve dung tempPassword cho moi dong', async () => {
-      prisma.user.findFirst.mockResolvedValue(null); // khong co email nao trung
+      prisma.user.findFirst.mockResolvedValue(null); // khong co ma NV/email nao trung
       let nextId = 10;
       prisma.user.create.mockImplementation((args: any) => Promise.resolve({ id: nextId++, ...args.data }));
 
       const buffer = await buildExcelBuffer([
-        ['nv1@sec.com', 'Nguyen Van 1', 'REQUESTER', '1', ''],
-        ['nv2@sec.com', 'Nguyen Van 2', 'REQUESTER', '1', ''],
+        ['SI001', 'nv1@sec.com', 'Nguyen Van 1', 'REQUESTER', '1', ''],
+        ['SI002', 'nv2@sec.com', 'Nguyen Van 2', 'REQUESTER', '1', ''],
       ]);
 
       const result = await service.bulkImportUsers(buffer);
@@ -173,15 +173,28 @@ describe('AuthService', () => {
       expect(result.results[0].tempPassword).not.toBe(result.results[1].tempPassword); // moi nguoi 1 mat khau khac nhau
     });
 
-    it('1 dong loi (email da ton tai) KHONG lam dung toan bo — dong con lai van thanh cong', async () => {
+    it('TU SINH email tu Ma nhan vien khi cot Email de trong (khop file nhan su that, khong co Email)', async () => {
+      prisma.user.findFirst.mockResolvedValue(null);
+      prisma.user.create.mockImplementation((args: any) => Promise.resolve({ id: 15, ...args.data }));
+
+      const buffer = await buildExcelBuffer([['SI24000004', '', 'Le Nhat Thanh', 'BOD', '1', '']]);
+      const result = await service.bulkImportUsers(buffer);
+
+      expect(result.results[0].success).toBe(true);
+      expect(result.results[0].email).toBe('si24000004@sec.com');
+      const createArg = prisma.user.create.mock.calls[0][0];
+      expect(createArg.data.employeeCode).toBe('SI24000004');
+    });
+
+    it('1 dong loi (Ma nhan vien da ton tai) KHONG lam dung toan bo — dong con lai van thanh cong', async () => {
       prisma.user.findFirst.mockImplementation(({ where }: any) =>
-        Promise.resolve(where.email === 'trung@sec.com' ? { id: 999 } : null),
+        Promise.resolve(where.employeeCode === 'SI_TRUNG' ? { id: 999 } : null),
       );
       prisma.user.create.mockImplementation((args: any) => Promise.resolve({ id: 20, ...args.data }));
 
       const buffer = await buildExcelBuffer([
-        ['trung@sec.com', 'Nguoi Trung', 'REQUESTER', '1', ''],
-        ['moi@sec.com', 'Nguoi Moi', 'REQUESTER', '1', ''],
+        ['SI_TRUNG', 'trung@sec.com', 'Nguoi Trung', 'REQUESTER', '1', ''],
+        ['SI_MOI', 'moi@sec.com', 'Nguoi Moi', 'REQUESTER', '1', ''],
       ]);
 
       const result = await service.bulkImportUsers(buffer);
@@ -196,11 +209,21 @@ describe('AuthService', () => {
     it('bao loi ro rang khi Vai tro khong hop le', async () => {
       prisma.user.findFirst.mockResolvedValue(null);
 
-      const buffer = await buildExcelBuffer([['a@sec.com', 'A', 'VAI_TRO_BAY_DAT', '1', '']]);
+      const buffer = await buildExcelBuffer([['SI001', 'a@sec.com', 'A', 'VAI_TRO_BAY_DAT', '1', '']]);
       const result = await service.bulkImportUsers(buffer);
 
       expect(result.results[0].success).toBe(false);
       expect(result.results[0].error).toContain('khong hop le');
+    });
+
+    it('bao loi ro rang khi thieu Ma nhan vien (bat buoc, khac ban truoc)', async () => {
+      prisma.user.findFirst.mockResolvedValue(null);
+
+      const buffer = await buildExcelBuffer([['', 'a@sec.com', 'A', 'REQUESTER', '1', '']]);
+      const result = await service.bulkImportUsers(buffer);
+
+      expect(result.results[0].success).toBe(false);
+      expect(result.results[0].error).toContain('Thieu thong tin bat buoc');
     });
 
     it('gan dung reportsToId khi "Email cap tren" la nguoi MOI tao trong CUNG file (khong phu thuoc thu tu dong)', async () => {
@@ -213,8 +236,8 @@ describe('AuthService', () => {
       // Dong 1: nhan vien, cap tren la "head@sec.com" — NGUOI NAY nam O
       // DONG SAU trong file (chua ton tai luc xu ly dong 1 o luot 1).
       const buffer = await buildExcelBuffer([
-        ['nv@sec.com', 'Nhan Vien', 'REQUESTER', '1', 'head@sec.com'],
-        ['head@sec.com', 'Truong Bo Phan', 'DEPT_HEAD', '1', ''],
+        ['SI_NV', 'nv@sec.com', 'Nhan Vien', 'REQUESTER', '1', 'head@sec.com'],
+        ['SI_HEAD', 'head@sec.com', 'Truong Bo Phan', 'DEPT_HEAD', '1', ''],
       ]);
 
       const result = await service.bulkImportUsers(buffer);
@@ -231,7 +254,7 @@ describe('AuthService', () => {
       prisma.user.findFirst.mockResolvedValue(null);
       prisma.user.create.mockImplementation((args: any) => Promise.resolve({ id: 40, ...args.data }));
 
-      const buffer = await buildExcelBuffer([['nv@sec.com', 'A', 'REQUESTER', '1', 'khong-ton-tai@sec.com']]);
+      const buffer = await buildExcelBuffer([['SI_NV', 'nv@sec.com', 'A', 'REQUESTER', '1', 'khong-ton-tai@sec.com']]);
       const result = await service.bulkImportUsers(buffer);
 
       expect(result.results[0].success).toBe(true); // tai khoan VAN duoc tao
@@ -243,8 +266,8 @@ describe('AuthService', () => {
       prisma.user.create.mockResolvedValue({ id: 50 });
 
       const buffer = await buildExcelBuffer([
-        ['a@sec.com', 'A', 'REQUESTER', '1', ''],
-        ['', '', '', '', ''], // dong trong — vi du do thao tac excel de lai
+        ['SI001', 'a@sec.com', 'A', 'REQUESTER', '1', ''],
+        ['', '', '', '', '', ''], // dong trong — vi du do thao tac excel de lai
       ]);
       const result = await service.bulkImportUsers(buffer);
 

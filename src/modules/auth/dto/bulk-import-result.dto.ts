@@ -4,6 +4,7 @@
 export interface BulkImportRowResult {
   row: number; // so dong trong file Excel (tinh ca dong tieu de = dong 1)
   email: string;
+  employeeCode?: string; // them 18/09/2026
   success: boolean;
   tempPassword?: string; // CHI co khi success — mat khau tam sinh ngau nhien
   error?: string;

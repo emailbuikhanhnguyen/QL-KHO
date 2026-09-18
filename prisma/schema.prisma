@@ -103,6 +103,13 @@ model User {
   fullName     String    @map("full_name")
   role         Role      @map("role")
 
+  // Them 18/09/2026 — Ma nhan vien thuc te cua cong ty (MSNV, VD
+  // "SI24000004"), khac han "id" tu tang (id chi dung noi bo he thong).
+  // Theo dung xac nhan Sep Thanh truoc do: "dung MSNV lam ID truy cap".
+  // De OPTIONAL (khong bat buoc) vi cac tai khoan demo cu (admin@congty.com...)
+  // duoc tao TRUOC KHI co truong nay, khong co MSNV that.
+  employeeCode String?   @unique @map("employee_code")
+
   departmentId Int       @map("department_id")
   department   Department @relation(fields: [departmentId], references: [id])
 

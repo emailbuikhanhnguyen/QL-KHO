@@ -185,18 +185,26 @@ export class AuthService {
     // ---------- LUOT 1: tao user ----------
     for (let rowNum = 2; rowNum <= sheet.rowCount; rowNum++) {
       const row = sheet.getRow(rowNum);
-      const email = String(row.getCell(1).text || '').trim().toLowerCase();
-      const fullName = String(row.getCell(2).text || '').trim();
-      const roleRaw = String(row.getCell(3).text || '').trim().toUpperCase();
-      const departmentIdRaw = String(row.getCell(4).text || '').trim();
-      const managerEmail = String(row.getCell(5).text || '').trim().toLowerCase();
+      // Them 18/09/2026 — doi THU TU cot: Ma nhan vien len DAU (vi day la
+      // dinh danh CHINH theo file nhan su that cua cong ty — file goc
+      // KHONG CO cot Email nao ca). Email gio la TUY CHON — neu de trong,
+      // TU SINH tu Ma nhan vien (xem generateEmailFromCode).
+      const employeeCode = String(row.getCell(1).text || '').trim().toUpperCase();
+      let email = String(row.getCell(2).text || '').trim().toLowerCase();
+      const fullName = String(row.getCell(3).text || '').trim();
+      const roleRaw = String(row.getCell(4).text || '').trim().toUpperCase();
+      const departmentIdRaw = String(row.getCell(5).text || '').trim();
+      const managerEmail = String(row.getCell(6).text || '').trim().toLowerCase();
 
       // Dong trong hoan toan (het du lieu) — bo qua, khong tinh la loi.
-      if (!email && !fullName && !roleRaw && !departmentIdRaw) continue;
+      if (!employeeCode && !email && !fullName && !roleRaw && !departmentIdRaw) continue;
 
       try {
-        if (!email || !fullName || !roleRaw || !departmentIdRaw) {
-          throw new Error('Thieu thong tin bat buoc (Email/Ho ten/Vai tro/Ma phong ban).');
+        if (!employeeCode || !fullName || !roleRaw || !departmentIdRaw) {
+          throw new Error('Thieu thong tin bat buoc (Ma nhan vien/Ho ten/Vai tro/Ma phong ban).');
+        }
+        if (!email) {
+          email = this.generateEmailFromCode(employeeCode);
         }
         if (!(VALID_ROLES as string[]).includes(roleRaw)) {
           throw new Error(`Vai tro "${roleRaw}" khong hop le. Cac vai tro hop le: ${VALID_ROLES.join(', ')}.`);
@@ -206,9 +214,13 @@ export class AuthService {
           throw new Error(`Ma phong ban "${departmentIdRaw}" khong phai so nguyen.`);
         }
 
+        const existingByCode = await this.prisma.user.findFirst({ where: { employeeCode, deletedAt: null } });
+        if (existingByCode) {
+          throw new Error(`Ma nhan vien "${employeeCode}" da ton tai trong he thong (id=${existingByCode.id}) — KHONG tao lai, cung KHONG cap nhat.`);
+        }
         const existing = await this.prisma.user.findFirst({ where: { email, deletedAt: null } });
         if (existing) {
-          throw new Error(`Email da ton tai trong he thong (id=${existing.id}) — KHONG tao lai, cung KHONG cap nhat.`);
+          throw new Error(`Email "${email}" da ton tai trong he thong (id=${existing.id}) — KHONG tao lai, cung KHONG cap nhat.`);
         }
         const department = await this.prisma.department.findFirst({ where: { id: departmentId, deletedAt: null } });
         if (!department) {
@@ -221,7 +233,7 @@ export class AuthService {
         const passwordHash = await bcrypt.hash(tempPassword, SALT_ROUNDS);
 
         const user = await this.prisma.user.create({
-          data: { email, passwordHash, fullName, role: roleRaw as Role, departmentId },
+          data: { email, employeeCode, passwordHash, fullName, role: roleRaw as Role, departmentId },
         });
 
         createdUserIds.set(email, user.id);
@@ -229,9 +241,9 @@ export class AuthService {
           pendingReportsTo.push({ email, managerEmail, rowNum });
         }
 
-        results.push({ row: rowNum, email, success: true, tempPassword });
+        results.push({ row: rowNum, email, employeeCode, success: true, tempPassword });
       } catch (err: any) {
-        results.push({ row: rowNum, email: email || '(trong)', success: false, error: err.message });
+        results.push({ row: rowNum, email: email || '(trong)', employeeCode, success: false, error: err.message });
       }
     }
 
@@ -266,6 +278,14 @@ export class AuthService {
       errorCount: results.filter((r) => !r.success).length,
       results,
     };
+  }
+
+  private generateEmailFromCode(employeeCode: string): string {
+    // Sinh email tam theo Ma nhan vien khi file khong co cot Email (dung
+    // dung truong hop file nhan su that cua cong ty — khong co Email nao
+    // ca, chi co MSNV) — theo dung xac nhan Sep Thanh: "dung MSNV lam ID
+    // truy cap". Domain @sec.com khop voi cac tai khoan demo hien co.
+    return `${employeeCode.toLowerCase()}@sec.com`;
   }
 
   private generateTempPassword(): string {
